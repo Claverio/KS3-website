@@ -65,9 +65,7 @@ AWS_S3_OBJECT_PARAMETERS = {
     "CacheControl": "max-age=31536000, immutable, public",
 }
 
-STATICFILES_DIRS = [
-    os.path.join(PROJECT_DIR, "static"),
-]
+STATICFILES_DIRS = []
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
