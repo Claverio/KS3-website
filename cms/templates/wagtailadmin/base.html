@@ -1,0 +1,16 @@
+{% extends "wagtailadmin/base.html" %}
+{% load static %}
+
+{% block branding_title %}KS3 Admin{% endblock %}
+
+{% block branding_logo %}
+    <img
+        class="ks3-admin-sidebar-logo"
+        src="{% static 'cms/images/logo-koperasi-vertical.svg' %}"
+        alt="KS3 Simpan Pinjam"
+    >
+{% endblock %}
+
+{% block branding_favicon %}
+    <link rel="icon" type="image/svg+xml" href="{% static 'cms/images/logo-koperasi-mark.svg' %}">
+{% endblock %}

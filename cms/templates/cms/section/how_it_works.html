@@ -1,0 +1,37 @@
+{% load static wagtailimages_tags %}
+<!-- start why KS3 section -->
+<section id="home-advantages" class="position-relative ks3-how-it-works-section">
+    <img src="{% static 'cms/images/demo-modern-business-elements-05.png' %}" alt="" class="position-absolute left-minus-100px top-150px animation-rotation d-none d-xl-block">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-xl-5 col-lg-6 md-mb-45px" data-anime='{ "el": "childs", "translateY": [30, 0], "opacity": [0,1], "duration": 600, "delay": 0, "staggervalue": 180, "easing": "easeOutQuad" }'>
+                <span class="ps-20px pe-20px pt-5px pb-5px mb-15px text-uppercase alt-font text-base-color fs-12 lh-26 fw-600 border-radius-100px bg-gradient-very-light-gray-transparent d-inline-flex"><i class="bi bi-patch-check fs-16 me-5px"></i>{{ home_settings.advantages_badge }}</span>
+                <h2 class="alt-font text-dark-gray fw-700 mb-15px">{{ home_settings.advantages_title }}</h2>
+                <p class="mb-30px w-90 sm-w-100">{{ home_settings.advantages_description }}</p>
+
+                {% for advantage in home_settings.advantages_items %}<div class="d-flex align-items-start{% if not forloop.last %} mb-25px{% endif %}">
+                    <div class="h-50px w-50px bg-base-transparent-light rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 me-20px">
+                        <i class="bi {{ advantage.value.icon }} text-base-color fs-22"></i>
+                    </div>
+                    <div>
+                        <h6 class="alt-font text-dark-gray fw-700 mb-5px">{{ advantage.value.title }}</h6>
+                        <p class="mb-0 fs-15 lh-24">{{ advantage.value.description }}</p>
+                    </div>
+                </div>{% endfor %}
+            </div>
+
+            <div class="col-lg-6 offset-xl-1 position-relative text-center" data-anime='{ "opacity": [0,1], "translateY": [30,0], "duration": 700, "delay": 100, "easing": "easeOutQuad" }'>
+                {% if home_settings.advantages_image %}{% image home_settings.advantages_image width-542 as advantages_image %}<img src="{{ advantages_image.url }}" width="{{ advantages_image.width }}" height="{{ advantages_image.height }}" class="md-w-100 border-radius-10px" alt="{{ home_settings.advantages_image_alt }}">{% endif %}
+                <img src="{% static 'cms/images/demo-modern-business-elements-03.png' %}" alt="" class="position-absolute right-50px lg-right-30px bottom-50px lg-bottom-30px animation-rotation d-none d-md-block">
+                <div class="blur-box bg-white-transparent position-absolute border-radius-10px bottom-70px sm-bottom-15px left-minus-10px sm-left-15px pt-20px pb-20px ps-25px pe-25px text-center box-shadow-extra-large">
+                    <div class="h-55px w-55px d-flex align-items-center justify-content-center rounded-circle bg-base-color mx-auto">
+                        <i class="bi bi-building-check align-middle text-white fs-26"></i>
+                    </div>
+                    <h6 class="alt-font text-dark-gray fw-700 mb-0 mt-15px">{{ home_settings.advantages_floating_title }}</h6>
+                    <span class="fs-13 text-dark-gray opacity-7">{{ home_settings.advantages_floating_description }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- end why KS3 section -->

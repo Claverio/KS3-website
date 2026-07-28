@@ -1,0 +1,15 @@
+{% load static wagtailimages_tags %}
+<section id="home-app" class="position-relative overflow-hidden bg-gradient-very-light-gray ks3-app-cta-section">
+    <div class="container position-relative z-index-1"><div class="row align-items-center justify-content-center">
+        <div class="col-lg-6 md-mb-50px ks3-app-visuals" data-anime='{ "el": "childs", "translateY": [30, 0], "opacity": [0,1], "duration": 600, "delay": 0, "staggervalue": 150, "easing": "easeOutQuad" }'><div class="row justify-content-center">
+            <div class="col-sm-5 xs-mb-30px">{% if home_settings.app_first_image %}{% image home_settings.app_first_image width-600 as app_first %}<img src="{{ app_first.url }}" width="{{ app_first.width }}" height="{{ app_first.height }}" class="w-100 box-shadow-quadruple-large border-radius-10px ks3-app-preview" data-bottom-top="transform: translateY(-150px)" data-top-bottom="transform: translateY(120px)" alt="{{ home_settings.app_image_alt }}">{% endif %}</div>
+            <div class="col-sm-5">{% if home_settings.app_second_image %}{% image home_settings.app_second_image width-600 as app_second %}<img src="{{ app_second.url }}" width="{{ app_second.width }}" height="{{ app_second.height }}" class="w-100 box-shadow-quadruple-large border-radius-10px ks3-app-preview" data-bottom-top="transform: translateY(120px)" data-top-bottom="transform: translateY(-180px)" alt="{{ home_settings.app_image_alt }}">{% endif %}</div>
+        </div></div>
+        <div class="col-lg-5 offset-lg-1 col-md-8 text-center text-lg-start ks3-app-content" data-anime='{ "el": "childs", "translateY": [30, 0], "opacity": [0,1], "duration": 600, "delay": 100, "staggervalue": 150, "easing": "easeOutQuad" }'>
+            <span class="ps-20px pe-20px pt-5px pb-5px mb-15px text-uppercase alt-font text-base-color fs-12 lh-26 fw-600 border-radius-100px bg-white d-inline-flex"><i class="bi bi-phone fs-16 me-5px"></i>{{ home_settings.app_badge }}</span>
+            <h2 class="alt-font text-dark-gray fw-700 mb-15px">{{ home_settings.app_title }}</h2>
+            <p class="fs-18 mb-25px">{{ home_settings.app_description }}</p>
+            <div class="d-flex justify-content-center justify-content-lg-start ks3-store-buttons"><a href="{{ home_settings.app_store_url }}" class="d-inline-block me-15px"><img src="{% static 'cms/images/app-store-black.svg' %}" class="h-50px" alt="Download on the App Store"></a><a href="{{ home_settings.play_store_url }}" class="d-inline-block"><img src="{% static 'cms/images/play-store-black.svg' %}" class="h-50px" alt="Get it on Google Play"></a></div>
+        </div>
+    </div></div>
+</section>

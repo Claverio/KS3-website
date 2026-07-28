@@ -1,0 +1,85 @@
+{% load static %}
+<!-- start header --> 
+            <header class="header-with-topbar">
+                <!-- start header top bar -->
+                <div class="header-top-bar top-bar-dark bg-white disable-fixed border-bottom border-color-extra-medium-gray">
+                    <div class="container-fluid">
+                        <div class="row h-50px xs-h-auto align-items-center m-0 xs-pt-5px xs-pb-5px">
+                            <div class="col-lg-6 col-md-7 text-center text-md-start xs-px-0">
+                                <div class="fs-14 text-dark-gray fw-500">&#128075; Imbal hasil simpanan hingga 9% p.a. — Mulai dari Rp500rb</div>
+                            </div>
+                            <div class="col-lg-6 col-md-5 text-end d-none d-md-flex">
+                                <div class="widget me-20px lg-me-25px md-me-0"><a href="mailto:{{ contact_setting.email }}" class="fs-14 fw-500 text-dark-gray"><i class="feather icon-feather-mail fs-16 text-base-color"></i>{{ contact_setting.email }}</a></div>
+                                <div class="widget fs-14 fw-500 text-dark-gray d-none d-lg-inline-block"><i class="feather icon-feather-map-pin fs-16 text-base-color"></i>{{ contact_setting.address }}</div> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end header top bar -->
+                <!-- start navigation -->
+                <nav class="navbar navbar-expand-lg header-light bg-transparent disable-fixed">
+                    <div class="container-fluid">
+                        <div class="col-auto col-lg-3 me-lg-0 me-auto">
+                            <a class="navbar-brand" href="{% url 'landing' %}">
+                                <img src="{% static 'cms/images/logo-koperasi-horizontal.svg' %}" alt="KS3 Simpan Pinjam" class="default-logo">
+                                <img src="{% static 'cms/images/logo-koperasi-horizontal.svg' %}" alt="KS3 Simpan Pinjam" class="alt-logo">
+                                <img src="{% static 'cms/images/logo-koperasi-horizontal.svg' %}" alt="KS3 Simpan Pinjam" class="mobile-logo"> 
+                            </a>
+                            <div class="d-xxl-flex d-none align-items-center ms-15px">
+                                <span class="h-25px w-25px bg-green-transparent-light border-radius-100px d-flex align-items-center justify-content-center me-5px">
+                                    <span class="h-9px w-9px bg-green border-radius-100px animation-zoom"></span>
+                                </span>
+                                <p class="mb-0 fs-13 lh-22 fw-500 text-green">Koperasi KS3</p>
+                            </div>
+                        </div>
+                        <div class="col-auto ms-auto md-ms-0 menu-order position-static">
+                            <button class="navbar-toggler float-start" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-line"></span>
+                                <span class="navbar-toggler-line"></span>
+                                <span class="navbar-toggler-line"></span>
+                                <span class="navbar-toggler-line"></span>
+                            </button>
+                            <div class="collapse navbar-collapse" id="navbarNav"> 
+                                <ul class="navbar-nav">
+                                    <li class="nav-item"><a href="{% url 'landing' %}" class="nav-link">Beranda</a></li> 
+                                    <li class="nav-item"><a href="{% url 'p2p_list' %}" class="nav-link">P2P Lending</a></li>
+                                    <li class="nav-item dropdown dropdown-with-icon">
+                                        <a href="{% url 'product' %}" class="nav-link">Produk <span class="label border-radius-100px bg-light-medium-gray fw-700 alt-font text-base-color text-uppercase">New</span></a>
+                                        <i class="fa-solid fa-angle-down dropdown-toggle" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                            {% for product in navigation_products %}<li><a href="{{ product.get_absolute_url }}"><i class="bi {{ product.icon }}"></i><div class="submenu-icon-content"><span>{{ product.title }}</span><p>{% if product.menu_description %}{{ product.menu_description }}{% else %}{{ product.summary|truncatechars:36 }}{% endif %}</p></div></a></li>{% empty %}<li><a href="{% url 'product' %}"><i class="bi bi-folder"></i><div class="submenu-icon-content"><span>Lihat Produk</span><p>Produk KS3 akan segera tersedia.</p></div></a></li>{% endfor %}
+                                        </ul>
+                                    </li>
+                                    {% if header_misc_pages %}<li class="nav-item dropdown dropdown-with-icon"><a href="#" class="nav-link">Halaman</a><i class="fa-solid fa-angle-down dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false"></i><ul class="dropdown-menu">{% for item in header_misc_pages %}<li><a href="{{ item.url }}"><i class="bi bi-file-text"></i><div class="submenu-icon-content"><span>{{ item.title }}</span><p>{% if item.menu_description %}{{ item.menu_description }}{% else %}{{ item.introduction|truncatechars:36 }}{% endif %}</p></div></a></li>{% endfor %}</ul></li>{% endif %}
+                                    {% for item in main_menu_misc_pages %}<li class="nav-item"><a href="{{ item.url }}" class="nav-link">{{ item.title }}</a></li>{% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-auto text-end d-none d-sm-flex">
+                            <div class="header-icon"> 
+                                <div class="header-search-icon icon">
+                                    <a href="#" class="search-form-icon header-search-form h-45px w-45px d-flex align-items-center justify-content-center border border-color-extra-medium-gray text-center rounded-circle"> 
+                                        <i class="feather icon-feather-search text-base-color"></i> 
+                                    </a>
+                                    <!-- start search input -->
+                                    <div class="search-form-wrapper">
+                                        <button title="Close" type="button" class="search-close">×</button>
+                                        <form id="search-form" role="search" method="get" class="search-form text-left" action="search-result.html">
+                                            <div class="search-form-box">
+                                                <h2 class="text-dark-gray text-center fw-600 mb-4 ls-minus-2px">Cari produk, artikel, atau informasi</h2>
+                                                <input class="search-input" id="search-form-input5e219ef164995" placeholder="Ketik untuk mencari..." name="s" value="" type="text" autocomplete="off">
+                                                <button type="submit" class="search-button">
+                                                    <i class="feather icon-feather-search" aria-hidden="true"></i> 
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <!-- end search input -->
+                                </div>
+                            </div>  
+                        </div>
+                    </div>
+                </nav>
+                <!-- end navigation -->
+            </header>
+            <!-- end header -->

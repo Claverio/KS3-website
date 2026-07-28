@@ -1,0 +1,6 @@
+{% load wagtailcore_tags %}
+{% for block in streamfield %}
+    {% include_block block %}
+{% empty %}
+    {% if request.user.is_staff %}<p class="text-medium-gray">Belum ada deskripsi project.</p>{% endif %}
+{% endfor %}

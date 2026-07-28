@@ -1,0 +1,96 @@
+{% load p2p_tags %}
+<section id="down-section" class="position-relative"><div class="container">
+<form action="{% url 'p2p_purchase' project.slug %}" method="post" id="p2p-purchase-form" data-unit-price="{{ project.slot_price }}" data-service-fee="{{ project.service_fee }}" novalidate>{% csrf_token %}<div class="row">
+    <div class="col-lg-7 order-1 md-mb-50px">
+        <a href="{{ project.get_absolute_url }}" class="fs-14 fw-600 text-medium-gray text-base-color-hover d-inline-block mb-25px"><i class="bi bi-arrow-left me-5px"></i>Kembali ke detail project</a>
+        {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+        <div class="bg-white border border-color-extra-medium-gray border-radius-10px p-30px mb-30px"><h5 class="alt-font text-dark-gray fw-700 mb-25px">Data pribadi</h5>
+            <div class="mb-20px"><label class="fs-14 fw-600 text-dark-gray mb-10px" for="{{ form.full_name.id_for_label }}">{{ form.full_name.label }}<span class="text-base-color">*</span></label>{{ form.full_name }}<div class="invalid-feedback" data-client-error-for="{{ form.full_name.id_for_label }}"></div>{% for error in form.full_name.errors %}<div class="invalid-feedback d-block" data-server-error-for="{{ form.full_name.id_for_label }}">{{ error }}</div>{% endfor %}</div>
+            <div class="row"><div class="col-md-6 mb-20px"><label class="fs-14 fw-600 text-dark-gray mb-10px" for="{{ form.phone.id_for_label }}">{{ form.phone.label }}<span class="text-base-color">*</span></label>{{ form.phone }}<div class="invalid-feedback" data-client-error-for="{{ form.phone.id_for_label }}"></div>{% for error in form.phone.errors %}<div class="invalid-feedback d-block" data-server-error-for="{{ form.phone.id_for_label }}">{{ error }}</div>{% endfor %}</div><div class="col-md-6 mb-20px"><label class="fs-14 fw-600 text-dark-gray mb-10px" for="{{ form.email.id_for_label }}">{{ form.email.label }}<span class="text-base-color">*</span></label>{{ form.email }}<div class="invalid-feedback" data-client-error-for="{{ form.email.id_for_label }}"></div>{% for error in form.email.errors %}<div class="invalid-feedback d-block" data-server-error-for="{{ form.email.id_for_label }}">{{ error }}</div>{% endfor %}</div></div>
+            <div><label class="fs-14 fw-600 text-dark-gray mb-10px" for="{{ form.nik.id_for_label }}">{{ form.nik.label }} <span class="fs-13 fw-400 text-medium-gray">(opsional)</span></label>{{ form.nik }}<div class="invalid-feedback" data-client-error-for="{{ form.nik.id_for_label }}"></div>{% for error in form.nik.errors %}<div class="invalid-feedback d-block" data-server-error-for="{{ form.nik.id_for_label }}">{{ error }}</div>{% endfor %}</div>
+        </div>
+        <div class="bg-white border border-color-extra-medium-gray border-radius-10px p-30px mb-30px"><h5 class="alt-font text-dark-gray fw-700 mb-25px">Detail pendanaan</h5>
+            <div class="row mb-20px"><div class="col-md-6 sm-mb-20px"><label class="fs-14 fw-600 text-dark-gray mb-10px" for="{{ form.slot_quantity.id_for_label }}">{{ form.slot_quantity.label }}<span class="text-base-color">*</span></label>{{ form.slot_quantity }}<div class="invalid-feedback" data-client-error-for="{{ form.slot_quantity.id_for_label }}"></div>{% for error in form.slot_quantity.errors %}<div class="invalid-feedback d-block" data-server-error-for="{{ form.slot_quantity.id_for_label }}">{{ error }}</div>{% endfor %}<span class="fs-13 text-medium-gray d-block mt-10px">Maks. {{ project.available_slots }} slot tersedia</span></div><div class="col-md-6"><label class="fs-14 fw-600 text-dark-gray mb-10px">Harga per slot</label><input class="form-control border-radius-4px" value="{{ project.slot_price|rupiah }}" disabled></div></div>
+            <div><label class="fs-14 fw-600 text-dark-gray mb-10px" for="{{ form.note.id_for_label }}">{{ form.note.label }} <span class="fs-13 fw-400 text-medium-gray">(opsional)</span></label>{{ form.note }}{% for error in form.note.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}</div>
+        </div>
+    </div>
+    <div class="col-lg-5 order-2 ps-6 lg-ps-4 md-ps-15px"><div class="position-sticky top-80px"><div class="bg-white border border-color-extra-medium-gray border-radius-10px p-30px">
+        <h5 class="alt-font text-dark-gray fw-700 mb-20px">Ringkasan pendanaan</h5><div class="d-flex align-items-start justify-content-between gap-15px mb-5px"><span class="alt-font text-dark-gray fw-700 fs-18">{{ project.title }}</span><span class="alt-font fs-12 fw-600 text-uppercase text-nowrap flex-shrink-0 d-inline-flex align-items-center border-radius-100px ps-15px pe-15px pt-5px pb-5px bg-green-transparent-light text-green">{{ project.display_status }}</span></div><span class="fs-13 text-medium-gray d-block mb-20px">{{ project.interest_rate|percent }} p.a. · Tenor {{ project.tenor_months }} bulan · {{ project.get_installment_frequency_display }}</span>
+        <div class="bg-gradient-top-very-light-gray border-radius-6px p-20px mb-20px fs-14"><div class="d-flex justify-content-between pb-10px mb-10px border-bottom"><span>Harga per slot</span><span class="fw-600">{{ project.slot_price|rupiah }}</span></div><div class="d-flex justify-content-between pb-10px mb-10px border-bottom"><span>Jumlah slot</span><span class="fw-600" id="summary-slots">1 slot</span></div><div class="d-flex justify-content-between"><span>Biaya layanan</span><span class="fw-600">{{ project.service_fee|rupiah }}</span></div></div>
+        <div class="d-flex justify-content-between align-items-center mb-25px"><span class="alt-font fs-18 fw-700 text-dark-gray">Total pendanaan</span><span class="alt-font fs-26 fw-700 text-base-color" id="summary-total">-</span></div>
+        <button type="submit" class="btn btn-large btn-base-color btn-rounded btn-switch-text w-100 mb-15px"><span><span class="btn-double-text" data-text="Bayar">Bayar</span><span><i class="fa-solid fa-arrow-right"></i></span></span></button><p class="fs-13 text-medium-gray mb-0 lh-22"><i class="bi bi-shield-lock text-base-color me-5px"></i>Anda akan diarahkan ke Xendit untuk menyelesaikan pembayaran.</p>
+    </div></div></div>
+</div></form></div></section>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.getElementById('p2p-purchase-form');
+  const quantity = document.getElementById('id_slot_quantity');
+  const fullName = document.getElementById('id_full_name');
+  const phone = document.getElementById('id_phone');
+  const email = document.getElementById('id_email');
+  const nik = document.getElementById('id_nik');
+  const rupiah = new Intl.NumberFormat('id-ID', {style: 'currency', currency: 'IDR', maximumFractionDigits: 0});
+  function updateSummary() { const parsed = parseInt(quantity.value, 10); const qty = Number.isInteger(parsed) && parsed > 0 ? parsed : 0; document.getElementById('summary-slots').textContent = qty ? qty + ' slot' : '-'; document.getElementById('summary-total').textContent = qty ? rupiah.format((Number(form.dataset.unitPrice) * qty) + Number(form.dataset.serviceFee)) : '-'; }
+  phone.addEventListener('input', function () { let value = phone.value.replace(/[^0-9+\s-]/g, ''); value = value.replace(/(?!^)\+/g, ''); phone.value = value; });
+  nik.addEventListener('input', function () { nik.value = nik.value.replace(/\D/g, '').slice(0, 16); });
+  quantity.addEventListener('input', function () { if (quantity.value) quantity.value = quantity.value.replace(/\D/g, ''); });
+  quantity.addEventListener('input', updateSummary); updateSummary();
+
+  const validatedFields = [fullName, phone, email, nik, quantity];
+  const requiredMessages = {
+    id_full_name: 'Nama lengkap wajib diisi.',
+    id_phone: 'Nomor handphone / WhatsApp wajib diisi.',
+    id_email: 'Email wajib diisi.',
+    id_slot_quantity: 'Jumlah slot wajib diisi.'
+  };
+  function validationMessage(field) {
+    const value = field.value.trim();
+    if (field.required && !value) return requiredMessages[field.id] || 'Field ini wajib diisi.';
+    if (field === fullName && (value.length < 3 || /\d/.test(value))) return 'Nama minimal 3 karakter dan tidak boleh mengandung angka.';
+    if (field === phone && !/^\+?\d{8,15}$/.test(value.replace(/[\s-]/g, ''))) return 'Masukkan 8–15 digit nomor WhatsApp yang valid.';
+    if (field === email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Masukkan alamat email yang valid.';
+    if (field === nik && value && !/^\d{16}$/.test(value)) return 'NIK harus terdiri dari tepat 16 digit.';
+    if (field === quantity) {
+      const amount = Number(value);
+      if (!Number.isInteger(amount) || amount < 1) return 'Jumlah slot minimal 1.';
+      if (amount > Number(quantity.max)) return 'Jumlah slot melebihi slot yang tersedia.';
+    }
+    return '';
+  }
+  function showValidation(field) {
+    const message = validationMessage(field);
+    const feedback = form.querySelector('[data-client-error-for="' + field.id + '"]');
+    form.querySelectorAll('[data-server-error-for="' + field.id + '"]').forEach(function (serverError) {
+      serverError.classList.add('d-none');
+    });
+    field.classList.toggle('is-invalid', Boolean(message));
+    field.classList.toggle('is-valid', !message && Boolean(field.value.trim()));
+    field.setAttribute('aria-invalid', message ? 'true' : 'false');
+    if (feedback) {
+      feedback.textContent = message;
+      feedback.classList.toggle('d-block', Boolean(message));
+    }
+    return !message;
+  }
+  validatedFields.forEach(function (field) {
+    field.addEventListener('input', function () {
+      field.dataset.validationTouched = 'true';
+      showValidation(field);
+    });
+    field.addEventListener('blur', function () {
+      field.dataset.validationTouched = 'true';
+      showValidation(field);
+    });
+  });
+  form.addEventListener('submit', function (event) {
+    form.classList.add('was-validated');
+    const valid = validatedFields.map(showValidation).every(Boolean);
+    if (!valid) {
+      event.preventDefault();
+      event.stopPropagation();
+      const invalid = form.querySelector('.is-invalid');
+      if (invalid) invalid.focus();
+    }
+  });
+});
+</script>

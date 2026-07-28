@@ -1,0 +1,1159 @@
+```yaml
+# =====================================================
+# Current Website Structure Audit
+# Website: KSP Sentra Solusi Sejahtera
+# URL: https://www.koperasiks3.id/
+# Page scope: Homepage
+# =====================================================
+
+metadata:
+  filename: "current_structure.yaml"
+  document_type: "ui_content_inventory"
+  purpose:
+    - "Memetakan struktur halaman existing sebelum rebranding"
+    - "Menjadi baseline redesign UI/UX"
+    - "Memisahkan konten, komponen, interaksi, dan masalah halaman"
+  page_type: "single_page_company_profile"
+  extraction_method:
+    - "Rendered HTML content audit"
+    - "Indexed page content audit"
+    - "Public image asset path inspection"
+  limitations:
+    - >
+      Hero menggunakan gambar sehingga teks, CTA, dan hierarchy di dalam
+      banner tidak dapat diekstrak sebagai elemen HTML.
+    - >
+      Nilai warna, ukuran font, spacing, breakpoint, dan animation detail
+      membutuhkan inspeksi visual/browser DevTools tambahan.
+    - >
+      Struktur ini mencatat komponen yang terlihat dari halaman publik,
+      bukan struktur source-code internal.
+
+page:
+  id: "homepage"
+  route: "/"
+  title: "KSP Sentra Solusi Sejahtera"
+  layout_type: "single_page_scroll"
+  navigation_model:
+    type: "anchor_navigation"
+    behavior: "Navbar mengarahkan pengunjung ke section dalam homepage"
+  primary_user_flows:
+    - "Mempelajari koperasi"
+    - "Melihat produk simpanan"
+    - "Membaca berita"
+    - "Mengirim pesan"
+    - "Login ke sistem anggota"
+
+global_components:
+  - id: "site_header"
+    type: "header"
+  - id: "primary_navigation"
+    type: "navigation"
+  - id: "footer"
+    type: "footer"
+
+sections:
+
+  # ---------------------------------------------------
+  # 01. HEADER / NAVIGATION
+  # ---------------------------------------------------
+
+  - id: "header"
+    order: 1
+    type: "site_header"
+    semantic_element: "header"
+    purpose:
+      - "Brand identification"
+      - "Primary navigation"
+      - "Member login access"
+
+    layout:
+      pattern: "Horizontal navbar"
+      likely_behavior:
+        desktop: "Logo on left, navigation and login on right"
+        mobile: "Not verified"
+      sticky: "not_verified"
+      container: "centered_content_container"
+
+    components:
+      - id: "brand_logo"
+        type: "image_logo"
+        position: "left"
+        fields:
+          src: "/upload/page/logo-color.png"
+          alt: "not_extracted"
+          href: "/"
+        states:
+          default: true
+          dark_variant: false
+
+      - id: "main_navigation"
+        type: "navigation_menu"
+        position: "right"
+        items:
+          - label: "Home"
+            target: "homepage_or_home_anchor"
+            type: "anchor_link"
+
+          - label: "Tentang Kami"
+            target: "about_section"
+            type: "anchor_link"
+
+          - label: "Produk"
+            target: "products_section"
+            type: "anchor_link"
+
+          - label: "Berita"
+            target: "news_section"
+            type: "anchor_link"
+
+          - label: "Hubungi Kami"
+            target: "contact_section"
+            type: "anchor_link"
+
+      - id: "login_link"
+        type: "external_link"
+        label: "Login"
+        url: "https://kspsss.smartcoop.id/"
+        purpose: "Access external member system"
+        visual_role: "navigation_action"
+        opens_new_tab: "not_verified"
+
+    content_fields:
+      logo:
+        type: "image"
+        required: true
+      navigation_items:
+        type: "array"
+        required: true
+      login_label:
+        type: "string"
+        current_value: "Login"
+      login_url:
+        type: "url"
+        required: true
+
+    audit:
+      strengths:
+        - "Menu utama sederhana"
+        - "Login anggota mudah ditemukan"
+      issues:
+        - "CTA akuisisi anggota baru tidak terlihat"
+        - "Login diperlakukan sebagai menu biasa, bukan user action berbeda"
+        - "Tidak ada informasi kontak cepat di header"
+        - "Tidak ada dropdown atau product navigation"
+      redesign_questions:
+        - "Apakah pengguna baru dan anggota existing perlu dipisahkan secara visual?"
+        - "Apakah CTA utama menjadi Jadi Anggota atau Ajukan Pembiayaan?"
+        - "Apakah login tetap menuju aplikasi eksternal?"
+
+  # ---------------------------------------------------
+  # 02. HERO
+  # ---------------------------------------------------
+
+  - id: "hero"
+    order: 2
+    type: "hero_carousel"
+    semantic_element: "section"
+    purpose:
+      - "Menyampaikan pesan utama"
+      - "Menjadi visual pembuka homepage"
+
+    layout:
+      pattern: "Full-width image slider"
+      width: "full_bleed"
+      content_implementation: "image_based"
+      slide_count: 2
+      navigation:
+        previous_control: true
+        next_control: true
+        pagination_dots: "not_verified"
+        autoplay: "not_verified"
+
+    components:
+      - id: "hero_slider"
+        type: "carousel"
+        slides:
+          - id: "hero_slide_1"
+            order: 1
+            type: "image_slide"
+            fields:
+              background_image:
+                src: "/upload/main-banner/header1.png"
+                alt: "not_extractable"
+              eyebrow:
+                value: ""
+                status: "not_extractable_from_image"
+              title:
+                value: ""
+                status: "not_extractable_from_image"
+              description:
+                value: ""
+                status: "not_extractable_from_image"
+              primary_cta:
+                label: ""
+                url: ""
+                status: "not_detected_as_html"
+              secondary_cta:
+                label: ""
+                url: ""
+                status: "not_detected_as_html"
+
+          - id: "hero_slide_2"
+            order: 2
+            type: "image_slide"
+            fields:
+              background_image:
+                src: "/upload/main-banner/header2.png"
+                alt: "not_extractable"
+              eyebrow:
+                value: ""
+                status: "not_extractable_from_image"
+              title:
+                value: ""
+                status: "not_extractable_from_image"
+              description:
+                value: ""
+                status: "not_extractable_from_image"
+              primary_cta:
+                label: ""
+                url: ""
+                status: "not_detected_as_html"
+              secondary_cta:
+                label: ""
+                url: ""
+                status: "not_detected_as_html"
+
+      - id: "hero_previous"
+        type: "carousel_control"
+        label: "Previous"
+        direction: "previous"
+
+      - id: "hero_next"
+        type: "carousel_control"
+        label: "Next"
+        direction: "next"
+
+    content_schema_recommended:
+      eyebrow:
+        type: "string"
+      title:
+        type: "string"
+      description:
+        type: "rich_text"
+      background_or_media:
+        type: "image_or_video"
+      primary_cta:
+        type: "link"
+      secondary_cta:
+        type: "link"
+      supporting_trust_text:
+        type: "string"
+
+    audit:
+      strengths:
+        - "Menyediakan area visual besar untuk brand message"
+        - "Memungkinkan lebih dari satu kampanye"
+      critical_issues:
+        - "Pesan utama tertanam di gambar"
+        - "Tidak SEO-friendly"
+        - "Tidak aksesibel untuk screen reader"
+        - "Text responsiveness bergantung pada gambar"
+        - "Konten sulit dikelola tanpa membuat ulang aset"
+        - "CTA tidak terdeteksi sebagai elemen interaktif HTML"
+        - "Carousel berpotensi membuat pesan utama tidak fokus"
+      redesign_recommendation:
+        replace_with: "Single focused hero with HTML text and real CTA"
+        retain_carousel: false
+        suggested_fields:
+          - "eyebrow"
+          - "headline"
+          - "supporting_copy"
+          - "primary_cta"
+          - "secondary_cta"
+          - "trust_microcopy"
+          - "product_or_member_app_visual"
+
+  # ---------------------------------------------------
+  # 03. WHY KS3
+  # ---------------------------------------------------
+
+  - id: "why_ks3"
+    order: 3
+    type: "feature_benefits"
+    semantic_element: "section"
+    navigation_anchor: "tentang-kami"
+    section_title: "Mengapa Harus Koperasi KS3"
+    purpose:
+      - "Menjelaskan alasan memilih KS3"
+      - "Membangun differentiation awal"
+
+    layout:
+      pattern: "Three-column icon cards"
+      item_count: 3
+      alignment: "center_or_card_based"
+      responsive_behavior: "likely stacked on mobile, not verified"
+
+    header:
+      eyebrow:
+        value: ""
+        status: "not_available"
+      title:
+        value: "Mengapa Harus Koperasi KS3"
+      description:
+        value: ""
+        status: "not_available"
+
+    components:
+      - id: "benefit_card_digitalisasi"
+        type: "icon_feature_card"
+        order: 1
+        fields:
+          icon:
+            type: "image"
+            src_example: "/upload/why/bebas-biaya-tahunan.png"
+          title: "Digitalisasi"
+          description: >
+            Kemudahan akses pembiayaan secara digital, bisa mengatur
+            simpanan yang dapat dimonitor setiap saat untuk keperluan
+            dana pendidikan, hari tua, dan kebutuhan mendadak lainnya.
+          link:
+            label: ""
+            url: ""
+            status: "not_available"
+
+      - id: "benefit_card_kompetitif"
+        type: "icon_feature_card"
+        order: 2
+        fields:
+          icon:
+            type: "image"
+            src: "existing_asset_not_named_in_extraction"
+          title: "Kompetitif"
+          description: >
+            Proses pinjaman cepat, mudah, dan ringan serta memberikan
+            jasa simpanan yang kompetitif bagi yang ingin membantu bisnis
+            UMKM di Indonesia dan bisa dilakukan kapan dan di mana saja.
+          link:
+            label: ""
+            url: ""
+            status: "not_available"
+
+      - id: "benefit_card_terverifikasi"
+        type: "icon_feature_card"
+        order: 3
+        fields:
+          icon:
+            type: "image"
+            src: "existing_asset_not_named_in_extraction"
+          title: "Terverfikasi"
+          corrected_title: "Terverifikasi"
+          description: >
+            Mempunyai sistem pengendalian internal yang baik dengan tim
+            yang kompeten dalam memberikan pelayanan dan saran bisnis
+            kepada UKM yang menjadi anggota.
+          link:
+            label: ""
+            url: ""
+            status: "not_available"
+
+    reusable_component_schema:
+      name: "BenefitCard"
+      fields:
+        icon: "image"
+        title: "string"
+        description: "text"
+        link: "optional_link"
+
+    audit:
+      strengths:
+        - "Menyederhanakan value proposition menjadi tiga poin"
+        - "Format mudah dipindai"
+      issues:
+        - "Judul 'Terverfikasi' salah eja"
+        - "Deskripsi terlalu panjang untuk feature card"
+        - "Benefit dan feature tercampur dalam satu copy"
+        - "Tidak ada bukti pendukung"
+        - "Tidak memiliki CTA menuju penjelasan lebih lengkap"
+        - "Istilah digitalisasi masih abstrak"
+      redesign_opportunity:
+        - "Ubah setiap poin menjadi outcome konkret"
+        - "Tambahkan angka atau proof point"
+        - "Pisahkan benefit utama dari trust signal"
+        - "Gunakan icon system yang konsisten"
+
+  # ---------------------------------------------------
+  # 04. FEATURED PRODUCTS
+  # ---------------------------------------------------
+
+  - id: "featured_products"
+    order: 4
+    type: "product_showcase"
+    semantic_element: "section"
+    navigation_anchor: "produk"
+    section_title: "Produk Unggulan"
+    purpose:
+      - "Memperkenalkan produk simpanan"
+      - "Mendorong eksplorasi produk"
+
+    layout:
+      pattern: "Numbered product cards or slider"
+      item_count: 5
+      visible_items: "not_verified"
+      interaction:
+        card_clickable: "not_verified"
+        carousel: "possible_but_not_verified"
+        details_modal: false
+
+    header:
+      eyebrow:
+        value: ""
+        status: "not_available"
+      title: "Produk Unggulan"
+      description:
+        value: ""
+        status: "not_available"
+      header_cta:
+        value: ""
+        status: "not_available"
+
+    components:
+      - id: "product_simpanan_wajib"
+        type: "product_card"
+        order: 1
+        fields:
+          image:
+            src: "existing_product_asset"
+            alt: "not_extracted"
+          title: "Simpanan Wajib"
+          description: >
+            Simpanan yang akan ditagihkan per bulan selama menjadi
+            anggota koperasi.
+          sequence_number: "1"
+          badge: ""
+          product_category: "Simpanan"
+          cta:
+            label: ""
+            url: ""
+            status: "not_available"
+
+      - id: "product_simpanan_sukarela"
+        type: "product_card"
+        order: 2
+        fields:
+          image:
+            src: "existing_product_asset"
+            alt: "not_extracted"
+          title: "Simpanan Sukarela"
+          description: >
+            Simpanan sukarela yang bisa dilakukan oleh anggota tanpa
+            batasan tertentu.
+          sequence_number: "2"
+          badge: ""
+          product_category: "Simpanan"
+          cta:
+            label: ""
+            url: ""
+            status: "not_available"
+
+      - id: "product_simpanan_berjangka"
+        type: "product_card"
+        order: 3
+        fields:
+          image:
+            src: "existing_product_asset"
+            alt: "not_extracted"
+          title: "Simpanan Berjangka"
+          description: >
+            Simpanan dengan tempo 3, 6, dan 12 bulan dan mendapatkan
+            hasil yang kompetitif.
+          sequence_number: "3"
+          badge: ""
+          product_category: "Simpanan"
+          cta:
+            label: ""
+            url: ""
+            status: "not_available"
+
+      - id: "product_simpanan_pokok"
+        type: "product_card"
+        order: 4
+        fields:
+          image:
+            src: "existing_product_asset"
+            alt: "not_extracted"
+          title: "Simpanan Pokok"
+          description: >
+            Merupakan simpanan pertama kali pada saat menjadi anggota
+            koperasi.
+          sequence_number: "4"
+          badge: ""
+          product_category: "Simpanan"
+          cta:
+            label: ""
+            url: ""
+            status: "not_available"
+
+      - id: "product_simpanan_lain"
+        type: "product_card"
+        order: 5
+        fields:
+          image:
+            src: "existing_product_asset"
+            alt: "not_extracted"
+          title: "Simpanan Lain"
+          description: >
+            Simpanan untuk kebutuhan seperti dana hari tua, pendidikan,
+            dan rekreasi yang bisa dialokasikan secara mandiri.
+          sequence_number: "5"
+          badge: ""
+          product_category: "Simpanan"
+          cta:
+            label: ""
+            url: ""
+            status: "not_available"
+
+    reusable_component_schema:
+      name: "ProductCard"
+      fields:
+        image: "image"
+        badge: "optional_string"
+        title: "string"
+        short_description: "text"
+        sequence_number: "optional_integer"
+        highlights: "optional_array"
+        cta: "link"
+
+    audit:
+      strengths:
+        - "Produk utama dapat dipindai dalam satu section"
+        - "Penomoran memberi identitas visual"
+      critical_issues:
+        - "Tidak ada CTA per produk"
+        - "Tidak terdapat nominal, syarat, manfaat, risiko, atau imbal hasil"
+        - "Semua produk diperlakukan dengan hierarchy yang sama"
+        - "Tidak tersedia produk pinjaman meskipun pembiayaan menjadi pesan utama"
+        - "Deskripsi belum menjawab alasan memilih masing-masing produk"
+        - "Tidak jelas apakah kartu dapat diklik"
+      redesign_recommendation:
+        pattern: "Goal-based product selector"
+        possible_groups:
+          - "Saya ingin menyimpan dana"
+          - "Saya ingin mengembangkan usaha"
+          - "Saya ingin menjadi anggota"
+        card_fields:
+          - "product_name"
+          - "best_for"
+          - "key_benefit"
+          - "requirements_summary"
+          - "rate_or_fee_summary"
+          - "detail_cta"
+          - "application_cta"
+
+  # ---------------------------------------------------
+  # 05. NEWS
+  # ---------------------------------------------------
+
+  - id: "news"
+    order: 5
+    type: "article_listing"
+    semantic_element: "section"
+    navigation_anchor: "berita"
+    section_title: "Berita"
+    purpose:
+      - "Memberikan edukasi"
+      - "Menunjukkan aktivitas konten organisasi"
+      - "Mendukung SEO"
+
+    layout:
+      pattern: "Four article cards"
+      item_count: 4
+      card_orientation: "image_top_content_bottom"
+      archive_link: "not_detected_on_homepage"
+
+    header:
+      eyebrow:
+        value: ""
+        status: "not_available"
+      title: "Berita"
+      description:
+        value: ""
+        status: "not_available"
+      view_all_cta:
+        value: ""
+        status: "not_detected"
+
+    components:
+      - id: "article_accounting_ethics"
+        type: "article_card"
+        order: 1
+        fields:
+          image:
+            src: "existing_blog_asset"
+            alt: "not_extracted"
+          category: ""
+          title: "8 Etika Profesi Akuntansi yang Harus Dimiliki Akuntan"
+          published_relative: "3 years ago"
+          excerpt: >
+            Apakah kalian tertarik memiliki profesi sebagai seorang
+            akuntan? Atau justru kalian adalah akunta...
+          author: "not_shown_in_homepage_card"
+          cta:
+            label: "Read more"
+            type: "internal_link"
+
+      - id: "article_budgeting_errors"
+        type: "article_card"
+        order: 2
+        fields:
+          image:
+            src: "existing_blog_asset"
+            alt: "not_extracted"
+          category: ""
+          title: "8 Kesalahan Menyusun Estimasi Anggaran dan Cara Memperbaikinya"
+          published_relative: "3 years ago"
+          excerpt: >
+            Terlepas dari kemauan kuat agar bisnis berkembang lebih cepat,
+            sejarah menunjukkan kalau pemilik...
+          author: "not_shown_in_homepage_card"
+          cta:
+            label: "Read more"
+            type: "internal_link"
+
+      - id: "article_marketing_strategy"
+        type: "article_card"
+        order: 3
+        fields:
+          image:
+            src: "existing_blog_asset"
+            alt: "not_extracted"
+          category: ""
+          title: "4 Tahapan Perencanaan Strategi Pemasaran yang Ideal"
+          published_relative: "3 years ago"
+          excerpt: >
+            Ada tahapan perencanaan strategi pemasaran yang berfungsi
+            sebagai arahan supaya pemasaran produk...
+          author: "not_shown_in_homepage_card"
+          cta:
+            label: "Read more"
+            type: "internal_link"
+
+      - id: "article_poac"
+        type: "article_card"
+        order: 4
+        fields:
+          image:
+            src: "existing_blog_asset"
+            alt: "not_extracted"
+          category: ""
+          title: "Kaitan Prinsip POAC (Planning, Organizing, Actuating, Controlling)"
+          published_relative: "3 years ago"
+          excerpt: >
+            POAC merupakan sebuah prinsip manajemen organisasi yang
+            pertama kali diperkenalkan oleh George R....
+          author: "not_shown_in_homepage_card"
+          cta:
+            label: "Read more"
+            type: "internal_link"
+
+    reusable_component_schema:
+      name: "ArticleCard"
+      fields:
+        image: "image"
+        category: "optional_string"
+        title: "string"
+        published_at: "datetime"
+        excerpt: "text"
+        author: "optional_string"
+        cta: "link"
+
+    audit:
+      strengths:
+        - "Menyediakan struktur untuk content marketing"
+        - "Menambah kedalaman konten website"
+      issues:
+        - "Konten yang ditampilkan sudah lama"
+        - "Tanggal menggunakan relative time sehingga terasa ambigu"
+        - "Topik lebih bersifat bisnis umum daripada kebutuhan anggota koperasi"
+        - "CTA menggunakan bahasa Inggris sementara konten berbahasa Indonesia"
+        - "Tidak terlihat kategori artikel"
+        - "Tidak ada CTA Lihat Semua Berita"
+        - "Tidak membangun bukti aktivitas koperasi secara kuat"
+      redesign_options:
+        - "Ubah menjadi Edukasi Keuangan & UMKM"
+        - "Tambahkan kabar koperasi dan kegiatan anggota"
+        - "Gunakan tanggal absolut"
+        - "Prioritaskan artikel terbaru"
+        - "Tampilkan maksimal tiga artikel pada homepage"
+
+  # ---------------------------------------------------
+  # 06. CONTACT
+  # ---------------------------------------------------
+
+  - id: "contact"
+    order: 6
+    type: "contact_form_section"
+    semantic_element: "section"
+    navigation_anchor: "hubungi-kami"
+    section_title: "Hubungi Kami"
+    purpose:
+      - "Menangkap pertanyaan pengunjung"
+      - "Menghasilkan contact inquiry"
+
+    layout:
+      pattern: "Contact form"
+      columns: "not_verified"
+      supporting_content: "not_detected"
+
+    header:
+      eyebrow:
+        value: ""
+        status: "not_available"
+      title: "Hubungi Kami"
+      description:
+        value: ""
+        status: "not_available"
+
+    components:
+      - id: "contact_form"
+        type: "form"
+        method: "not_verified"
+        action: "not_verified"
+        success_state: "not_verified"
+        error_state: "not_verified"
+
+        fields:
+          - id: "contact_name"
+            type: "text"
+            label: "Nama"
+            placeholder: "Nama"
+            required: "not_verified"
+            autocomplete: "name"
+
+          - id: "contact_email"
+            type: "email"
+            label: "Email"
+            placeholder: "Email"
+            required: "not_verified"
+            autocomplete: "email"
+
+          - id: "contact_phone"
+            type: "tel"
+            label: "No. Telp"
+            placeholder: "No. Telp"
+            required: "not_verified"
+            autocomplete: "tel"
+
+          - id: "contact_message"
+            type: "textarea"
+            label: "Pesan"
+            placeholder: ""
+            required: "not_verified"
+
+        submit:
+          type: "button"
+          label: "KIRIM"
+          style: "primary_or_default"
+          loading_state: "not_verified"
+          disabled_state: "not_verified"
+
+    audit:
+      strengths:
+        - "Form singkat"
+        - "Meminta channel kontak yang relevan"
+      issues:
+        - "Tidak menjelaskan estimasi waktu respons"
+        - "Tidak menjelaskan tujuan atau kategori pertanyaan"
+        - "Tidak terlihat consent atau privacy notice"
+        - "Tidak memiliki jalur WhatsApp atau telepon langsung"
+        - "CTA generik"
+        - "Tidak ada confirmation message yang dapat diverifikasi"
+        - "Tidak ada pilihan produk yang diminati"
+      redesign_recommendation:
+        form_fields:
+          - "name"
+          - "phone_or_whatsapp"
+          - "email_optional"
+          - "user_goal"
+          - "product_interest"
+          - "message"
+          - "privacy_consent"
+        submit_label: "Konsultasikan Kebutuhan Saya"
+        supporting_microcopy:
+          - "Tim kami akan menghubungi Anda"
+          - "Data Anda tidak akan dibagikan tanpa izin"
+
+  # ---------------------------------------------------
+  # 07. FOOTER
+  # ---------------------------------------------------
+
+  - id: "footer"
+    order: 7
+    type: "site_footer"
+    semantic_element: "footer"
+    purpose:
+      - "Menampilkan identitas organisasi"
+      - "Menampilkan alamat kantor"
+      - "Newsletter signup"
+      - "Social media access"
+      - "Copyright"
+
+    layout:
+      pattern: "Multi-column footer"
+      likely_columns:
+        - "Brand description and logo"
+        - "Newsletter"
+        - "Office information"
+        - "Social links"
+      background_style: "likely_dark"
+      exact_visual: "not_verified"
+
+    components:
+      - id: "footer_logo"
+        type: "image_logo"
+        fields:
+          src: "/upload/page/logo-white.png"
+          alt: "not_extracted"
+
+      - id: "footer_brand_description"
+        type: "text_block"
+        fields:
+          title: ""
+          description: >
+            KSP Sentra Solusi Sejahtera adalah koperasi berbasis digital
+            yang bertujuan membangun para pelaku UMKM dalam mengembangkan
+            bisnis melalui pembiayaan yang efisien serta memberikan
+            kesempatan kepada anggota penyimpan untuk ikut berpartisipasi
+            memajukan UMKM di Indonesia.
+
+      - id: "newsletter"
+        type: "newsletter_form"
+        fields:
+          title: "Ikuti"
+          email:
+            type: "email"
+            placeholder: "Masukkan Email"
+          submit:
+            label: "KIRIM"
+          privacy_notice:
+            value: ""
+            status: "not_available"
+
+      - id: "office_information"
+        type: "contact_information"
+        fields:
+          organization_name: "Koperasi Simpan Pinjam Sentra Solusi Sejahtera"
+          building: "Werkspace Pluit, B-G 168"
+          address: >
+            Jl. Pluit Indah No.168B, RT.8/RW.6, Pluit,
+            Jakarta Utara 14450
+          phone: ""
+          email: ""
+          operating_hours: ""
+          map_url: ""
+
+      - id: "social_links"
+        type: "social_navigation"
+        fields:
+          title: "Follow"
+          items: []
+          extraction_status: "icons_or_urls_not_extracted"
+
+      - id: "app_or_download_visual"
+        type: "image"
+        fields:
+          src: "/upload/page/download.png"
+          alt: "not_extracted"
+          purpose: "not_verified"
+
+      - id: "copyright"
+        type: "legal_text"
+        fields:
+          text: "Copyright © 2022 - KS3"
+
+    audit:
+      strengths:
+        - "Nama organisasi dan alamat tersedia"
+        - "Terdapat brand description"
+        - "Menyediakan newsletter structure"
+      issues:
+        - "Tahun copyright tidak diperbarui"
+        - "Tidak terlihat email dan telepon secara langsung"
+        - "Tidak ada legal navigation"
+        - "Tidak ada nomor badan hukum atau regulatory disclosure"
+        - "Tidak ada privacy policy dan terms"
+        - "Judul section menggunakan campuran Bahasa Indonesia dan Inggris"
+        - "Tujuan gambar download tidak jelas dari struktur HTML"
+        - "Newsletter tidak menjelaskan manfaat berlangganan"
+      missing_footer_links:
+        - "Tentang KS3"
+        - "Produk Simpanan"
+        - "Produk Pembiayaan"
+        - "Cara Menjadi Anggota"
+        - "Pusat Bantuan"
+        - "Kebijakan Privasi"
+        - "Syarat dan Ketentuan"
+        - "Legalitas"
+        - "Pengaduan Anggota"
+
+forms:
+  - id: "contact_form"
+    location: "contact"
+    fields:
+      - "name"
+      - "email"
+      - "phone"
+      - "message"
+    submit_label: "KIRIM"
+
+  - id: "newsletter_form"
+    location: "footer"
+    fields:
+      - "email"
+    submit_label: "KIRIM"
+
+external_integrations:
+  - id: "member_login"
+    type: "external_application"
+    provider_or_platform: "Smartcoop"
+    url: "https://kspsss.smartcoop.id/"
+    entry_point: "Header Login"
+
+content_entities:
+  - entity: "benefit"
+    count: 3
+  - entity: "product"
+    count: 5
+  - entity: "article"
+    count: 4
+  - entity: "office"
+    count: 1
+  - entity: "contact_form"
+    count: 1
+  - entity: "newsletter_form"
+    count: 1
+
+current_information_architecture:
+  primary_navigation:
+    - "Home"
+    - "Tentang Kami"
+    - "Produk"
+    - "Berita"
+    - "Hubungi Kami"
+    - "Login"
+
+  section_sequence:
+    - "Header"
+    - "Hero carousel"
+    - "Mengapa Harus Koperasi KS3"
+    - "Produk Unggulan"
+    - "Berita"
+    - "Hubungi Kami"
+    - "Footer"
+
+  missing_sections:
+    - "Strong value proposition"
+    - "About or organizational story"
+    - "Membership process"
+    - "Loan or financing products"
+    - "How it works"
+    - "Eligibility and requirements"
+    - "Rates, fees, and financial transparency"
+    - "Simulation calculator"
+    - "Digital platform preview"
+    - "Statistics and impact"
+    - "Testimonials"
+    - "Partner or regulator logos"
+    - "Governance and legal information"
+    - "Security and data protection"
+    - "FAQ"
+    - "Final conversion CTA"
+
+conversion_inventory:
+  existing_actions:
+    - id: "login"
+      label: "Login"
+      audience: "Existing member"
+      strength: "medium"
+      destination: "External member application"
+
+    - id: "contact_submit"
+      label: "KIRIM"
+      audience: "General visitor"
+      strength: "weak"
+      destination: "Contact form submission"
+
+    - id: "article_read_more"
+      label: "Read more"
+      audience: "Content reader"
+      strength: "low"
+      destination: "Article detail"
+
+    - id: "newsletter_submit"
+      label: "KIRIM"
+      audience: "Content subscriber"
+      strength: "low"
+      destination: "Newsletter submission"
+
+  missing_primary_actions:
+    - "Jadi Anggota"
+    - "Ajukan Pembiayaan"
+    - "Buka Simpanan"
+    - "Lihat Simulasi"
+    - "Konsultasi Produk"
+
+  funnel_assessment:
+    awareness: "present_but_weak"
+    education: "partially_present"
+    trust: "weak"
+    product_consideration: "weak"
+    conversion: "weak"
+    retention_or_member_access: "present_via_login"
+
+design_system_inventory:
+  observable_components:
+    - "Logo"
+    - "Navbar"
+    - "Navigation link"
+    - "External login link"
+    - "Hero carousel"
+    - "Carousel controls"
+    - "Section header"
+    - "Icon feature card"
+    - "Product card"
+    - "Article card"
+    - "Contact form"
+    - "Text input"
+    - "Email input"
+    - "Telephone input"
+    - "Textarea"
+    - "Submit button"
+    - "Newsletter form"
+    - "Footer contact block"
+    - "Social link group"
+
+  content_patterns:
+    section_heading:
+      fields:
+        - "title"
+      missing_fields:
+        - "eyebrow"
+        - "description"
+        - "section_cta"
+
+    feature_card:
+      fields:
+        - "image"
+        - "title"
+        - "description"
+
+    product_card:
+      fields:
+        - "image"
+        - "title"
+        - "description"
+        - "sequence_number"
+      missing_fields:
+        - "benefit"
+        - "requirements"
+        - "rate_or_fee"
+        - "cta"
+
+    article_card:
+      fields:
+        - "image"
+        - "title"
+        - "relative_date"
+        - "excerpt"
+        - "cta"
+
+accessibility_audit:
+  status: "partial"
+  observed_risks:
+    - "Hero message embedded inside images"
+    - "Image alt text not available in extracted content"
+    - "Generic button label KIRIM appears in multiple contexts"
+    - "Generic link label Read more repeats across articles"
+    - "Mixed language labels"
+    - "Carousel controls rely on generic Previous and Next labels"
+  needs_manual_verification:
+    - "Color contrast"
+    - "Keyboard navigation"
+    - "Focus indicators"
+    - "Form label association"
+    - "Error announcement"
+    - "Heading hierarchy"
+    - "Touch target size"
+    - "Reduced motion support"
+
+seo_audit:
+  status: "partial"
+  issues:
+    - "Primary hero copy is likely unavailable to search engines as text"
+    - "Homepage lacks a clear HTML value proposition"
+    - "Product cards contain very limited detail"
+    - "Article timestamps use relative wording"
+    - "Old content dominates the latest-news section"
+    - "No visible FAQ content"
+    - "Potentially weak internal linking from homepage products"
+  opportunities:
+    - "Create dedicated product pages"
+    - "Add structured FAQ content"
+    - "Add organization and financial service structured data"
+    - "Use descriptive CTA labels"
+    - "Move hero content into semantic HTML"
+    - "Publish recent cooperative and UMKM content"
+
+responsive_audit:
+  status: "requires_manual_verification"
+  likely_risks:
+    - "Text embedded in hero images may become unreadable on mobile"
+    - "Five product cards may require carousel or horizontal scrolling"
+    - "Four news cards may become vertically long"
+    - "Multi-column footer may need restructuring"
+    - "Navigation may require a mobile menu"
+
+technical_content_debt:
+  high_priority:
+    - "Convert hero from image text to semantic HTML"
+    - "Correct spelling and copy issues"
+    - "Add real primary conversion CTA"
+    - "Add detailed product destination"
+    - "Expose legal and trust information"
+    - "Update stale article and copyright dates"
+
+  medium_priority:
+    - "Standardize Bahasa Indonesia labels"
+    - "Add form consent and response expectation"
+    - "Clarify social and download elements"
+    - "Add explicit contact channels"
+    - "Improve image alt text"
+
+  low_priority:
+    - "Replace sequence numbering if it has no meaning"
+    - "Add richer section intros"
+    - "Create consistent card component rules"
+
+overall_assessment:
+  current_model: "Digital company profile with product listing"
+  desired_rebrand_shift: >
+    Trusted digital cooperative platform with a clear member journey,
+    transparent financial products, strong proof of legitimacy, and
+    conversion paths for both savings and business financing.
+  strongest_existing_assets:
+    - "Clear institutional name"
+    - "Digital cooperative positioning"
+    - "UMKM-oriented mission"
+    - "Five identifiable savings products"
+    - "Existing external member application"
+    - "Physical office address"
+  largest_gaps:
+    - "No clear hero value proposition in accessible HTML"
+    - "No visible financing product catalogue"
+    - "No membership or application journey"
+    - "Minimal trust and regulatory proof"
+    - "No rates, fees, requirements, or simulation"
+    - "Weak primary CTA"
+    - "No meaningful social proof"
+    - "Stale content"
+```

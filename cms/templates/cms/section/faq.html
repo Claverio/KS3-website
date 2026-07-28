@@ -1,0 +1,20 @@
+{% load wagtailcore_tags %}
+<section id="home-faq" class="pt-6 ks3-faq-section">
+    <div class="container"><div class="row">
+        <div class="col-xl-4 col-lg-5">
+            <span class="ps-20px pe-20px pt-5px pb-5px mb-20px text-uppercase alt-font text-base-color fs-12 lh-26 fw-600 alt-font border-radius-100px bg-gradient-very-light-gray-transparent d-inline-flex"><i class="bi bi-headphones fs-16 me-5px"></i>{{ home_settings.faq_badge }}</span>
+            <h2 class="alt-font text-dark-gray fw-700 mb-15px">{{ home_settings.faq_title }}</h2>
+            <p class="mb-0">{{ home_settings.faq_description }}</p>
+            <p>{{ home_settings.faq_contact_prefix }}
+                {% if contact_setting.whatsapp_link %}<a href="{{ contact_setting.whatsapp_link }}" target="_blank" rel="noopener noreferrer" class="text-dark-gray border-bottom border-color-dark-gray fw-500"><i class="bi bi-whatsapp me-5px"></i>{{ contact_setting.whatsapp_display|default:"WhatsApp" }}</a>
+                {% else %}<span class="text-dark-gray fw-500"><i class="bi bi-whatsapp me-5px"></i>WhatsApp</span>{% endif %}
+            </p>
+        </div>
+        <div class="col-xl-7 col-lg-7 offset-xl-1"><div class="accordion accordion-style-02" id="accordion-style-02" data-active-icon="icon-feather-minus" data-inactive-icon="icon-feather-plus">
+            {% for faq in home_settings.faq_items %}<div class="accordion-item{% if forloop.first %} active-accordion{% endif %}">
+                <div class="accordion-header border-bottom {% if forloop.last %}border-color-transparent{% else %}border-color-extra-medium-gray{% endif %}"><a href="#" data-bs-toggle="collapse" data-bs-target="#accordion-style-02-{{ forloop.counter|stringformat:'02d' }}" aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}" data-bs-parent="#accordion-style-02"><div class="accordion-title mb-0 position-relative text-dark-gray"><i class="feather {% if forloop.first %}icon-feather-minus{% else %}icon-feather-plus{% endif %}"></i><span class="fs-18 fw-500">{{ faq.value.question }}</span></div></a></div>
+                <div id="accordion-style-02-{{ forloop.counter|stringformat:'02d' }}" class="accordion-collapse collapse{% if forloop.first %} show{% endif %}" data-bs-parent="#accordion-style-02"><div class="accordion-body last-paragraph-no-margin border-bottom {% if forloop.last %}border-color-transparent{% else %}border-color-light-medium-gray{% endif %}">{{ faq.value.answer|richtext }}</div></div>
+            </div>{% endfor %}
+        </div></div>
+    </div></div>
+</section>

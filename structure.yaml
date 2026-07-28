@@ -1,0 +1,120 @@
+blocks:
+  - name: header-top-bar
+    fields:
+      - subscribe_text: string (e.g., "Subscribe and receive 20% bonus discount.")
+      - email: string (e.g., "info@domin.com")
+      - location: string (e.g., "Broadway, 24th Floor, San Francisco")
+
+  - name: navigation
+    fields:
+      - logo_default: image
+      - logo_alt: image
+      - logo_mobile: image
+      - availability_status: string (e.g., "Available for work.")
+      - menu_items: list
+        - title: string
+        - link: string
+        - submenu: list
+          - title: string
+          - description: string
+          - icon: string
+          - link: string
+      - search_title: string (e.g., "Cari P2P Lending, Produk dan Berita")
+      - search_placeholder: string
+
+  - name: hero-section
+    fields:
+      - background_image: image (Background)
+      - floating_image: image (Resolution: 81x90)
+      - review_badge: string (e.g., "4.8 Stars - Reviews by Google")
+      - title: string
+      - subtitle: text
+      - newsletter_placeholder: string
+      - newsletter_cta: string
+      - newsletter_note: string
+      - stat_box_value: string (e.g., "19.58%")
+      - stat_box_label: string (e.g., "Profit by sales")
+      - main_image: image (Resolution: 975x725)
+
+  - name: marquee-section
+    fields:
+      - items: list
+        - text: string (e.g., "designers", "thinkers")
+
+  - name: about-section
+    fields:
+      - main_image: image (Resolution: 470x566)
+      - overlapping_image: image (Resolution: 350x419)
+      - badge_text: string (e.g., "We are modern business agency")
+      - title: string
+      - description: text
+      - progress_bars: list
+        - percent: integer
+        - label: string
+      - insight_text: string
+
+  - name: stats-section
+    fields:
+      - background_image: image (Background)
+      - badge_text: string (e.g., "Facts that matter")
+      - title: string
+      - stats: list
+        - description: string
+        - value: integer
+        - prefix_or_suffix: string (e.g., "+", "%")
+
+  - name: trust-section
+    fields:
+      - badge_text: string (e.g., "Trusted by clients worldwide")
+      - title: string
+      - description: text
+      - features: list
+        - text: string
+      - cta_1_text: string
+      - cta_1_link: string
+      - cta_2_text: string
+      - cta_2_link: string
+      - main_image: image (Resolution: 542x606)
+      - stat_box_value: string (e.g., "148%")
+      - stat_box_label: string (e.g., "Agency growth")
+
+  - name: services-section
+    fields:
+      - background_image: image (Background)
+      - badge_text: string (e.g., "Services and solutions")
+      - title: string
+      - services: list
+        - image: image (Resolution: ~180x150, height 150px)
+        - title: string
+        - description: text
+        - link: string
+      - footer_note: string (e.g., "Create your own website in one time...")
+
+  - name: faq-section
+    fields:
+      - badge_text: string (e.g., "Customer support")
+      - title: string
+      - description: text
+      - contact_email: string
+      - support_image: image (Resolution: 156x113)
+      - support_text: string (e.g., "Support executive 1000+ satisfied.")
+      - faqs: list
+        - question: string
+        - answer: text
+
+  - name: footer
+    fields:
+      - background_image: image (Background)
+      - logo: image
+      - social_links: list
+        - platform: string
+        - link: string
+      - addresses: list
+        - name: string
+        - details: string
+      - contact_email_1: string
+      - contact_email_2: string
+      - newsletter_title: string
+      - newsletter_placeholder: string
+      - copyright_text: string
+      - large_background_text: string (e.g., "scaleup")

@@ -1,0 +1,40 @@
+# robots.txt - Provix by Claverio
+# https://provix.id/
+
+User-agent: *
+Allow: /
+Disallow: /static/
+Disallow: /media/
+Disallow: /admin/
+Disallow: /django-admin/
+Disallow: /documents/
+Disallow: /search/
+
+# Allow all crawlers to access the main page
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# AI/LLM Crawlers
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+# Sitemap
+Sitemap: https://provix.id/sitemap.xml

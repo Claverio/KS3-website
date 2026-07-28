@@ -1,0 +1,11 @@
+<section id="down-section" class="position-relative">
+    <div class="container">
+        <div class="row row-cols-1 row-cols-lg-3 row-cols-md-2" data-anime='{ "el": "childs", "translateY": [50, 0], "opacity": [0,1], "duration": 1200, "delay": 0, "staggervalue": 150, "easing": "easeOutQuad" }'>
+            {% for project in projects %}
+                {% include 'cms/components/p2p_card.html' with project=project only %}
+            {% empty %}
+                <div class="col-12"><div class="alert alert-light border">Belum ada project P2P yang tersedia.</div></div>
+            {% endfor %}
+        </div>
+    </div>
+</section>

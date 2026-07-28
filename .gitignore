@@ -1,0 +1,41 @@
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+backend/settings/.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Django runtime
+db.sqlite3
+*.sqlite3
+/media/
+/static/
+/staticfiles/
+*.log
+
+# IDE and operating system
+.idea/
+.vscode/
+.DS_Store
+
+# Credentials and database artifacts
+*.pem
+*.key
+*.p12
+*.pfx
+*.sql
+*.dump

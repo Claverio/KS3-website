@@ -1,0 +1,256 @@
+:root {
+    --ks3-primary: #005daa;
+    --ks3-primary-dark: #003f74;
+    --ks3-primary-hover: #004d8d;
+    --ks3-primary-soft: #eaf4fc;
+    --ks3-secondary: #ffac0a;
+    --ks3-secondary-dark: #8a5600;
+    --ks3-accent: #ff0008;
+
+    --w-color-primary-hue: 207;
+    --w-color-primary-saturation: 100%;
+    --w-color-primary-lightness: 33.3%;
+    --w-color-primary: var(--ks3-primary);
+    --w-color-primary-200: var(--ks3-primary-dark);
+
+    --w-color-secondary-hue: 40;
+    --w-color-secondary-saturation: 100%;
+    --w-color-secondary-lightness: 52%;
+    --w-color-secondary: var(--ks3-secondary);
+    --w-color-secondary-50: #fff8e8;
+    --w-color-secondary-75: #ffe8b8;
+    --w-color-secondary-100: var(--ks3-secondary-dark);
+    --w-color-secondary-400: #d88900;
+
+    --w-color-critical-200: var(--ks3-accent);
+    --w-color-focus: var(--ks3-secondary);
+    --w-color-surface-button-default: var(--ks3-primary);
+    --w-color-surface-button-hover: var(--ks3-primary-hover);
+    --w-color-border-button-outline-default: var(--ks3-primary);
+    --w-color-border-button-outline-hover: var(--ks3-primary-hover);
+    --w-color-text-button-outline-default: var(--ks3-primary);
+    --w-color-text-button-outline-hover: var(--ks3-primary-hover);
+    --w-color-text-link-default: var(--ks3-primary);
+    --w-color-text-link-hover: var(--ks3-primary-hover);
+    --w-color-surface-menus: var(--ks3-primary-dark);
+    --w-color-surface-menu-item-active: var(--ks3-primary);
+    --w-login-fullscreen-background:
+        radial-gradient(circle at 12% 18%, rgb(255 172 10 / 24%) 0 8rem, transparent 8.1rem),
+        radial-gradient(circle at 88% 86%, rgb(255 255 255 / 10%) 0 13rem, transparent 13.1rem),
+        linear-gradient(135deg, #00365f 0%, var(--ks3-primary) 58%, #0072c6 100%);
+}
+
+.w-theme-light {
+    --w-color-primary: var(--ks3-primary);
+    --w-color-primary-200: var(--ks3-primary-dark);
+    --w-color-secondary: var(--ks3-secondary);
+    --w-color-critical-200: var(--ks3-accent);
+    --w-color-surface-menus: var(--ks3-primary-dark);
+    --w-color-surface-menu-item-active: var(--ks3-primary);
+    --w-color-surface-button-default: var(--ks3-primary);
+    --w-color-surface-button-hover: var(--ks3-primary-hover);
+    --w-color-border-button-outline-default: var(--ks3-primary);
+    --w-color-border-button-outline-hover: var(--ks3-primary-hover);
+    --w-color-text-button-outline-default: var(--ks3-primary);
+    --w-color-text-button-outline-hover: var(--ks3-primary-hover);
+    --w-color-text-link-default: var(--ks3-primary);
+    --w-color-text-link-hover: var(--ks3-primary-hover);
+}
+
+.w-theme-dark {
+    --w-color-primary: #8fc5ed;
+    --w-color-primary-200: var(--ks3-primary);
+    --w-color-secondary: var(--ks3-secondary);
+    --w-color-critical-200: var(--ks3-accent);
+    --w-color-surface-menus: var(--ks3-primary-dark);
+    --w-color-surface-menu-item-active: var(--ks3-primary);
+    --w-color-surface-button-default: var(--ks3-primary);
+    --w-color-surface-button-hover: #1475c5;
+    --w-color-border-button-outline-default: #60a9e7;
+    --w-color-border-button-outline-hover: #a8d3f4;
+    --w-color-text-button-outline-default: #8fc5ed;
+    --w-color-text-button-outline-hover: #d6ebfa;
+    --w-color-text-link-default: #8fc5ed;
+    --w-color-text-link-hover: #d6ebfa;
+}
+
+@media (prefers-color-scheme: light) {
+    .w-theme-system {
+        --w-color-primary: var(--ks3-primary);
+        --w-color-primary-200: var(--ks3-primary-dark);
+        --w-color-secondary: var(--ks3-secondary);
+        --w-color-critical-200: var(--ks3-accent);
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .w-theme-system {
+        --w-color-primary: #8fc5ed;
+        --w-color-primary-200: var(--ks3-primary);
+        --w-color-secondary: var(--ks3-secondary);
+        --w-color-critical-200: var(--ks3-accent);
+        --w-color-surface-menus: var(--ks3-primary-dark);
+        --w-color-surface-menu-item-active: var(--ks3-primary);
+        --w-color-surface-button-default: var(--ks3-primary);
+        --w-color-surface-button-hover: #1475c5;
+        --w-color-border-button-outline-default: #60a9e7;
+        --w-color-border-button-outline-hover: #a8d3f4;
+        --w-color-text-button-outline-default: #8fc5ed;
+        --w-color-text-button-outline-hover: #d6ebfa;
+        --w-color-text-link-default: #8fc5ed;
+        --w-color-text-link-hover: #d6ebfa;
+    }
+}
+
+/* Sidebar branding */
+.ks3-admin-sidebar-logo {
+    display: block;
+    height: 5.25rem;
+    margin: .9rem auto .65rem;
+    object-fit: contain;
+    width: 4.6rem;
+}
+
+.sidebar-collapsed .ks3-admin-sidebar-logo {
+    height: 3.75rem;
+    margin-bottom: .45rem;
+    margin-top: .75rem;
+    width: 3.2rem;
+}
+
+.sidebar__inner {
+    background: linear-gradient(180deg, var(--ks3-primary-dark) 0%, #002e55 100%);
+}
+
+[data-wagtail-sidebar] [aria-current="page"],
+[data-wagtail-sidebar] .sidebar-menu-item--active {
+    box-shadow: inset 4px 0 0 var(--ks3-secondary);
+}
+
+/* Consistent interaction language */
+.button,
+.w-tabs__tab,
+input,
+select,
+textarea {
+    border-radius: .38rem;
+}
+
+.button:not(.button-secondary):not(.button-outline):not(.no),
+button[type="submit"].button {
+    font-weight: 700;
+}
+
+.w-tabs__tab[aria-selected="true"] {
+    box-shadow: inset 0 -3px 0 var(--ks3-secondary);
+    color: var(--ks3-primary);
+}
+
+.w-theme-dark .w-tabs__tab[aria-selected="true"] {
+    color: #8fc5ed;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+.button:focus-visible,
+a:focus-visible {
+    outline-color: var(--ks3-secondary);
+}
+
+.w-status--primary,
+.w-status--live,
+.w-status--published {
+    background-color: var(--ks3-primary-soft);
+    color: var(--ks3-primary-dark);
+}
+
+.w-status--critical,
+.messages .error {
+    border-color: var(--ks3-accent);
+}
+
+/* Login */
+.login .content-wrapper {
+    background: #fff;
+    border: 0;
+    border-top: .42rem solid var(--ks3-secondary);
+    box-shadow: 0 1.5rem 4rem rgb(0 28 52 / 32%);
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0;
+    max-width: 29rem;
+    padding-top: 2.25rem;
+    color: #25313d;
+    color-scheme: light;
+}
+
+.login .ks3-login-logo {
+    margin: 0 auto 1.65rem;
+    order: -3;
+    width: 15.5rem;
+}
+
+.login .ks3-login-logo img {
+    display: block;
+    height: auto;
+    width: 100%;
+}
+
+.login h1 {
+    color: var(--ks3-primary-dark);
+    margin-bottom: .55rem;
+    order: -2;
+}
+
+.login .ks3-login-intro {
+    color: #5b6876;
+    line-height: 1.55;
+    margin: 0 0 2rem;
+    order: -1;
+    text-align: center;
+}
+
+.login .login-form .button {
+    background: var(--ks3-primary) !important;
+    border-color: var(--ks3-primary) !important;
+    color: #fff !important;
+    min-height: 3rem;
+}
+
+.login .login-form .button:hover {
+    background: var(--ks3-primary-hover) !important;
+    border-color: var(--ks3-primary-hover) !important;
+}
+
+.login .reset-password {
+    color: var(--ks3-primary);
+}
+
+.login .w-field__label,
+.login .remember-me {
+    color: #25313d;
+}
+
+.login input[type="text"],
+.login input[type="password"] {
+    background: #fff;
+    border-color: #9aa8b5;
+    color: #17212b;
+}
+
+.login input::placeholder {
+    color: #6a7785;
+    opacity: 1;
+}
+
+@media (max-width: 49.9375em) {
+    .login .content-wrapper {
+        padding: 2rem 1.5rem;
+        width: min(100%, 27rem);
+    }
+
+    .login .ks3-login-logo {
+        width: min(14rem, 82%);
+    }
+}

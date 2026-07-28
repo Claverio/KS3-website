@@ -1,0 +1,259 @@
+/* KS3 brand palette. Loaded after the theme so utility classes inherit these values. */
+:root {
+  --base-color: #005daa;
+  --green: #ffac0a;
+  --red: #ff0008;
+  --yellow: #ffac0a;
+  --orange: #ffac0a;
+  --golden-yellow: #ffac0a;
+  --crusoe-green: #ffac0a;
+  --cornflower-blue: #005daa;
+  --jade: #005daa;
+  --tropical-blue: #005daa;
+  --light-red: #fff0f0;
+  --white-ice: #e6f2fb;
+  --solitude-blue: #e6f2fb;
+  --selago: #e6f2fb;
+
+  --bs-primary: #005daa;
+  --bs-primary-rgb: 0, 93, 170;
+  --bs-link-color: #005daa;
+  --bs-link-hover-color: #004a87;
+  --bs-danger: #ff0008;
+  --bs-danger-rgb: 255, 0, 8;
+  --bs-warning: #ffac0a;
+  --bs-warning-rgb: 255, 172, 10;
+  --swiper-theme-color: #005daa;
+}
+
+/* Preserve the meaning of legacy status helpers while applying the KS3 palette. */
+.bg-green-transparent-light {
+  background-color: rgba(255, 172, 10, 0.14) !important;
+}
+
+.bg-base-transparent-light {
+  background-color: rgba(0, 93, 170, 0.12) !important;
+}
+
+.border-color-base-transparent {
+  border-color: rgba(0, 93, 170, 0.25) !important;
+}
+
+/* SVG logos need an explicit brand width; the base theme's shrink-to-fit rule
+   otherwise resolves both the anchor and the image to 0px. */
+.header-with-topbar .navbar-brand {
+  width: 250px !important;
+}
+
+.header-with-topbar .navbar-brand .default-logo,
+.header-with-topbar.sticky.sticky-active .navbar-brand .alt-logo {
+  width: 100% !important;
+  height: auto;
+}
+
+.ks3-status-complete {
+  color: #ffffff !important;
+  background-color: #ff0008 !important;
+}
+
+.ks3-status-complete,
+.ks3-status-complete:hover {
+  color: #ffffff !important;
+}
+
+/* Keep the featured P2P block compact and aligned with the surrounding sections. */
+.ks3-p2p-featured-section {
+  padding-top: 75px;
+  padding-bottom: 75px;
+}
+
+.ks3-about-section {
+  padding-top: 90px;
+  padding-bottom: 90px;
+}
+
+.ks3-how-it-works-section {
+  padding-top: 75px;
+  padding-bottom: 70px !important;
+}
+
+.ks3-faq-section {
+  padding-top: 70px !important;
+}
+
+.ks3-app-cta-section {
+  padding-top: 55px;
+  padding-bottom: 55px;
+}
+
+.ks3-ksp-products-carousel {
+  padding-top: 75px;
+  padding-bottom: 75px;
+}
+
+.ks3-ksp-products-carousel .swiper-pagination-bullet-active {
+  background-color: #005daa;
+  opacity: 1;
+}
+
+.ks3-app-preview {
+  width: 85% !important;
+  height: auto;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.ks3-p2p-progress {
+  overflow: hidden;
+  background-color: #e5ebef;
+}
+
+.ks3-p2p-progress .ks3-p2p-progress-bar {
+  position: relative;
+  width: var(--ks3-progress) !important;
+  min-width: 0;
+  transition: width 0.6s ease;
+}
+
+/* About metrics use one consistent primary treatment. */
+.ks3-about-section .progress-bar.bg-gradient-flamingo-red-transparent,
+.ks3-about-section .progress-bar.bg-gradient-base-color-transparent {
+  background: #005daa !important;
+}
+
+.ks3-about-section .progress-bar-percent,
+.ks3-about-section .progress-bar-title {
+  color: #ffffff !important;
+}
+
+@media (min-width: 1200px) {
+  .ks3-p2p-featured-title {
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 991px) {
+  .header-with-topbar .navbar-brand {
+    width: 210px !important;
+    max-width: calc(100vw - 145px);
+  }
+
+  .header-with-topbar .navbar-brand .mobile-logo {
+    width: 100% !important;
+    height: auto;
+  }
+
+  .header-with-topbar .navbar-brand .default-logo,
+  .header-with-topbar .navbar-brand .alt-logo,
+  .header-with-topbar.sticky.sticky-active .navbar-brand .alt-logo {
+    width: 0 !important;
+    height: 0;
+  }
+
+  .ks3-p2p-featured-section {
+    padding-top: 60px;
+    padding-bottom: 60px;
+  }
+
+  .ks3-about-section {
+    padding-top: 65px;
+    padding-bottom: 65px;
+  }
+
+  .ks3-how-it-works-section {
+    padding-top: 60px;
+    padding-bottom: 55px !important;
+  }
+
+  .ks3-faq-section {
+    padding-top: 55px !important;
+  }
+
+  .ks3-app-cta-section {
+    padding-top: 50px;
+    padding-bottom: 50px;
+  }
+
+  .ks3-ksp-products-carousel {
+    padding-top: 60px;
+    padding-bottom: 60px;
+  }
+
+  .ks3-app-preview {
+    width: 82% !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .ks3-app-cta-section {
+    isolation: isolate;
+    padding: 60px 0 !important;
+    background: linear-gradient(145deg, #003f70 0%, #005daa 58%, #087ac4 100%) !important;
+  }
+
+  .ks3-app-cta-section::before,
+  .ks3-app-cta-section::after {
+    position: absolute;
+    z-index: -1;
+    content: "";
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .ks3-app-cta-section::before {
+    top: -90px;
+    right: -100px;
+    width: 240px;
+    height: 240px;
+  }
+
+  .ks3-app-cta-section::after {
+    bottom: -110px;
+    left: -90px;
+    width: 220px;
+    height: 220px;
+  }
+
+  .ks3-app-visuals {
+    display: none !important;
+  }
+
+  .ks3-app-content {
+    width: 100%;
+    padding-right: 28px;
+    padding-left: 28px;
+    color: rgba(255, 255, 255, 0.82);
+  }
+
+  .ks3-app-content > span {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.14) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+  }
+
+  .ks3-app-content h2 {
+    color: #ffffff !important;
+    font-size: 38px;
+    line-height: 1.08;
+    letter-spacing: -1.5px;
+  }
+
+  .ks3-app-content p {
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 16px !important;
+    line-height: 1.65;
+  }
+
+  .ks3-store-buttons {
+    align-items: center;
+    gap: 10px;
+  }
+
+  .ks3-store-buttons a {
+    margin-right: 0 !important;
+  }
+
+  .ks3-store-buttons img {
+    height: 44px !important;
+  }
+}

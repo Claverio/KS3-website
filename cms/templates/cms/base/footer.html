@@ -1,0 +1,40 @@
+{% load static %}
+<!-- srat footer -->
+        <footer class="cover-background pb-0 overflow-visible" style="background-image: url('{% static 'cms/images/footer-bg.webp' %}')">
+            <img src="{% static 'cms/images/demo-modern-business-elements-04.png' %}" alt="" class="position-absolute right-150px md-right-50px top-minus-60px animation-rotation d-none d-sm-block">
+            <div class="container overflow-hidden">
+                <div class="row position-relative z-index-9">
+                    <div class="col-12 col-xl-4 col-md-6 d-flex flex-column lg-mb-30px sm-mb-20px order-1">
+                        <a href="{% url 'landing' %}" class="footer-logo mb-25px xs-mb-20px d-inline-block">
+                            <img src="{% static 'cms/images/logo-koperasi-vertical.svg' %}" alt="KS3 Simpan Pinjam" style="max-height: 110px; width: auto;">
+                        </a>
+                        {% if footer_misc_pages %}<ul class="p-0 mb-20px list-unstyled">{% for item in footer_misc_pages %}<li class="mb-5px"><a href="{{ item.url }}" class="text-white opacity-7 opacity-10-hover">{{ item.title }}</a></li>{% endfor %}</ul>{% endif %}
+                        <div class="elements-social social-text-style-01 mt-auto">
+                            <ul class="small-icon light">
+                                {% if contact_setting.facebook_url %}<li><a class="facebook" href="{{ contact_setting.facebook_url }}" target="_blank" rel="noopener noreferrer">Fb.</a></li>{% endif %}
+                                {% if contact_setting.instagram_url %}<li><a class="instagram" href="{{ contact_setting.instagram_url }}" target="_blank" rel="noopener noreferrer">Ig.</a></li>{% endif %}
+                                {% if contact_setting.twitter_url %}<li><a class="twitter" href="{{ contact_setting.twitter_url }}" target="_blank" rel="noopener noreferrer">Tw.</a></li>{% endif %}
+                                {% if contact_setting.behance_url %}<li><a class="behance" href="{{ contact_setting.behance_url }}" target="_blank" rel="noopener noreferrer">Be.</a></li>{% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-12 col-xl-4 col-md-6 last-paragraph-no-margin order-xl-2 order-3 sm-mb-20px">
+                        <p class="w-80 mb-20px md-w-100"><span class="text-white d-block">Kantor Pusat KS3</span>{{ contact_setting.address }}</p>
+                        <p class="w-80 md-w-100"><span class="text-white d-block">Jam Operasional</span>{{ contact_setting.operational_hours }}</p>
+                    </div>
+                    <div class="col-12 col-xl-4 col-md-6 last-paragraph-no-margin order-xl-3 order-4 sm-mb-30px">
+                        <p class="mb-0">Punya pertanyaan tentang pendanaan? </p>
+                        <a href="mailto:{{ contact_setting.email }}" class="text-white text-decoration-line-bottom mb-25px d-inline-block">{{ contact_setting.email }}</a>
+                        <p class="mb-0">Butuh bantuan pembiayaan?</p>
+                        <a href="mailto:{{ contact_setting.financing_email }}" class="text-white text-decoration-line-bottom d-inline-block">{{ contact_setting.financing_email }}</a>
+                        <p class="mt-25px mb-0">© 2026 KSP Sentra Solusi Sejahtera.</p>
+                    </div>
+                </div>
+                <div class="row mb-minus-70px md-mb-minus-50px md-mb-minus-20px">
+                    <div class="col-12 text-center">
+                        <span class="text-base-color fs-180 xl-fs-200 lg-fs-180 sm-fs-160 xs-fs-120 fw-600 ls-minus-8px lg-ls-minus-4px w-100 opacity-6">KSP KS3</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- end footer -->

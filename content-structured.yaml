@@ -1,0 +1,1167 @@
+# =====================================================
+# Content-Structured CMS Blueprint — REVISED
+# Brand: KSP Sentra Solusi Sejahtera (KS3)
+# Template Base: structure.yaml
+# Source of Truth: https://www.koperasiks3.id/
+# Date: 2026-07-26
+# =====================================================
+#
+# FACT CHECK — PRODUK EXISTING DI WEBSITE:
+# ─────────────────────────────────────────
+# Semua produk yang tercatat di website saat ini adalah SIMPANAN:
+#   1. Simpanan Wajib     → ditagihkan per bulan selama jadi anggota
+#   2. Simpanan Sukarela  → tanpa batasan tertentu
+#   3. Simpanan Berjangka → tenor 3, 6, 12 bulan, hasil kompetitif
+#   4. Simpanan Pokok     → simpanan pertama saat jadi anggota
+#   5. Simpanan Lain      → hari tua, pendidikan, rekreasi
+#
+# Website TIDAK menampilkan:
+#   - Produk pinjaman/pembiayaan secara eksplisit
+#   - Angka statistik apapun (anggota, penyaluran, dll)
+#   - Testimoni atau rating
+#   - Imbal hasil / bunga / biaya
+#   - FAQ atau proses menjadi anggota
+#
+# YANG BARU (belum ada di website existing):
+#   - P2P Lending → produk baru yang akan diperkenalkan di revamp
+#
+# Narasi koperasi di footer & keunggulan memang menyebut "pembiayaan
+# UMKM" dan "proses pinjaman cepat", tapi TIDAK ada halaman produk
+# pembiayaan. Ini yang akan diisi oleh P2P Lending sebagai produk baru.
+#
+# SOCIAL MEDIA EXISTING:
+#   - Instagram: https://www.instagram.com/koperasiks3/
+#   - Facebook: https://www.facebook.com/koperasiks3
+#   - YouTube: https://koperasiks3.id (belum mengarah ke channel real)
+#
+# MOBILE APP:
+#   - SmartCoop Anggota Sentra (Google Play Store)
+#   - Link: https://play.google.com/store/apps/details?id=com.fourvisionmedia.smartcoopAnggota.Sentra
+#
+# MEMBER LOGIN:
+#   - https://kspsss.smartcoop.id/
+#
+# ALAMAT:
+#   - Werkspace Pluit, B-G 168
+#   - Jl. Pluit Indah No.168B, RT.8/RW.6, Pluit, Jakarta Utara 14450
+#
+# =====================================================
+#
+# MARKETING FUNNEL DESIGN
+# ───────────────────────
+# Funnel Stages (section flow):
+#   1. HOOK         → header-top-bar + hero-section
+#   2. CREDIBILITY  → marquee-section + stats-section
+#   3. EDUCATION    → about-section + services-section
+#   4. TRUST        → trust-section
+#   5. OBJECTION    → faq-section
+#   6. CONVERSION   → footer (final CTA)
+#
+# P2P LENDING INTEGRATION STRATEGY
+# ─────────────────────────────────
+# P2P lending = produk BARU, jadi positioning-nya harus smooth:
+#   - Hero → P2P lending sebagai headline utama (produk baru unggulan)
+#   - About → Narasi evolusi KS3 dari koperasi simpan pinjam ke ekosistem P2P
+#   - Services → P2P lending sebagai service #1, diikuti produk simpanan existing
+#   - Trust → Cara kerja P2P (edukasi, karena ini baru bagi audience koperasi)
+#   - FAQ → Menjawab keraguan soal P2P di bawah payung koperasi
+#
+# Produk simpanan existing tetap dipertahankan sebagai backbone
+# tapi di-reframe: simpanan = cara ikut mendanai UMKM, bukan
+# sekadar "menyimpan uang di koperasi".
+
+# =====================================================
+# BLOCK 1: HEADER TOP BAR
+# Funnel Stage: HOOK — Micro-trigger & quick-contact
+# =====================================================
+
+header_top_bar:
+  _funnel_stage: "hook"
+  _purpose: >
+    Memberikan first impression profesional dan menyampaikan satu pesan
+    kunci. Top bar juga menampilkan kontak cepat untuk menunjukkan bahwa
+    KS3 adalah institusi yang reachable.
+
+  subscribe_text: "🚀 Kini hadir: Pendanaan P2P Lending untuk UMKM — Produk terbaru dari KS3"
+  # Rotasi teks (jika dibuat ticker):
+  # - "🏢 Koperasi Simpan Pinjam terdaftar — Sejak 2019"
+  # - "📱 Download aplikasi SmartCoop Anggota di Google Play"
+  # - "💡 Simpanan Berjangka tenor 3, 6, 12 bulan tersedia"
+  #
+  # Catatan: Jangan sertakan angka imbal hasil/bunga kecuali sudah ada
+  # data resmi yang disetujui untuk dipublikasikan.
+
+  email: "cs@koperasiks3.id"
+  # Catatan: Email ini placeholder. Pastikan alamat email yang benar
+  # diisi oleh tim KS3 sebelum launch.
+
+  location: "Werkspace Pluit, Jl. Pluit Indah No.168B, Jakarta Utara"
+
+  _design_notes: >
+    Top bar slim (32–40px), dark background (brand primary gelap).
+    Teks subscribe_text bisa dijadikan ticker rotating.
+    Tampilkan icon WhatsApp + email sebagai quick-contact.
+    Pada mobile, top bar bisa di-hide setelah scroll 100px.
+
+# =====================================================
+# BLOCK 2: NAVIGATION
+# Funnel Stage: HOOK — Orientation & persona routing
+# =====================================================
+
+navigation:
+  _funnel_stage: "hook"
+  _purpose: >
+    Navigasi melayani dua persona utama:
+    1) Calon pendana/penyimpan → ingin tahu produk simpanan & P2P
+    2) Pelaku UMKM → ingin tahu cara mendapat pembiayaan
+    Plus anggota existing yang ingin login.
+
+  logo_default:
+    _image_note: "Logo KS3 full-color horizontal, format SVG/PNG, min 200x60px"
+    _image_description: >
+      Logo KS3 yang sudah ada di website (logo-color.png).
+      Jika di-redesign, pastikan konsisten dengan branding baru.
+
+  logo_alt:
+    _image_note: "Logo KS3 versi putih, min 200x60px"
+    _image_description: >
+      Logo KS3 putih yang sudah ada (logo-white.png), untuk navbar
+      saat di-scroll dengan dark background atau overlay.
+
+  logo_mobile:
+    _image_note: "Logo KS3 compact/mark-only, 48x48px"
+    _image_description: >
+      Versi ringkas logo KS3 tanpa wordmark untuk tampilan mobile.
+
+  availability_status: "Menerima Anggota Baru"
+  # Micro-status yang menunjukkan bahwa koperasi aktif.
+  # Setelah P2P lending live, bisa diganti: "Pendanaan P2P Dibuka"
+
+  menu_items:
+    - title: "Beranda"
+      link: "#hero"
+
+    - title: "Tentang Kami"
+      link: "#about"
+
+    - title: "Produk"
+      link: "#services"
+      submenu:
+        - title: "Pendanaan P2P Lending"
+          description: "Danai UMKM melalui platform koperasi digital"
+          icon: "icon-p2p-network"
+          link: "#services"
+          _note: "PRODUK BARU — highlight dengan badge 'Baru' di submenu"
+
+        - title: "Simpanan Berjangka"
+          description: "Tenor 3, 6, dan 12 bulan"
+          icon: "icon-calendar-coin"
+          link: "#services"
+          _note: "PRODUK EXISTING — dari website saat ini"
+
+        - title: "Simpanan Sukarela"
+          description: "Setor dan tarik tanpa batasan"
+          icon: "icon-wallet-flex"
+          link: "#services"
+          _note: "PRODUK EXISTING — dari website saat ini"
+
+        - title: "Simpanan Lainnya"
+          description: "Dana hari tua, pendidikan, rekreasi"
+          icon: "icon-piggy-multi"
+          link: "#services"
+          _note: "PRODUK EXISTING — dari website saat ini"
+
+    - title: "Cara Kerja"
+      link: "#trust"
+
+    - title: "FAQ"
+      link: "#faq"
+
+    - title: "Hubungi Kami"
+      link: "#footer"
+
+  # CTA Buttons di navbar (di luar menu biasa):
+  _nav_cta_primary:
+    label: "Daftar Sekarang"
+    link: "/register"
+    style: "filled_primary"
+    _note: >
+      Saat ini belum ada halaman registrasi di website.
+      Sementara bisa diarahkan ke WhatsApp atau form kontak.
+
+  _nav_cta_login:
+    label: "Login"
+    link: "https://kspsss.smartcoop.id/"
+    style: "text_link"
+    opens_new_tab: true
+    _note: "EXISTING — sudah ada di website saat ini, mengarah ke SmartCoop"
+
+  search_title: "Cari produk, artikel, atau informasi"
+  search_placeholder: "Ketik untuk mencari..."
+
+  _design_notes: >
+    Navbar sticky dengan backdrop-blur on scroll.
+    "Daftar Sekarang" sebagai CTA utama (filled button, warna primer).
+    "Login" sebagai text link di samping CTA, mengarah ke SmartCoop external.
+    Mega-dropdown pada "Produk" menampilkan 4 item dengan icon + description.
+    P2P Lending di submenu diberi badge "Baru" untuk menarik perhatian.
+    Pada mobile: hamburger menu, CTA tetap visible di luar hamburger.
+
+# =====================================================
+# BLOCK 3: HERO SECTION
+# Funnel Stage: HOOK — Value proposition & P2P introduction
+# =====================================================
+# STRATEGI: P2P Lending diperkenalkan di hero sebagai evolusi layanan
+# KS3. Copy harus membuat pengunjung paham dalam 5 detik:
+# "KS3 = koperasi digital + sekarang bisa danai UMKM langsung"
+
+hero_section:
+  _funnel_stage: "hook"
+  _purpose: >
+    Section paling penting. Harus menjawab: "Apa ini?", "Untuk siapa?",
+    "Apa yang bisa saya lakukan di sini?" P2P Lending diperkenalkan
+    sebagai inovasi terbaru dari koperasi yang sudah mereka kenal.
+
+  background_image:
+    _image_note: "Resolusi 1920x1080px, format WebP/JPG"
+    _image_description: >
+      Foto autentik pelaku UMKM Indonesia (pemilik warung, pengrajin,
+      pedagang pasar) yang sedang bekerja — BUKAN stock photo generik.
+      Overlay gradient dari warna brand (dark ke transparent, dari kiri
+      ke kanan) agar teks tetap terbaca. Alternatif: abstract geometric
+      pattern yang modern dengan warna brand.
+
+  floating_image:
+    _image_note: "Resolusi 81x90px, format PNG transparan"
+    _image_description: >
+      Badge kecil bertuliskan "Koperasi Terdaftar" atau logo
+      Kemenkop UKM sebagai micro trust signal. Bisa juga badge
+      "Tersedia di Google Play" karena sudah ada app SmartCoop.
+
+  review_badge: "✅ Koperasi Simpan Pinjam Terdaftar — Kemenkop UKM RI"
+  # Menggunakan fakta legal, BUKAN rating karangan.
+  # Jika nanti ada data rating dari Play Store atau survey,
+  # bisa diganti: "⭐ 4.x — Rating di Google Play"
+
+  title: "Koperasi Digital\nyang Menggerakkan UMKM"
+  # Copywriting rationale:
+  # - Baris 1: Identitas brand (koperasi + digital)
+  # - Baris 2: Misi/dampak (menggerakkan UMKM)
+  # - Tidak menyebutkan angka imbal hasil karena belum ada data resmi
+  #
+  # Alternatif A/B:
+  # "Simpan. Danai. Tumbuh Bersama."
+  # "Dari Koperasi, untuk UMKM Indonesia"
+  # "Kini Anda Bisa Langsung Mendanai UMKM"
+
+  subtitle: >
+    KS3 adalah koperasi simpan pinjam berbasis digital yang kini
+    menghadirkan layanan pendanaan peer-to-peer (P2P) lending.
+    Simpan dana Anda atau danai langsung pelaku UMKM terverifikasi —
+    semuanya melalui satu platform.
+  # Subtitle menjelaskan dua hal:
+  # 1. KS3 = koperasi (existing identity)
+  # 2. P2P lending = layanan baru (product launch angle)
+
+  newsletter_placeholder: "Masukkan email Anda"
+  newsletter_cta: "Daftar & Mulai →"
+  newsletter_note: "Gratis mendaftar. Tanpa komitmen awal."
+  # Form ini = lead capture ringan (email-first).
+  # Setelah submit → redirect ke halaman registrasi/onboarding.
+  # Alternatif: dual-button CTA tanpa form email:
+  #   "Saya Ingin Mendanai" | "Saya Butuh Pembiayaan"
+
+  stat_box_value: "3-in-1"
+  stat_box_label: "Simpan · Danai · Pinjam"
+  # Karena TIDAK ADA angka real (total penyaluran, jumlah anggota, dll),
+  # stat box digunakan untuk menyampaikan proposisi "3 layanan dalam 1 platform".
+  # PENTING: Ganti dengan angka real begitu tersedia. Contoh:
+  #   value: "1.000+"  label: "Anggota Aktif"
+  #   value: "Rp X M"  label: "Total Pembiayaan"
+  # Angka real JAUH lebih powerful daripada tagline.
+
+  main_image:
+    _image_note: "Resolusi 975x725px, format PNG transparan"
+    _image_description: >
+      Mockup device (laptop + smartphone) menampilkan tampilan
+      dashboard/aplikasi SmartCoop KS3. Karena sudah ada app di
+      Play Store, bisa screenshot halaman real dari app tersebut.
+      Tampilkan: daftar simpanan, portofolio, atau landing P2P.
+      Ini adalah visual proof bahwa platform digital benar ada —
+      bukan sekadar klaim "berbasis digital".
+
+  _design_notes: >
+    Layout split: teks kiri (55-60%), mockup device kanan (40-45%).
+    Stat box floating di bawah-kiri mockup, glassmorphism style.
+    Review badge di atas title, subtle fade-in animation.
+    Background JANGAN image yang mengandung teks (masalah website lama).
+    Semua copy HARUS sebagai HTML text. CTA button min 48px height.
+    Mobile: layout stacked, teks di atas, image di bawah.
+
+# =====================================================
+# BLOCK 4: MARQUEE SECTION
+# Funnel Stage: CREDIBILITY — Trust anchors & keyword display
+# =====================================================
+
+marquee_section:
+  _funnel_stage: "credibility"
+  _purpose: >
+    Infinite scroll marquee sebagai visual separator + trust reinforcement.
+    Hanya menggunakan klaim yang bisa dibuktikan atau yang merupakan
+    deskripsi faktual.
+
+  items:
+    - text: "Koperasi Terdaftar"
+      _factual: true  # Terdaftar di Kemenkop UKM
+    - text: "100% Digital"
+      _factual: true  # Sudah ada app SmartCoop
+    - text: "Simpanan Berjangka"
+      _factual: true  # Produk existing
+    - text: "P2P Lending"
+      _factual: "new_product"  # Produk baru
+    - text: "Pembiayaan UMKM"
+      _factual: true  # Disebutkan di narasi website
+    - text: "Sejak 2019"
+      _factual: "verify"  # Copyright 2022, tapi berdiri mungkin 2019 — perlu konfirmasi
+    - text: "Aplikasi Mobile"
+      _factual: true  # SmartCoop di Play Store
+    - text: "Simpanan Fleksibel"
+      _factual: true  # Simpanan Sukarela
+    - text: "Pendanaan Langsung"
+      _factual: "new_product"  # Fitur P2P baru
+    - text: "Transparan"
+      _factual: "claim"  # Klaim brand, belum ada bukti spesifik
+
+  _design_notes: >
+    Infinite scroll horizontal (kiri→kanan), font besar (48-72px),
+    warna teks muted (30-40% opacity). Item dipisahkan oleh dot/star.
+    Scroll pelan dan smooth. Background putih/sangat terang.
+
+# =====================================================
+# BLOCK 5: ABOUT SECTION
+# Funnel Stage: EDUCATION — Siapa KS3 & model bisnis P2P
+# =====================================================
+
+about_section:
+  _funnel_stage: "education"
+  _purpose: >
+    Menjelaskan identitas KS3 dan memperkenalkan model P2P lending
+    sebagai evolusi natural dari koperasi simpan pinjam. Pengunjung
+    harus keluar dari section ini dengan pemahaman: "Oh, KS3 ini
+    koperasi yang sekarang juga punya platform P2P."
+
+  main_image:
+    _image_note: "Resolusi 470x566px, format JPG/WebP"
+    _image_description: >
+      Foto kantor KS3 di Werkspace Pluit atau foto tim KS3 yang
+      profesional namun approachable. Jika tidak ada foto tim,
+      bisa gunakan foto suasana coworking space yang modern untuk
+      menunjukkan kesan "koperasi modern, bukan koperasi jadul".
+
+  overlapping_image:
+    _image_note: "Resolusi 350x419px, format JPG/WebP"
+    _image_description: >
+      Foto pelaku UMKM di tempat usahanya (warung, workshop, toko)
+      yang terlihat produktif. Atau screenshot tampilan app SmartCoop
+      di smartphone untuk menunjukkan sisi digital. Foto overlapping
+      memberi kesan "dua dunia yang terhubung: digital + UMKM".
+
+  badge_text: "Tentang KS3"
+
+  title: "Koperasi Simpan Pinjam\nBerbasis Digital"
+  # Langsung menyatakan identitas yang sudah ada di website
+  # tanpa over-claiming sesuatu yang belum terbukti.
+
+  description: >
+    KSP Sentra Solusi Sejahtera (KS3) adalah koperasi berbasis digital
+    yang bertujuan membangun para pelaku UMKM dalam mengembangkan
+    bisnisnya melalui pembiayaan yang efisien, serta memberikan
+    kesempatan kepada para anggota penyimpan untuk ikut berpartisipasi
+    memajukan UMKM di Indonesia.
+
+    Kini, KS3 melangkah lebih jauh dengan menghadirkan layanan
+    Pendanaan P2P Lending — di mana anggota dapat langsung memilih
+    dan mendanai pelaku UMKM terverifikasi melalui platform digital kami.
+  # Paragraf 1: Copy yang hampir persis dari narasi existing di footer website.
+  # Paragraf 2: Transisi natural ke produk baru (P2P Lending).
+  # Tidak ada klaim statistik karena data tidak tersedia.
+
+  progress_bars:
+    - percent: 100
+      label: "Proses Digital End-to-End"
+      # Fakta: sudah ada app SmartCoop + portal login
+
+    - percent: 100
+      label: "Kepatuhan Regulasi Koperasi"
+      # Fakta: terdaftar sebagai KSP
+
+    # CATATAN: Progress bar ini lebih cocok digunakan untuk menunjukkan
+    # kapabilitas/fitur, BUKAN statistik performa (karena tidak ada data).
+    # Jika dirasa aneh menggunakan 100% untuk semua, alternatif:
+    # Ganti progress_bars dengan icon-checklist approach:
+    # ✅ Platform digital tersedia
+    # ✅ Koperasi terdaftar resmi
+    # ✅ Aplikasi mobile di Play Store
+
+  insight_text: >
+    "Kami percaya bahwa inklusi keuangan dimulai dari kepercayaan
+    dan transparansi. KS3 hadir untuk menjembatani anggota penyimpan
+    dengan pelaku UMKM yang membutuhkan modal — secara digital,
+    cepat, dan di bawah pengawasan koperasi."
+  # Quote dari pengurus (perlu dikonfirmasi nama dan jabatan).
+  # Jika belum ada quote resmi, bisa dijadikan tagline brand.
+
+  _design_notes: >
+    Layout: gambar kiri (40%), konten kanan (60%).
+    Badge text "Tentang KS3" sebagai eyebrow label.
+    Pertimbangkan mengganti progress_bars dengan icon-checklist
+    karena lebih cocok untuk menunjukkan kapabilitas (bukan metrics).
+    Insight text sebagai blockquote dengan kutipan besar.
+    Overlapping image dengan subtle shadow + slight tilt untuk depth.
+
+# =====================================================
+# BLOCK 6: STATS SECTION
+# Funnel Stage: CREDIBILITY — Quantified proof
+# =====================================================
+
+stats_section:
+  _funnel_stage: "credibility"
+  _purpose: >
+    Memberikan bukti kuantitatif. PENTING: Saat ini KS3 TIDAK
+    menampilkan angka apapun di website. Section ini HARUS diisi
+    dengan data real dari internal KS3 sebelum launch.
+    Template di bawah menyediakan placeholder yang harus diganti.
+
+  background_image:
+    _image_note: "Resolusi 1920x600px, format WebP/JPG, perlu dark overlay"
+    _image_description: >
+      Foto suasana UMKM Indonesia: pasar, deretan warung, atau
+      area komersial. Dark overlay 70-80% agar teks putih tetap
+      terbaca. Foto harus menyampaikan "ekonomi rakyat bergerak".
+
+  badge_text: "KS3 dalam Angka"
+
+  title: "Dampak Nyata bagi UMKM Indonesia"
+
+  stats:
+    - description: "Anggota Terdaftar"
+      value: "[ISI_DATA_REAL]"
+      prefix_or_suffix: "+"
+      _note: >
+        WAJIB DIISI oleh tim KS3. Ambil dari data SmartCoop.
+        Contoh: 500+, 1.000+, dll.
+
+    - description: "Total Pembiayaan Tersalurkan"
+      value: "[ISI_DATA_REAL]"
+      prefix_or_suffix: "Rp _ Juta"
+      _note: >
+        WAJIB DIISI. Total akumulasi pembiayaan yang sudah dicairkan.
+
+    - description: "UMKM Terdanai"
+      value: "[ISI_DATA_REAL]"
+      prefix_or_suffix: "+"
+      _note: >
+        WAJIB DIISI. Jumlah UMKM yang sudah menerima pembiayaan.
+
+    - description: "Tahun Beroperasi"
+      value: "[ISI_DATA_REAL]"
+      prefix_or_suffix: "Tahun+"
+      _note: >
+        Hitung dari tahun berdiri. Copyright di website: 2022.
+        Jika berdiri 2019, maka 2026-2019 = 7 tahun.
+        KONFIRMASI tahun berdiri yang benar.
+
+  _important_note: >
+    ⚠️ JANGAN LAUNCH section ini dengan placeholder.
+    Jika data belum tersedia saat launch, SEMBUNYIKAN section ini
+    dan aktifkan setelah data real diisi.
+    Angka karangan akan merusak trust — terutama untuk layanan keuangan.
+
+  _design_notes: >
+    Full-width, background image + dark overlay.
+    Counter animation (0 → target) saat masuk viewport.
+    Font angka besar (72-96px), bold, putih. Label lebih kecil, semi-transparent.
+    Layout: 4 kolom desktop, 2x2 tablet, stacked mobile.
+    Optional parallax ringan.
+
+# =====================================================
+# BLOCK 7: TRUST SECTION
+# Funnel Stage: TRUST — Cara kerja P2P & keamanan
+# =====================================================
+
+trust_section:
+  _funnel_stage: "trust"
+  _purpose: >
+    Menjelaskan cara kerja P2P lending di KS3 secara sederhana.
+    Karena P2P lending baru, pengunjung butuh edukasi proses yang clear.
+    Section ini juga menjawab: "Apakah ini aman?" dan "Siapa pengawasnya?"
+
+  badge_text: "Cara Kerja"
+
+  title: "Simpel, Digital,\nDi Bawah Pengawasan Koperasi"
+  # Baris 1: menghilangkan barrier "ribet"
+  # Baris 2: menghilangkan barrier "siapa yang awasi?"
+
+  description: >
+    Layanan KS3 tersedia sepenuhnya secara digital melalui
+    platform web dan aplikasi mobile SmartCoop. Baik sebagai
+    penyimpan, pendana P2P, maupun pelaku UMKM yang membutuhkan
+    pembiayaan — semua proses dilakukan online dengan pengawasan
+    koperasi berlisensi.
+
+  features:
+    # Setiap feature harus BISA DIBUKTIKAN
+    - text: "✅ Daftar online — tanpa perlu kunjungan kantor"
+      _factual: "claim_reasonable"  # Website & app sudah digital
+    - text: "✅ Kelola simpanan & pendanaan dari aplikasi SmartCoop"
+      _factual: true  # App sudah ada di Play Store
+    - text: "✅ Koperasi terdaftar resmi di Kemenkop UKM RI"
+      _factual: true  # Disebutkan sebagai KSP terdaftar
+    - text: "✅ Tim pengendalian internal & analis kredit profesional"
+      _factual: true  # Disebutkan di section "Terverfikasi" existing
+    - text: "✅ Pantau portofolio Anda secara real-time di dashboard"
+      _factual: "claim_reasonable"  # SmartCoop app memungkinkan ini
+    - text: "✅ Pembiayaan melalui proses analisis dan verifikasi usaha"
+      _factual: true  # Disebutkan di narasi existing
+
+  cta_1_text: "Daftar Sebagai Anggota"
+  cta_1_link: "/register"
+  # Saat ini belum ada halaman register.
+  # Sementara bisa diarahkan ke form kontak atau WhatsApp.
+
+  cta_2_text: "Download Aplikasi"
+  cta_2_link: "https://play.google.com/store/apps/details?id=com.fourvisionmedia.smartcoopAnggota.Sentra"
+  # Link REAL ke app SmartCoop di Play Store — sudah existing.
+
+  main_image:
+    _image_note: "Resolusi 542x606px, format PNG transparan"
+    _image_description: >
+      Infographic sederhana alur 3 langkah:
+      1) Ikon orang + HP → "Daftar & Verifikasi"
+      2) Ikon pilih/klik → "Pilih Simpanan atau Danai UMKM"
+      3) Ikon grafik/dompet → "Pantau & Terima Hasil"
+      Atau mockup tampilan app SmartCoop di smartphone dengan
+      beberapa screen (onboarding, dashboard, detail produk).
+
+  stat_box_value: "📱"
+  stat_box_label: "Tersedia di Google Play"
+  # Menggunakan fakta bahwa app sudah ada di Play Store
+  # sebagai trust proof (bukan angka karangan).
+  # Alternatif jika ada data:
+  #   value: "X.XXX+"  label: "Downloads di Play Store"
+
+  _design_notes: >
+    Layout: konten kiri (55%), image/infographic kanan (45%).
+    Features menggunakan checkmark hijau/primer.
+    Dua CTA: "Daftar" (filled primary) dan "Download" (outlined, icon Play Store).
+    Stat box floating di area image, glassmorphism.
+    Background light gray atau subtle pattern.
+    Optional: tab toggle "Untuk Pendana" / "Untuk Pelaku UMKM"
+    yang mengubah konten features sesuai persona.
+
+# =====================================================
+# BLOCK 8: SERVICES SECTION
+# Funnel Stage: EDUCATION — Product catalog
+# =====================================================
+# STRATEGI: Menampilkan SEMUA produk — P2P Lending sebagai service
+# pertama (produk baru, highlight), diikuti produk simpanan existing.
+# Simpanan Wajib & Simpanan Pokok TIDAK ditampilkan di sini karena
+# bersifat administratif (syarat keanggotaan, bukan produk yang "dijual").
+
+services_section:
+  _funnel_stage: "education"
+  _purpose: >
+    Katalog produk lengkap. P2P Lending sebagai produk #1 (hero product).
+    Produk simpanan existing melengkapi sebagai ekosistem.
+    Setiap produk punya CTA agar pengunjung bisa langsung take action.
+
+  background_image:
+    _image_note: "Resolusi 1920x800px, format WebP, subtle & terang"
+    _image_description: >
+      Subtle geometric pattern atau solid light color dengan texture
+      minimal. Background TIDAK boleh bersaing dengan product cards.
+
+  badge_text: "Produk & Layanan"
+
+  title: "Solusi Keuangan untuk Setiap Kebutuhan"
+
+  services:
+
+    # ──────────────────────────────────────────────────
+    # PRODUK BARU: P2P LENDING
+    # ──────────────────────────────────────────────────
+    - id: "p2p-lending"
+      _status: "PRODUK BARU — belum ada di website existing"
+      image:
+        _image_note: "Resolusi ~180x150px (height 150), format PNG/SVG"
+        _image_description: >
+          Ilustrasi yang menggambarkan koneksi/network antara
+          pendana dan UMKM. Gaya modern line-art atau isometric.
+          Warna dominan brand primer.
+      title: "Pendanaan P2P Lending"
+      description: >
+        Danai pelaku UMKM terverifikasi secara langsung melalui
+        platform digital KS3. Pilih sendiri UMKM yang ingin Anda
+        dukung, dan pantau perkembangan pendanaan Anda secara
+        real-time dari dashboard atau aplikasi SmartCoop.
+      link: "/produk/p2p-lending"
+      _badge: "🆕 Baru"
+      _cta_text: "Pelajari Selengkapnya →"
+      _note: >
+        TIDAK menyebutkan angka imbal hasil karena belum ada data
+        resmi. Setelah ada rate yang disetujui, tambahkan di highlights.
+
+    # ──────────────────────────────────────────────────
+    # PRODUK EXISTING: SIMPANAN BERJANGKA
+    # ──────────────────────────────────────────────────
+    - id: "simpanan-berjangka"
+      _status: "PRODUK EXISTING — ada di website saat ini"
+      image:
+        _image_note: "Resolusi ~180x150px, format PNG/SVG"
+        _image_description: >
+          Ilustrasi kalender + koin atau ikon time-deposit.
+          Gaya konsisten dengan card lainnya.
+      title: "Simpanan Berjangka"
+      description: >
+        Tempatkan dana Anda pada tenor 3, 6, atau 12 bulan.
+        Simpanan berjangka KS3 menawarkan hasil yang kompetitif
+        bagi anggota yang ingin merencanakan keuangan jangka
+        menengah dengan kepastian.
+      link: "/produk/simpanan-berjangka"
+      _cta_text: "Lihat Detail →"
+      _source_copy: >
+        Copy original di website: "simpanan dengan tempo 3, 6,
+        dan 12 bulan dan mendapatkan hasil yang kompetitif"
+
+    # ──────────────────────────────────────────────────
+    # PRODUK EXISTING: SIMPANAN SUKARELA
+    # ──────────────────────────────────────────────────
+    - id: "simpanan-sukarela"
+      _status: "PRODUK EXISTING — ada di website saat ini"
+      image:
+        _image_note: "Resolusi ~180x150px, format PNG/SVG"
+        _image_description: >
+          Ilustrasi dompet/wallet dengan panah masuk-keluar
+          menunjukkan fleksibilitas. Gaya konsisten.
+      title: "Simpanan Sukarela"
+      description: >
+        Simpanan fleksibel yang bisa dilakukan kapan saja oleh
+        anggota tanpa batasan tertentu. Cocok sebagai tabungan
+        harian atau dana cadangan yang bisa ditarik sewaktu-waktu.
+      link: "/produk/simpanan-sukarela"
+      _cta_text: "Lihat Detail →"
+      _source_copy: >
+        Copy original: "simpanan sukarela yang bisa dilakukan oleh
+        anggota tanpa batasan tertentu"
+
+    # ──────────────────────────────────────────────────
+    # PRODUK EXISTING: SIMPANAN LAIN
+    # ──────────────────────────────────────────────────
+    - id: "simpanan-lain"
+      _status: "PRODUK EXISTING — ada di website saat ini"
+      image:
+        _image_note: "Resolusi ~180x150px, format PNG/SVG"
+        _image_description: >
+          Ilustrasi multi-goal (ikon graduation cap + rumah + pesawat)
+          yang menggambarkan berbagai tujuan simpanan.
+      title: "Simpanan Tujuan"
+      _renamed_from: "Simpanan Lain"
+      _rename_rationale: >
+        "Simpanan Lain" terdengar seperti sisa/tidak penting.
+        "Simpanan Tujuan" lebih positif dan menjelaskan fungsinya.
+        PERLU APPROVAL dari tim KS3 untuk rename ini.
+      description: >
+        Alokasikan simpanan Anda secara mandiri untuk kebutuhan
+        spesifik: dana hari tua, pendidikan anak, atau rekreasi.
+        Setiap tujuan bisa diatur dan dipantau melalui platform.
+      link: "/produk/simpanan-tujuan"
+      _cta_text: "Lihat Detail →"
+      _source_copy: >
+        Copy original: "simpanan untuk kebutuhan seperti dana hari
+        tua, pendidikan, rekreasi yang bisa dialokasikan secara mandiri"
+
+  footer_note: >
+    Sebagai anggota KS3, Anda juga akan memiliki Simpanan Pokok
+    (satu kali saat mendaftar) dan Simpanan Wajib (bulanan) sebagai
+    bagian dari kewajiban keanggotaan koperasi. Pelajari selengkapnya
+    di halaman Cara Menjadi Anggota.
+  # Simpanan Pokok & Wajib disebutkan di sini sebagai footnote,
+  # bukan sebagai product card — karena bersifat mandatory, bukan
+  # produk pilihan yang "dijual".
+
+  _design_notes: >
+    Layout: grid. Card P2P Lending HARUS lebih menonjol:
+    - Opsi 1: ukuran card 2x width (span full row di desktop)
+    - Opsi 2: warna card berbeda (gradient brand) + badge "Baru"
+    - Opsi 3: spotlight/glow effect di belakang card
+    Card lain (simpanan) berukuran equal, layout 3-column.
+    Setiap card: image, title, description, CTA link.
+    Hover: card elevates dengan shadow yang intensified.
+    Footer note ditampilkan di bawah cards sebagai teks kecil.
+
+# =====================================================
+# BLOCK 9: FAQ SECTION
+# Funnel Stage: OBJECTION HANDLING — Hilangkan keraguan
+# =====================================================
+
+faq_section:
+  _funnel_stage: "objection_handling"
+  _purpose: >
+    Menjawab keraguan terakhir sebelum konversi. FAQ diurutkan dari
+    pertanyaan umum → spesifik produk → keamanan/trust.
+    Jawaban HARUS berdasarkan fakta. Jika belum ada info resmi,
+    tandai sebagai [PERLU KONFIRMASI].
+
+  badge_text: "Pertanyaan Umum"
+
+  title: "Yang Sering Ditanyakan tentang KS3"
+
+  description: >
+    Kami memahami bahwa memilih layanan keuangan adalah keputusan penting.
+    Berikut jawaban atas pertanyaan yang paling sering kami terima.
+
+  contact_email: "cs@koperasiks3.id"
+  # KONFIRMASI email yang benar dengan tim KS3
+
+  support_image:
+    _image_note: "Resolusi 156x113px, format PNG"
+    _image_description: >
+      Foto customer service representative KS3 atau ilustrasi
+      avatar CS yang friendly (headset, senyum). Memberikan kesan
+      "ada manusia yang bisa dihubungi".
+
+  support_text: "Butuh bantuan lebih lanjut? Hubungi tim kami."
+
+  faqs:
+    # ── PERTANYAAN UMUM ──
+    - question: "Apa itu KS3?"
+      answer: >
+        KSP Sentra Solusi Sejahtera (KS3) adalah koperasi simpan pinjam
+        berbasis digital yang bertujuan membangun para pelaku UMKM
+        dalam mengembangkan bisnisnya melalui pembiayaan yang efisien,
+        serta memberikan kesempatan kepada anggota penyimpan untuk ikut
+        berpartisipasi memajukan UMKM di Indonesia.
+      _source: "Narasi footer website existing — copy hampir persis"
+
+    - question: "Apa itu P2P Lending dan apa hubungannya dengan koperasi?"
+      answer: >
+        P2P (Peer-to-Peer) Lending adalah model pendanaan di mana dana
+        dari anggota pendana disalurkan langsung kepada pelaku UMKM
+        melalui platform digital. Di KS3, layanan P2P Lending beroperasi
+        di bawah payung koperasi simpan pinjam terdaftar — sehingga
+        memiliki struktur organisasi, pengawasan, dan mekanisme
+        keanggotaan yang jelas. Ini adalah layanan terbaru dari KS3.
+      _source: "Penjelasan produk baru, berdasarkan konsep P2P koperasi"
+
+    - question: "Apa saja produk simpanan yang tersedia?"
+      answer: >
+        KS3 menyediakan beberapa jenis simpanan:
+        (1) Simpanan Berjangka — dengan tenor 3, 6, dan 12 bulan
+        serta hasil yang kompetitif,
+        (2) Simpanan Sukarela — bisa dilakukan kapan saja tanpa
+        batasan tertentu,
+        (3) Simpanan Tujuan — untuk kebutuhan hari tua, pendidikan,
+        dan rekreasi yang dialokasikan secara mandiri.
+        Selain itu, sebagai anggota Anda juga memiliki Simpanan Pokok
+        (satu kali saat mendaftar) dan Simpanan Wajib (bulanan).
+      _source: "Semua produk dari section Produk Unggulan website existing"
+
+    # ── PERTANYAAN PROSES ──
+    - question: "Bagaimana cara menjadi anggota KS3?"
+      answer: >
+        [PERLU KONFIRMASI DARI TIM KS3]
+        Proses pendaftaran dapat dilakukan melalui platform digital kami.
+        Syarat dan langkah-langkah detail akan segera tersedia
+        di halaman Cara Menjadi Anggota.
+      _source: "Belum ada di website — info ini HARUS diisi oleh tim KS3"
+
+    - question: "Apakah ada aplikasi mobile?"
+      answer: >
+        Ya. KS3 memiliki aplikasi SmartCoop Anggota yang tersedia di
+        Google Play Store. Melalui aplikasi ini, anggota dapat mengakses
+        dan mengelola layanan koperasi secara digital.
+      _source: >
+        Fakta — link ke Play Store ada di hero banner dan download section:
+        https://play.google.com/store/apps/details?id=com.fourvisionmedia.smartcoopAnggota.Sentra
+
+    # ── PERTANYAAN TRUST ──
+    - question: "Apakah KS3 terdaftar resmi?"
+      answer: >
+        Ya. KS3 beroperasi sebagai Koperasi Simpan Pinjam (KSP) yang
+        terdaftar di bawah Kementerian Koperasi dan UKM Republik Indonesia.
+        Kantor kami berlokasi di Werkspace Pluit, Jl. Pluit Indah No.168B,
+        Jakarta Utara.
+      _source: "Nama legal dan alamat dari footer website existing"
+      _note: >
+        TAMBAHKAN nomor badan hukum koperasi / NIK jika tersedia.
+        Ini sangat penting untuk trust di layanan keuangan.
+
+    - question: "Apakah dana saya aman?"
+      answer: >
+        KS3 memiliki sistem pengendalian internal yang baik dengan tim
+        yang kompeten dalam memberikan pelayanan. Sebagai koperasi
+        terdaftar, kami menjalankan mekanisme pengawasan organisasi
+        sesuai ketentuan yang berlaku.
+      _source: >
+        Berdasarkan copy existing di section "Terverfikasi":
+        "Mempunyai sistem pengendalian internal yang baik dengan tim
+        yang kompeten dalam hal memberikan pelayanan"
+      _note: >
+        Jawaban ini PERLU diperkuat dengan info tambahan: audit,
+        mekanisme mitigasi risiko, dll. Tim KS3 harus melengkapi.
+
+    - question: "Bagaimana cara menghubungi KS3?"
+      answer: >
+        Anda bisa menghubungi kami melalui:
+        — Form kontak di website ini
+        — Email: [ISI EMAIL RESMI]
+        — Kunjungi kantor kami di Werkspace Pluit, B-G 168,
+          Jl. Pluit Indah No.168B, Jakarta Utara 14450
+        Kami juga aktif di Instagram (@koperasiks3) dan
+        Facebook (koperasiks3).
+      _source: "Data kontak dari footer website existing"
+
+    - question: "Berapa imbal hasil simpanan dan pendanaan P2P?"
+      answer: >
+        [PERLU KONFIRMASI DARI TIM KS3]
+        Informasi detail mengenai imbal hasil untuk masing-masing
+        produk akan tersedia di halaman produk. Silakan hubungi
+        tim kami untuk konsultasi lebih lanjut.
+      _source: >
+        Website existing menyebut "hasil yang kompetitif" untuk
+        Simpanan Berjangka, tapi TIDAK menyebutkan angka spesifik.
+
+    - question: "Apa yang membedakan KS3 dengan fintech P2P lainnya?"
+      answer: >
+        KS3 adalah koperasi simpan pinjam terdaftar yang menjalankan
+        layanan P2P lending di bawah payung organisasi koperasi.
+        Ini berarti ada struktur keanggotaan, Rapat Anggota Tahunan,
+        pengurus dan pengawas yang dipilih anggota, serta tata kelola
+        yang diatur oleh regulasi koperasi — bukan semata-mata
+        platform teknologi tanpa badan hukum koperasi.
+      _source: "Diferensiasi structural — koperasi vs fintech"
+
+  _design_notes: >
+    Layout: accordion FAQ di kanan (60%), support card di kiri (40%).
+    Accordion smooth, satu FAQ terbuka per waktu, FAQ pertama open by default.
+    Support card: foto CS, support_text, email, tombol "Hubungi via WhatsApp".
+    Background putih/sangat terang.
+    Optional: filter tab "Umum" / "Produk" / "Keamanan".
+
+# =====================================================
+# BLOCK 10: FOOTER
+# Funnel Stage: CONVERSION — Final CTA + trust signals
+# =====================================================
+
+footer:
+  _funnel_stage: "conversion"
+  _purpose: >
+    Last-chance conversion + institutional trust reinforcement.
+    Pengunjung yang scroll sampai sini biasanya interested tapi
+    belum decided. Footer harus push terakhir + lengkap secara info.
+
+  background_image:
+    _image_note: "Resolusi 1920x800px, format WebP/JPG, dark"
+    _image_description: >
+      Solid dark color (brand navy/charcoal) atau foto skyline
+      Jakarta malam dengan heavy dark overlay. Kontras kuat
+      dengan teks putih.
+
+  logo:
+    _image_note: "Logo KS3 putih, min 200x60px, format PNG/SVG"
+    _image_description: >
+      Logo KS3 versi putih yang sudah ada (logo-white.png).
+
+  # ── PRE-FOOTER CTA BANNER ──
+  _pre_footer_cta:
+    _purpose: "Final conversion push sebelum footer navigation"
+    title: "Siap Bergabung dengan KS3?"
+    subtitle: >
+      Daftar sebagai anggota untuk menikmati simpanan,
+      pendanaan P2P, dan layanan keuangan digital dari
+      koperasi terpercaya.
+    cta_primary:
+      label: "Daftar Sekarang"
+      link: "/register"
+    cta_secondary:
+      label: "Hubungi Kami Dulu"
+      link: "#contact"
+      # Untuk pengunjung yang belum siap daftar,
+      # arahkan ke kontak sebagai soft conversion.
+    _design_notes: >
+      Section terpisah di atas footer columns.
+      Background gradient brand primary → dark.
+      Teks center-aligned, dua buttons side-by-side.
+
+  social_links:
+    # ── DATA REAL dari website existing ──
+    - platform: "Instagram"
+      link: "https://www.instagram.com/koperasiks3/"
+      _source: "Footer website existing"
+
+    - platform: "Facebook"
+      link: "https://www.facebook.com/koperasiks3"
+      _source: "Footer website existing"
+
+    - platform: "YouTube"
+      link: "https://koperasiks3.id"
+      _source: "Footer website existing — NOTE: link ini mengarah ke homepage, BUKAN ke channel YouTube. PERBAIKI."
+      _action_required: "Minta tim KS3 URL YouTube channel yang benar"
+
+    # Social media di bawah ini BELUM ADA di website existing.
+    # Tambahkan hanya jika akun sudah dibuat:
+    # - platform: "WhatsApp"
+    #   link: "https://wa.me/62XXXXXXXXXXX"
+    # - platform: "LinkedIn"
+    #   link: "https://linkedin.com/company/koperasiks3"
+    # - platform: "TikTok"
+    #   link: "https://tiktok.com/@koperasiks3"
+
+  addresses:
+    # ── DATA REAL dari footer website ──
+    - name: "Koperasi Simpan Pinjam Sentra Solusi Sejahtera"
+      details: >
+        Werkspace Pluit, B-G 168
+        Jl. Pluit Indah No.168B, RT.8/RW.6, Pluit,
+        Jakarta Utara 14450
+      _source: "Footer website existing — copy persis"
+
+  contact_email_1: "[ISI_EMAIL_RESMI_KS3]"
+  contact_email_2: "[ISI_EMAIL_PARTNERSHIP_JIKA_ADA]"
+  # Website existing TIDAK menampilkan email di manapun.
+  # WAJIB KONFIRMASI dengan tim KS3.
+
+  # ── FOOTER NAVIGATION ──
+  _footer_nav:
+    column_1:
+      title: "Produk"
+      links:
+        - label: "P2P Lending"
+          url: "/produk/p2p-lending"
+          _status: "baru"
+        - label: "Simpanan Berjangka"
+          url: "/produk/simpanan-berjangka"
+          _status: "existing"
+        - label: "Simpanan Sukarela"
+          url: "/produk/simpanan-sukarela"
+          _status: "existing"
+        - label: "Simpanan Tujuan"
+          url: "/produk/simpanan-tujuan"
+          _status: "existing (renamed dari Simpanan Lain)"
+
+    column_2:
+      title: "Koperasi"
+      links:
+        - label: "Tentang KS3"
+          url: "/tentang"
+        - label: "Cara Menjadi Anggota"
+          url: "/cara-bergabung"
+        - label: "Legalitas"
+          url: "/legalitas"
+        - label: "Berita & Edukasi"
+          url: "/blogs"
+          _status: "existing — halaman /blogs sudah ada di website"
+
+    column_3:
+      title: "Bantuan"
+      links:
+        - label: "FAQ"
+          url: "/faq"
+        - label: "Hubungi Kami"
+          url: "/#contact"
+        - label: "Pengaduan"
+          url: "/pengaduan"
+
+    column_4:
+      title: "Legal"
+      links:
+        - label: "Kebijakan Privasi"
+          url: "/kebijakan-privasi"
+        - label: "Syarat & Ketentuan"
+          url: "/syarat-ketentuan"
+        - label: "Disclaimer Risiko"
+          url: "/disclaimer"
+          _note: "PENTING untuk P2P lending — wajib ada"
+
+  newsletter_title: "Dapatkan Info Terbaru dari KS3"
+  newsletter_placeholder: "Masukkan email Anda"
+  # Newsletter existing di website menggunakan:
+  # Title: "Ikuti", Placeholder: "Masukkan Email", CTA: "KIRIM"
+
+  copyright_text: "© 2026 KSP Sentra Solusi Sejahtera. Hak cipta dilindungi."
+  # Website existing: "Copyright © 2022 - KS3"
+  # Update tahun ke 2026 dan gunakan nama lengkap.
+
+  large_background_text: "KS3"
+
+  # ── TRUST BAR ──
+  _trust_bar:
+    items:
+      - text: "Koperasi Terdaftar Kemenkop UKM RI"
+        icon: "badge-government"
+        _factual: true
+
+      - text: "NIK: [ISI NOMOR INDUK KOPERASI]"
+        icon: "badge-legal"
+        _factual: "wajib diisi — essential trust signal"
+
+      - text: "Aplikasi Tersedia di Google Play"
+        icon: "badge-playstore"
+        _factual: true  # App SmartCoop sudah ada
+
+      - text: "SSL Encrypted"
+        icon: "badge-lock"
+        _factual: "verify — cek apakah website menggunakan SSL"
+
+  _design_notes: >
+    Multi-column (4 kolom desktop). Dark background, teks putih/light gray.
+    Pre-footer CTA di atas footer columns.
+    Newsletter inline (input + button satu baris).
+    Social links icon dengan hover animation.
+    Trust bar di paling bawah sebagai strip tipis dengan badge icons.
+    Large background text "KS3" font 200px+, opacity 5-10%.
+    Copyright year HARUS dynamic (auto-update).
+
+    DOWNLOAD SECTION: Website existing punya banner download app
+    di antara contact dan footer. Di revamp, integrasikan ini ke
+    trust_section CTA "Download Aplikasi" dan trust_bar "Google Play",
+    BUKAN sebagai section terpisah.
+
+# =====================================================
+# GLOBAL CONTENT NOTES
+# =====================================================
+
+_global_content_strategy:
+
+  brand_voice:
+    tone: "Profesional, hangat, jelas, tidak birokratis"
+    language: "Bahasa Indonesia baku, sentuhan conversational"
+    existing_issues_to_fix:
+      - "'Terverfikasi' → perbaiki jadi 'Terverifikasi'"
+      - "Copy terlalu panjang per paragraf — pecah jadi kalimat lebih singkat"
+      - "CTA generik 'KIRIM' → ganti dengan CTA berbasis outcome"
+      - "Campuran bahasa ('Read more', 'Follow') → konsistenkan ke Bahasa Indonesia"
+      - "Copyright © 2022 → update ke tahun berjalan"
+      - "YouTube link mengarah ke homepage → perbaiki ke channel YouTube"
+
+  dual_persona_approach:
+    persona_1_penyimpan_pendana:
+      who: "Anggota yang ingin menyimpan dana atau mendanai UMKM via P2P"
+      motivation: "Ikut berpartisipasi memajukan UMKM + hasil kompetitif"
+      cta_language: "Mulai Menyimpan, Danai UMKM, Lihat Produk Simpanan"
+
+    persona_2_umkm:
+      who: "Pelaku UMKM yang membutuhkan pembiayaan"
+      motivation: "Akses modal usaha yang cepat, mudah, dan ringan"
+      cta_language: "Ajukan Pembiayaan, Cek Syarat, Hubungi Kami"
+      _source: >
+        Copy existing: "Proses pinjaman cepat, mudah, dan ringan"
+        (section Kompetitif)
+
+  p2p_integration_summary: >
+    P2P Lending diintegrasikan ke dalam 5 dari 10 blocks:
+    1. Hero → Subtitle menjelaskan P2P sebagai layanan terbaru KS3
+    2. Marquee → "P2P Lending" dan "Pendanaan Langsung" sebagai keyword
+    3. About → Paragraf kedua menjelaskan evolusi ke P2P
+    4. Services → P2P Lending sebagai produk card #1 dengan badge "Baru"
+    5. FAQ → 3 pertanyaan spesifik menjawab keraguan soal P2P koperasi
+    Pendekatan ini membuat P2P terasa sebagai evolusi natural,
+    bukan produk asing yang ditempelkan ke koperasi.
+
+  # ── DATA YANG HARUS DIISI OLEH TIM KS3 ──
+  _data_required_before_launch:
+    critical:
+      - item: "Jumlah anggota terdaftar"
+        used_in: "stats_section"
+      - item: "Total pembiayaan yang sudah tersalurkan"
+        used_in: "stats_section"
+      - item: "Jumlah UMKM yang telah menerima pembiayaan"
+        used_in: "stats_section"
+      - item: "Tahun berdiri KS3 yang benar"
+        used_in: "stats_section, marquee_section"
+      - item: "Nomor Induk Koperasi (NIK)"
+        used_in: "footer trust_bar"
+      - item: "Alamat email resmi untuk CS dan partnership"
+        used_in: "footer, faq_section"
+      - item: "Nomor WhatsApp resmi"
+        used_in: "footer, support"
+
+    important:
+      - item: "Imbal hasil/jasa untuk Simpanan Berjangka"
+        used_in: "services_section, faq"
+      - item: "Syarat menjadi anggota (lengkap)"
+        used_in: "faq_section"
+      - item: "Nominal Simpanan Pokok dan Simpanan Wajib"
+        used_in: "faq_section, footer_note"
+      - item: "URL YouTube channel yang benar"
+        used_in: "footer social_links"
+      - item: "Rate/margin pembiayaan P2P"
+        used_in: "services_section (setelah P2P live)"
+      - item: "Quote dari pengurus untuk about section"
+        used_in: "about_section insight_text"
+
+    nice_to_have:
+      - item: "Rating app di Play Store"
+        used_in: "hero review_badge"
+      - item: "Testimonial anggota (3-5)"
+        used_in: "future testimonial section"
+      - item: "Foto tim KS3 / kantor"
+        used_in: "about_section images"
+      - item: "Screenshot dashboard SmartCoop"
+        used_in: "hero main_image, trust main_image"
+
+  # ── SECTIONS YANG SENGAJA TIDAK ADA DI LANDING PAGE ──
+  _excluded_from_landing:
+    simpanan_wajib:
+      _status: "PRODUK EXISTING"
+      reason: >
+        Bersifat mandatory (tagihan bulanan anggota), bukan produk
+        yang "dijual". Cukup disebutkan di FAQ dan footer_note
+        services section.
+      _source_copy: "simpanan yang akan ditagihkan per bulan selama menjadi anggota koperasi"
+
+    simpanan_pokok:
+      _status: "PRODUK EXISTING"
+      reason: >
+        Biaya pendaftaran satu kali saat jadi anggota, bukan produk
+        pilihan. Cukup disebutkan di FAQ dan footer_note services section.
+      _source_copy: "merupakan simpanan pertama kali pada saat menjadi anggota koperasi"
+
+    news_section:
+      _status: "EXISTING DI WEBSITE — tapi dipindah dari landing page"
+      reason: >
+        Artikel yang ada saat ini sudah 3+ tahun dan topiknya umum
+        (etika akuntansi, strategi pemasaran, POAC) — tidak langsung
+        mendukung conversion funnel. Halaman blog /blogs tetap ada
+        sebagai halaman terpisah (sudah exist). Di landing page,
+        slot ini lebih baik diisi section yang langsung mendorong konversi.
+      _future: >
+        Jika tim KS3 sudah rutin publish artikel baru yang relevan
+        (edukasi P2P, tips UMKM, berita koperasi), tambahkan preview
+        3 artikel terbaru di landing page, sebelum FAQ section.
+
+    download_app_section:
+      _status: "EXISTING — banner download di antara contact dan footer"
+      reason: >
+        Di revamp, download app diintegrasikan ke trust_section
+        (CTA "Download Aplikasi" → link Play Store) dan footer
+        trust_bar ("Tersedia di Google Play"). Tidak perlu section
+        banner terpisah yang hanya berisi satu gambar.
+
+  # ── ROADMAP SECTION MASA DEPAN ──
+  _future_sections:
+    - name: "Testimonial Anggota"
+      trigger: "Setelah 3-5 testimonial real terkumpul"
+      position: "Antara trust-section dan faq-section"
+
+    - name: "Kalkulator Simulasi P2P"
+      trigger: "Setelah rate P2P lending difinalisasi"
+      position: "Embed di hero section atau standalone modal"
+
+    - name: "Preview Blog/Edukasi"
+      trigger: "Setelah ada 5+ artikel baru yang relevan"
+      position: "Sebelum FAQ section"
+
+    - name: "Mitra & Partner"
+      trigger: "Setelah ada 3+ mitra resmi/institutional"
+      position: "Di bawah stats section sebagai logo strip"

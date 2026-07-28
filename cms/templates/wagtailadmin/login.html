@@ -1,0 +1,22 @@
+{% extends "wagtailadmin/login.html" %}
+{% load static %}
+
+{% block branding_title %}KS3 Admin{% endblock %}
+{% block branding_login %}Masuk ke KS3 Admin{% endblock %}
+
+{% block above_login %}
+    <p class="ks3-login-intro">Kelola konten, produk, dan pendanaan Koperasi KS3.</p>
+{% endblock %}
+
+{% block branding_logo %}
+    <div class="login-logo ks3-login-logo">
+        <img
+            src="{% static 'cms/images/logo-koperasi-horizontal.svg' %}"
+            alt="KS3 Simpan Pinjam"
+        >
+    </div>
+{% endblock %}
+
+{% block branding_favicon %}
+    <link rel="icon" type="image/svg+xml" href="{% static 'cms/images/logo-koperasi-mark.svg' %}">
+{% endblock %}

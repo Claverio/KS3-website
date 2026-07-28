@@ -1,0 +1,40 @@
+# Provix
+
+> Commerce system enterprise, harga UMKM. Platform digital commerce whitelabel murni untuk UMKM Indonesia — kelola toko, pembayaran, ekspedisi, dan promosi dalam satu dashboard tanpa potongan komisi marketplace.
+
+Provix是由 PT Claverio Transformasi Digital 开发的 SaaS 电商平台，面向印尼中小商户（UMKM）。提供白标解决方案，零佣金，内置支付网关（Xendit）和物流聚合（Byteship）。
+
+## Product
+
+- [Landing Page](https://provix.id/): Halaman utama Provix — overview produk, fitur, harga, dan cara mulai
+- [Demo](https://provix.id/#app-presentation-section): Lihat langsung tampilan storefront mobile dan dashboard admin
+
+## Pricing
+
+- [Starter — Rp1.500.000/bulan](https://provix.id/#pricing-section): Web Commerce lengkap, unlimited admin, dedicated payment & shipping gateway, migrasi data gratis dari marketplace
+- [Advanced + ERP — Rp2.500.000/bulan](https://provix.id/#pricing-section): Semua fitur Starter + modul ERP lengkap + WMS. Paling umum dipakai.
+- [Enterprise — Rp4.500.000/bulan](https://provix.id/#pricing-section): Semua fitur Advanced + integrasi mobile app (coming soon) + dedicated priority support
+
+## Key Features
+
+- [Fitur Lengkap](https://provix.id/#fitur-section): Pembayaran (VA/QRIS/kartu), ekspedisi multi-kurir, B2B & B2C, chatbot AI custom, integrasi ERP, page builder, sistem promosi
+- [Cara Kerja](https://provix.id/#how-it-works-section): Whitelabel murni 0% komisi, fully customizable, all-in-one system
+- [Stack Features](https://provix.id/#stack-features-section): Dashboard all-in-one, payment & shipping otomatis, promosi + AI chatbot
+
+## Onboarding
+
+- [Cara Mulai](https://provix.id/#process-steps-section): 4 langkah, 1 hari go-live — Ngobrol santai → Siapin domain → System deployment → Racik di dashboard
+
+## Company
+
+- [Tentang Claverio](https://claverio.id/): PT Claverio Transformasi Digital — induk perusahaan Provix
+- [Alamat](https://provix.id/#footer-section): Rukan Shibuya Blok B No. 26, PIK 2, Teluknaga, Tangerang, Banten 15510
+
+## FAQ
+
+- [Pertanyaan Umum](https://provix.id/#faq-section): Migrasi data gratis, kontrak minimum 6 bulan, upgrade/downgrade self-service, mobile app coming soon, ERP modul masih dikembangkan
+
+## Optional
+
+- [robots.txt](https://provix.id/robots.txt): Aturan crawler dan daftar AI bot yang diizinkan (GPTBot, ClaudeBot, PerplexityBot, dll)
+- [sitemap.xml](https://provix.id/sitemap.xml): Sitemap XML untuk search engine

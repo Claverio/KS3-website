@@ -1,0 +1,26 @@
+{% load p2p_tags %}
+<div class="col mb-30px">
+    <div class="bg-white border border-color-extra-medium-gray border-radius-10px p-30px h-100 d-flex flex-column">
+        <div class="d-flex align-items-start justify-content-between mb-10px">
+            <a href="{{ project.get_absolute_url }}" class="alt-font text-dark-gray fw-700 fs-20 ls-minus-05px text-base-color-hover">{{ project.title }}</a>
+            <span class="alt-font fs-12 fw-600 text-uppercase border-radius-100px ps-15px pe-15px pt-5px pb-5px {% if project.display_status == 'Open' %}bg-green-transparent-light text-green{% elif project.display_status == 'Terkumpul' %}ks3-status-complete{% else %}bg-gradient-very-light-gray-transparent text-base-color{% endif %} ms-15px flex-shrink-0">{{ project.display_status }}</span>
+        </div>
+        <p class="fs-15 mb-20px">{{ project.summary }}</p>
+        <div class="d-flex justify-content-between mb-5px">
+            <span class="fs-13 fw-600 text-uppercase text-medium-gray">Terkumpul</span>
+            <span class="fs-13 text-medium-gray"><i class="bi bi-people me-5px"></i>{{ project.lender_count }} lender</span>
+        </div>
+        <div class="alt-font fs-26 fw-700 text-dark-gray mb-15px">{{ project.funded_amount|rupiah }}</div>
+        <div class="d-flex justify-content-between fs-13 mb-10px">
+            <span class="text-medium-gray">Slot tersedia</span>
+            <span class="text-dark-gray fw-600">{{ project.available_slots }}<span class="text-medium-gray fw-400"> / {{ project.total_slots }} slot</span></span>
+        </div>
+        <div class="progress border-radius-100px mb-25px ks3-p2p-progress" style="height: 6px;"><div class="progress-bar bg-base-color border-radius-100px ks3-p2p-progress-bar" style="--ks3-progress: {{ project.progress_percentage }}%;" role="progressbar" aria-valuenow="{{ project.progress_percentage }}" aria-valuemin="0" aria-valuemax="100" aria-label="{{ project.progress_percentage }} persen dana terkumpul"></div></div>
+        <div class="bg-gradient-top-very-light-gray border-radius-6px p-20px mb-25px fs-14">
+            <div class="d-flex justify-content-between pb-10px mb-10px border-bottom border-color-extra-medium-gray"><span class="text-medium-gray">Bunga efektif</span><span class="text-dark-gray fw-600">{{ project.interest_rate|percent }} p.a.</span></div>
+            <div class="d-flex justify-content-between pb-10px mb-10px border-bottom border-color-extra-medium-gray"><span class="text-medium-gray">Tenor</span><span class="text-dark-gray fw-600">{{ project.tenor_months }} bulan</span></div>
+            <div class="d-flex justify-content-between"><span class="text-medium-gray">Frekuensi angsuran</span><span class="text-dark-gray fw-600">{{ project.get_installment_frequency_display }}</span></div>
+        </div>
+        <a href="{{ project.get_absolute_url }}" class="btn btn-medium btn-base-color btn-rounded btn-switch-text w-100 mt-auto"><span><span class="btn-double-text" data-text="Lihat detail">Lihat detail</span><span><i class="fa-solid fa-arrow-right"></i></span></span></a>
+    </div>
+</div>

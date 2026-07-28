@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 115 182" role="img" aria-labelledby="title">
+  <title id="title">KS3</title>
+  <defs>
+    <clipPath id="ks3-mark-clip">
+      <path d="M44.31 102.47c-6.6-6.6-6.6-17.33 0-23.92l50.7-50.7L67.17 0 16.46 50.7c-21.95 21.95-21.95 57.67 0 79.62l50.99 50.99 27.85-27.85-50.99-50.99Z"/>
+    </clipPath>
+  </defs>
+  <path fill="#ffac0a" d="M44.31 102.47c-6.6-6.6-6.6-17.33 0-23.92l50.7-50.7L67.17 0 16.46 50.7c-21.95 21.95-21.95 57.67 0 79.62l50.99 50.99 27.85-27.85-50.99-50.99Z"/>
+  <g clip-path="url(#ks3-mark-clip)">
+    <path fill="#005caa" d="m44.31 78.55 50.7-50.7L67.17 0 16.46 50.7c-21.95 21.95-21.95 57.67 0 79.62l13.1 13.1s-16.09-26.43 14.75-64.87Z"/>
+  </g>
+  <rect fill="#ff0008" x="74.2" y="70.38" width="40.26" height="40.26" transform="rotate(45 94.33 90.51)"/>
+</svg>

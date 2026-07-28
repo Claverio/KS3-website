@@ -1,0 +1,417 @@
+```yaml
+# =====================================================
+# Landing Page: Branding & Product Guide
+# Current Brand Audit
+# Produk: KSP Sentra Solusi Sejahtera / KS3
+# =====================================================
+
+metadata:
+  document_type: "current_brand_audit"
+  purpose: "Baseline untuk proses rebranding"
+  source_url: "https://www.koperasiks3.id/"
+  source_scope: "Homepage existing"
+  audit_note: >
+    Dokumen ini memetakan pesan brand yang saat ini dapat ditemukan pada
+    homepage. Beberapa elemen visual, terutama hero banner, menggunakan gambar
+    sehingga teks di dalam gambar tidak dapat diekstrak secara langsung.
+
+product:
+  name: "KSP Sentra Solusi Sejahtera"
+  short_name: "KS3"
+  category_label: "Koperasi Simpan Pinjam Berbasis Digital"
+  category:
+    primary: "Koperasi simpan pinjam"
+    secondary: "Layanan keuangan digital untuk anggota dan pelaku UMKM"
+  current_description: >
+    Koperasi berbasis digital yang bertujuan membantu pelaku UMKM
+    mengembangkan bisnis melalui pembiayaan yang efisien, sekaligus
+    memberikan kesempatan kepada anggota penyimpan untuk ikut
+    berpartisipasi memajukan UMKM di Indonesia.
+
+target_audience:
+  decision_maker:
+    who:
+      - "Pemilik dan pelaku UMKM yang membutuhkan pembiayaan"
+      - "Calon anggota yang ingin menyimpan dana melalui koperasi"
+    inferred_needs:
+      - "Akses pembiayaan yang cepat dan ringan"
+      - "Produk simpanan dengan hasil yang kompetitif"
+      - "Layanan yang dapat diakses secara digital"
+      - "Institusi keuangan yang dapat dipercaya"
+  daily_user:
+    who:
+      - "Anggota koperasi"
+      - "Pelaku UMKM"
+      - "Calon peminjam"
+      - "Calon penyimpan dana"
+  pain_points:
+    - "Akses pembiayaan UMKM sering dianggap rumit dan lambat"
+    - "Sulit memonitor simpanan dengan mudah"
+    - "Pilihan penyimpanan dana belum selalu fleksibel"
+    - "Calon anggota membutuhkan keyakinan bahwa koperasi dikelola secara profesional"
+    - "Informasi produk keuangan sering disampaikan dengan bahasa yang kurang jelas"
+
+vision:
+  status: "inferred_from_existing_copy"
+  text: >
+    Menjadi koperasi berbasis digital yang mendukung pertumbuhan UMKM
+    Indonesia melalui akses pembiayaan yang efisien dan partisipasi aktif
+    para anggota.
+
+mission:
+  status: "inferred_from_existing_copy"
+  text: >
+    Menyediakan layanan simpan pinjam yang mudah diakses, kompetitif,
+    dan dikelola secara profesional untuk membantu anggota memenuhi
+    kebutuhan finansial serta mengembangkan usaha.
+
+motto:
+  status: "not_found_as_explicit_text"
+  text: ""
+  sub_headline: ""
+  rationale: >
+    Homepage saat ini belum memiliki satu kalimat positioning utama yang
+    dapat dikenali sebagai motto atau value proposition. Pesan brand tersebar
+    pada bagian keunggulan dan deskripsi footer.
+  discarded_options: []
+
+value_proposition:
+  status: "fragmented"
+  primary: >
+    Kemudahan akses pembiayaan dan pengelolaan simpanan melalui koperasi
+    berbasis digital.
+  supporting_points:
+    - "Akses layanan secara digital"
+    - "Proses pinjaman cepat, mudah, dan ringan"
+    - "Jasa simpanan yang kompetitif"
+    - "Dikelola oleh tim yang kompeten"
+    - "Memiliki sistem pengendalian internal"
+    - "Berorientasi pada pengembangan UMKM Indonesia"
+
+highlight_points:
+  status: "existing"
+  section_title: "Mengapa Harus Koperasi KS3"
+  items:
+    - title: "Digitalisasi"
+      description: >
+        Kemudahan akses pembiayaan secara digital dan pengaturan simpanan
+        yang dapat dimonitor setiap saat untuk kebutuhan pendidikan,
+        hari tua, dan kebutuhan mendadak lainnya.
+      source_feature: "Akses pembiayaan dan monitoring simpanan digital"
+      content_quality:
+        clarity: "medium"
+        differentiation: "medium"
+        issue: >
+          Menggabungkan terlalu banyak manfaat dalam satu paragraf dan belum
+          menjelaskan bentuk pengalaman digital yang tersedia.
+
+    - title: "Kompetitif"
+      description: >
+        Proses pinjaman cepat, mudah, dan ringan serta jasa simpanan yang
+        kompetitif bagi anggota yang ingin membantu bisnis UMKM Indonesia.
+      source_feature: "Pinjaman dan jasa simpanan kompetitif"
+      content_quality:
+        clarity: "medium"
+        differentiation: "low"
+        issue: >
+          Kata kompetitif belum dilengkapi angka, contoh manfaat, atau
+          pembanding yang membuat klaim terasa konkret.
+
+    - title: "Terverifikasi"
+      original_title: "Terverfikasi"
+      description: >
+        Memiliki sistem pengendalian internal yang baik dan tim kompeten
+        untuk memberikan pelayanan serta saran bisnis kepada UKM anggota.
+      source_feature: "Governance dan dukungan bisnis"
+      content_quality:
+        clarity: "medium"
+        differentiation: "medium"
+        issue: >
+          Terdapat kesalahan ejaan pada judul existing dan belum tersedia
+          bukti legalitas, izin, sertifikasi, atau metrik operasional.
+
+products:
+  status: "existing"
+  section_title: "Produk Unggulan"
+  items:
+    - name: "Simpanan Wajib"
+      description: >
+        Simpanan yang ditagihkan setiap bulan selama seseorang menjadi
+        anggota koperasi.
+      type: "simpanan"
+      sequence_number: 1
+
+    - name: "Simpanan Sukarela"
+      description: >
+        Simpanan yang dapat dilakukan anggota secara sukarela tanpa
+        batasan tertentu.
+      type: "simpanan"
+      sequence_number: 2
+
+    - name: "Simpanan Berjangka"
+      description: >
+        Simpanan dengan tenor 3, 6, dan 12 bulan yang menawarkan hasil
+        kompetitif.
+      type: "simpanan"
+      sequence_number: 3
+
+    - name: "Simpanan Pokok"
+      description: >
+        Simpanan yang dibayarkan pertama kali ketika seseorang menjadi
+        anggota koperasi.
+      type: "simpanan"
+      sequence_number: 4
+
+    - name: "Simpanan Lain"
+      description: >
+        Simpanan yang dapat dialokasikan secara mandiri untuk kebutuhan
+        hari tua, pendidikan, dan rekreasi.
+      type: "simpanan"
+      sequence_number: 5
+
+  identified_gap: >
+    Narasi footer menyebut layanan pembiayaan dan halaman keunggulan membahas
+    pinjaman, tetapi section Produk Unggulan pada homepage hanya menampilkan
+    produk simpanan. Produk pembiayaan belum terlihat sebagai katalog yang jelas.
+
+how_it_works:
+  status: "not_available"
+  goal: ""
+  steps: []
+  notes: >
+    Homepage existing tidak menjelaskan proses menjadi anggota, mengajukan
+    pembiayaan, membuka simpanan, proses verifikasi, atau langkah menggunakan
+    platform digital.
+
+product_structure:
+  status: "partially_available"
+  notes: >
+    Produk ditampilkan sebagai daftar lima jenis simpanan. Tidak terlihat
+    informasi detail seperti persyaratan, manfaat, tenor lengkap, biaya,
+    imbal hasil, risiko, eligibility, maupun CTA spesifik untuk setiap produk.
+
+brand_voice:
+  status: "inferred"
+  tone:
+    current:
+      - "Formal"
+      - "Institusional"
+      - "Informatif"
+      - "Berorientasi sosial dan UMKM"
+    consistency: "low_to_medium"
+  language_style:
+    pronoun: "Campuran bentuk formal dan informal"
+    sentence_length: "Cenderung panjang"
+    technicality: "Rendah"
+  notes: >
+    Bahasa existing mencoba terasa mudah dipahami, tetapi beberapa kalimat
+    terlalu panjang, memiliki struktur yang kurang rapi, dan belum membentuk
+    karakter brand yang kuat atau khas.
+  writing_issues:
+    - "Kesalahan ejaan pada kata 'Terverfikasi'"
+    - "Kapitalisasi dan tanda baca belum konsisten"
+    - "Beberapa kalimat memuat terlalu banyak ide sekaligus"
+    - "Value proposition belum disampaikan secara singkat"
+    - "CTA belum menggunakan bahasa berbasis outcome"
+
+visual_identity:
+  status: "partially_observable"
+  direction: "Corporate financial institution"
+  logo:
+    file:
+      primary: "/upload/page/logo-color.png"
+      footer: "/upload/page/logo-white.png"
+    mark: "Tidak dapat dideskripsikan secara akurat dari HTML"
+    wordmark: "Tidak dapat diverifikasi dari HTML"
+    byline: ""
+  color_palette:
+    status: "requires_visual_asset_inspection"
+    primary_gradient:
+      light: ""
+      dark: ""
+      usage: ""
+    neutral_text: ""
+  typography_cue: >
+    Struktur heading menunjukkan penggunaan hierarki sans-serif khas
+    corporate website, tetapi nama font dan detail styling tidak dapat
+    dipastikan dari hasil ekstraksi halaman.
+  imagery:
+    hero:
+      format: "Two-slide image carousel"
+      assets:
+        - "/upload/main-banner/header1.png"
+        - "/upload/main-banner/header2.png"
+      issue: >
+        Informasi utama kemungkinan tertanam di dalam gambar sehingga tidak
+        optimal untuk aksesibilitas, SEO, responsive typography, dan
+        pengelolaan konten.
+    section_icons:
+      format: "Image icons"
+      example_asset: "/upload/why/bebas-biaya-tahunan.png"
+
+social_proof:
+  status: "not_available"
+  notes: >
+    Homepage tidak menampilkan jumlah anggota, total pembiayaan, jumlah UMKM
+    yang terbantu, testimoni, logo mitra, penghargaan, rating, maupun statistik
+    operasional.
+  waiting_list_count: ""
+  usage: ""
+
+risk_reversal:
+  status: "not_available"
+  offer: ""
+  notes: >
+    Belum terdapat simulasi, konsultasi gratis, jaminan transparansi biaya,
+    penjelasan keamanan dana, atau bentuk pengurangan risiko lain yang
+    ditampilkan secara eksplisit.
+
+visual_proof:
+  status: "limited"
+  notes: >
+    Website menggunakan banner, ikon, dan gambar produk, tetapi tidak terlihat
+    screenshot platform digital, tampilan dashboard anggota, alur aplikasi,
+    atau demonstrasi pengalaman menggunakan layanan.
+
+company_legitimacy:
+  status: "partially_available"
+  legal_entity: "Koperasi Simpan Pinjam Sentra Solusi Sejahtera"
+  abbreviation: "KSP Sentra Solusi Sejahtera"
+  office_address: >
+    Werkspace Pluit, B-G 168,
+    Jl. Pluit Indah No.168B, RT.8/RW.6, Pluit,
+    Jakarta Utara 14450
+  copyright: "Copyright © 2022 - KS3"
+  external_application:
+    label: "Login"
+    domain: "kspsss.smartcoop.id"
+  available_trust_signals:
+    - "Nama organisasi"
+    - "Alamat kantor fisik"
+    - "External member login"
+  missing_trust_signals:
+    - "Nomor badan hukum koperasi"
+    - "Nomor izin atau informasi regulator"
+    - "Informasi pengurus dan pengawas"
+    - "Kebijakan privasi"
+    - "Syarat dan ketentuan"
+    - "Informasi keamanan data"
+    - "Kontak email dan nomor telepon yang terlihat secara langsung"
+    - "Laporan tahunan atau RAT"
+  usage: >
+    Informasi legal dan governance perlu dibuat lebih eksplisit pada desain
+    rebranding karena trust merupakan faktor utama untuk layanan keuangan.
+
+competitors_positioning:
+  status: "not_available"
+  competitor_landscape: []
+  positioning: >
+    Positioning existing berpusat pada koperasi digital yang membantu UMKM
+    melalui pembiayaan efisien dan produk simpanan. Namun, belum dijelaskan
+    perbedaannya dibanding koperasi konvensional, bank, fintech lending,
+    atau platform pembiayaan UMKM lainnya.
+  differentiator: >
+    Kombinasi layanan simpanan, pembiayaan UMKM, akses digital, dan semangat
+    partisipasi anggota dalam memajukan UMKM.
+  explicit_comparison_table: "Tidak tersedia"
+
+objection_handling_faq:
+  status: "not_available"
+  items: []
+  missing_questions:
+    - "Apa syarat menjadi anggota?"
+    - "Siapa yang dapat mengajukan pinjaman?"
+    - "Berapa bunga atau jasa pinjaman?"
+    - "Berapa imbal hasil masing-masing simpanan?"
+    - "Apakah dana anggota dijamin?"
+    - "Bagaimana keamanan data dan transaksi?"
+    - "Berapa lama proses pengajuan pembiayaan?"
+    - "Dokumen apa saja yang dibutuhkan?"
+    - "Apakah layanan tersedia di seluruh Indonesia?"
+    - "Bagaimana cara mencairkan simpanan?"
+    - "Bagaimana jika pembayaran pinjaman terlambat?"
+    - "Siapa regulator atau lembaga pengawasnya?"
+
+conversion_funnel:
+  status: "weak_and_incomplete"
+  goal: >
+    Mengarahkan pengunjung untuk memahami koperasi, melihat produk,
+    menghubungi organisasi, atau login sebagai anggota.
+  stages:
+    - stage: "Datang"
+      current_trigger: "Hero image carousel"
+      issue: >
+        Pesan hero tidak tersedia sebagai konten HTML sehingga value
+        proposition dan CTA tidak dapat dievaluasi maupun diindeks dengan baik.
+
+    - stage: "Mengenal"
+      current_trigger: "Section Mengapa Harus Koperasi KS3"
+      issue: >
+        Menjelaskan tiga keunggulan umum, tetapi belum membuktikan manfaat
+        dengan angka atau contoh nyata.
+
+    - stage: "Mempertimbangkan"
+      current_trigger: "Section Produk Unggulan"
+      issue: >
+        Produk hanya berupa kartu ringkas dan belum memiliki detail,
+        simulasi, persyaratan, atau CTA per produk.
+
+    - stage: "Membangun kepercayaan"
+      current_trigger:
+        - "Berita"
+        - "Alamat kantor di footer"
+      issue: >
+        Artikel yang tampil sudah berumur sekitar tiga tahun dan lebih banyak
+        membahas topik bisnis umum daripada bukti aktivitas koperasi.
+
+    - stage: "Konversi"
+      current_trigger:
+        - "Form Hubungi Kami"
+        - "Login anggota"
+      issue: >
+        Tidak tersedia CTA kuat seperti Daftar Anggota, Ajukan Pembiayaan,
+        Lihat Simulasi, atau Konsultasi Produk.
+
+  design_implication: >
+    Rebranding perlu mengubah homepage dari company profile pasif menjadi
+    funnel berbasis kebutuhan: pahami manfaat, pilih tujuan, lihat produk,
+    validasi kepercayaan, lalu mengambil tindakan.
+
+pricing:
+  status: "not_available"
+  display_on_landing_page: false
+  currency: "IDR"
+  billing_period: ""
+  tiers: []
+  notes: >
+    Tidak tersedia informasi nominal simpanan wajib, simpanan pokok,
+    bunga atau jasa pinjaman, imbal hasil simpanan, biaya administrasi,
+    penalti, maupun biaya lain.
+  billing:
+    method: ""
+  additional_costs:
+    status: "not_available"
+    notes: ""
+    items: []
+    presentation_note: >
+      Untuk rebranding layanan keuangan, transparansi biaya sebaiknya
+      menjadi bagian penting dari halaman produk atau halaman simulasi.
+
+call_to_action:
+  status: "limited"
+  primary:
+    current: "KIRIM"
+    context: "Submit form Hubungi Kami"
+  secondary:
+    current: "Login"
+    destination: "https://kspsss.smartcoop.id/"
+  other:
+    newsletter: "KIRIM"
+  missing_ctas:
+    - "Jadi Anggota"
+    - "Ajukan Pembiayaan"
+    - "Buka Simpanan"
+    - "Lihat Produk"
+    - "Hitung Simulasi"
+    - "Konsultasi dengan Tim"
+```

@@ -1,0 +1,8 @@
+Django>=6,<6.1
+wagtail>=7.4,<7.5
+python-dotenv
+psycopg[binary]
+django-storages
+boto3
+requests>=2.34,<3
+wagtail-font-awesome-svg>=2,<3

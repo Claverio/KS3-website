@@ -1,0 +1,5 @@
+<section id="home-marquee" class="pt-6" data-anime='{"opacity": [0,1], "duration": 600, "delay": 0, "staggervalue": 300, "easing": "easeOutQuad" }'>
+    <div class="container-fluid"><div class="row position-relative"><div class="col swiper swiper-width-auto feather-shadow text-center pb-20px sm-pb-10px" data-slider-options='{ "slidesPerView": "auto", "spaceBetween":90, "speed": 8000, "loop": true, "allowTouchMove": false, "autoplay": { "delay":0, "disableOnInteraction": false }, "keyboard": { "enabled": true, "onlyInViewport": true }, "effect": "slide" }'><div class="swiper-wrapper marquee-slide">
+        {% for item in home_settings.marquee_items %}<div class="swiper-slide"><div class="fs-120 md-fs-100 sm-fs-90 {% if item.value.tone == 'dark' %}text-dark-gray fw-700{% else %}fw-600 text-extra-medium-gray{% endif %} ls-minus-5px">{{ item.value.text }}</div></div>{% endfor %}
+    </div></div></div></div>
+</section>

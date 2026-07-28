@@ -1,0 +1,12 @@
+{% load static %}
+<section class="page-title-center-alignment top-space-margin position-relative cover-background border-radius-10px lg-no-border-radius p-0 overflow-visible" style="background-image: url({% static 'cms/images/header-bg.webp' %})">
+    <div class="container position-relative">
+        <div class="row align-items-center justify-content-center position-relative z-index-1 h-350px sm-h-250px">
+            <div class="col-md-7 text-center position-relative page-title-extra-large" data-anime='{ "el": "childs", "translateY": [30, 0], "opacity": [0,1], "duration": 600, "delay": 0, "staggervalue": 300, "easing": "easeOutQuad" }'>
+                <h1 class="alt-font d-inline-block fw-700 ls-0px text-dark-gray mb-15px">{{ page_title }}</h1>
+                {% if page_description %}<p class="mx-auto w-70 xl-w-80 md-w-100 mb-0">{{ page_description }}</p>{% endif %}
+            </div>
+            <div class="down-section text-center" data-anime='{ "translateY": [30, 0], "opacity": [0,1], "duration": 600, "delay": 200, "staggervalue": 300, "easing": "easeOutQuad" }'><a href="#down-section" class="section-link"><div class="text-dark-gray"><i class="bi bi-arrow-down-short icon-very-medium animation-float"></i></div></a></div>
+        </div>
+    </div>
+</section>

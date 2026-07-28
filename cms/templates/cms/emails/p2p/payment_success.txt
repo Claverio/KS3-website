@@ -1,0 +1,14 @@
+{% load p2p_tags %}Halo {{ purchase.full_name }},
+
+Pembayaran Anda telah berhasil diverifikasi.
+
+Nomor booking: {{ purchase.booking_number }}
+Project: {{ purchase.project.title }}
+Jumlah slot: {{ purchase.slot_quantity }} slot
+Total dibayar: {{ purchase.total_amount|rupiah }}
+
+Simpan email ini sebagai bukti konfirmasi.
+Butuh bantuan? {{ contact_setting.email }}{% if contact_setting.whatsapp_display %} / WhatsApp {{ contact_setting.whatsapp_display }}{% endif %}
+
+KSP Sentra Solusi Sejahtera
+{{ contact_setting.address }}

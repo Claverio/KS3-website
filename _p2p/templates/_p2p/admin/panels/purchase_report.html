@@ -1,0 +1,56 @@
+{% load wagtailadmin_tags p2p_tags tz %}
+<style>
+    .ks3-report-summary { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1rem; margin-bottom:1.75rem; }
+    .ks3-report-card { background:var(--w-color-surface-page,#fff); border:1px solid var(--w-color-border-furniture,#d9d9d9); border-radius:.65rem; padding:1rem 1.1rem; }
+    .ks3-report-card small { color:var(--w-color-text-meta,#5c5c5c); display:block; margin-bottom:.35rem; }
+    .ks3-report-card strong { display:block; font-size:1.35rem; line-height:1.25; }
+    .ks3-report-card span { color:var(--w-color-text-meta,#5c5c5c); display:block; font-size:.8rem; margin-top:.35rem; }
+    .ks3-report-actions { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1rem; }
+    .ks3-report-actions .button { flex:0 0 auto; width:auto; white-space:nowrap; }
+    .ks3-report-table-wrap { overflow-x:auto; border:1px solid var(--w-color-border-furniture,#d9d9d9); border-radius:.65rem; }
+    .ks3-report-table { width:100%; min-width:760px; border-collapse:collapse; table-layout:fixed; }
+    .ks3-report-table th:nth-child(1) { width:18%; }
+    .ks3-report-table th:nth-child(2) { width:28%; }
+    .ks3-report-table th:nth-child(3) { width:20%; }
+    .ks3-report-table th:nth-child(4) { width:22%; }
+    .ks3-report-table th:nth-child(5) { width:12%; }
+    .ks3-report-table th,.ks3-report-table td { padding:.9rem 1rem; border-bottom:1px solid var(--w-color-border-furniture,#e5e5e5); text-align:left; vertical-align:middle; }
+    .ks3-report-table th { background:var(--w-color-surface-header,#f6f6f6); color:var(--w-color-text-meta,#5c5c5c); font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; }
+    .ks3-report-table tr:last-child td { border-bottom:0; }
+    .ks3-report-primary { display:block; font-weight:700; line-height:1.35; }
+    .ks3-report-secondary { color:var(--w-color-text-meta,#5c5c5c); display:block; font-size:.78rem; line-height:1.45; margin-top:.15rem; overflow-wrap:anywhere; }
+    .ks3-report-money { font-size:1rem; font-weight:700; white-space:nowrap; }
+    .ks3-status { display:inline-flex; border:1px solid var(--w-color-border-furniture,#d9d9d9); border-radius:999px; padding:.25rem .7rem; font-size:.75rem; font-weight:700; white-space:nowrap; }
+    .ks3-status--paid { background:#dcfce7; border-color:#86efac; color:#166534; }
+    .ks3-status--waiting_payment,.ks3-status--creating { background:#fef3c7; border-color:#fcd34d; color:#92400e; }
+    .ks3-status--failed { background:#fee2e2; border-color:#fca5a5; color:#991b1b; }
+    @media(max-width:900px){.ks3-report-summary{grid-template-columns:repeat(2,minmax(0,1fr));}.ks3-report-actions{align-items:flex-start;flex-direction:column;}}
+</style>
+{% if self.instance.pk %}
+    <div class="ks3-report-summary">
+        <div class="ks3-report-card"><small>Total transaksi</small><strong>{{ purchase_count }}</strong><span>Semua status pembayaran</span></div>
+        <div class="ks3-report-card"><small>Transaksi lunas</small><strong>{{ paid_count }}</strong><span>{{ payment_rate }}% dari seluruh transaksi</span></div>
+        <div class="ks3-report-card"><small>Pembeli lunas</small><strong>{{ buyer_count }}</strong><span>Berdasarkan email unik</span></div>
+        <div class="ks3-report-card"><small>Total pembayaran</small><strong>{{ paid_amount_display }}</strong><span>Termasuk biaya layanan</span></div>
+    </div>
+    <div class="ks3-report-actions">
+        <div><h2 class="w-h3">Daftar pembelian</h2><p class="help-block help-info">Menampilkan maksimal 250 transaksi terbaru. Export memuat seluruh transaksi project ini.</p></div>
+        <a class="button button-secondary" href="{{ export_url }}">Export CSV</a>
+    </div>
+    <div class="ks3-report-table-wrap">
+        <table class="ks3-report-table">
+            <thead><tr><th>Transaksi</th><th>Pembeli</th><th>Kontak</th><th>Investasi</th><th>Status</th></tr></thead>
+            <tbody>
+                {% for purchase in purchase_rows %}<tr>
+                    <td><span class="ks3-report-primary">{{ purchase.booking_number }}</span><span class="ks3-report-secondary">{% timezone "Asia/Jakarta" %}{{ purchase.created_at|date:"d M Y, H:i" }} WIB{% endtimezone %}</span></td>
+                    <td><span class="ks3-report-primary">{{ purchase.full_name }}</span><span class="ks3-report-secondary">{{ purchase.email }}</span></td>
+                    <td><span class="ks3-report-primary">{{ purchase.phone }}</span><span class="ks3-report-secondary">{{ purchase.slot_quantity }} slot × {{ purchase.unit_price|rupiah }}</span></td>
+                    <td><span class="ks3-report-money">{{ purchase.total_amount|rupiah }}</span><span class="ks3-report-secondary">Termasuk biaya {{ purchase.service_fee|rupiah }}</span></td>
+                    <td><span class="ks3-status ks3-status--{{ purchase.status }}">{{ purchase.status|payment_status_label }}</span></td>
+                </tr>{% empty %}<tr><td colspan="5">Belum ada pembelian untuk project ini.</td></tr>{% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <p class="help-block help-info">Simpan project terlebih dahulu untuk melihat laporan pembelian.</p>
+{% endif %}

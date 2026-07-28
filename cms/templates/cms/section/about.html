@@ -1,0 +1,17 @@
+{% load static wagtailimages_tags %}
+<section id="home-about" class="position-relative overflow-hidden ks3-about-section">
+    <img src="{% static 'cms/images/demo-modern-business-elements-02.png' %}" alt="" class="position-absolute right-10px top-70px lg-top-40px animation-rotation d-none d-md-block">
+    <div class="container"><div class="row align-items-center justify-content-center mb-5 sm-mb-0">
+        <div class="col-lg-6 position-relative md-mb-15 sm-mb-25">
+            <div class="w-70 xs-w-80" data-animation-delay="50" data-shadow-animation="true">{% if home_settings.about_primary_image %}{% image home_settings.about_primary_image width-470 as about_primary %}<img src="{{ about_primary.url }}" width="{{ about_primary.width }}" height="{{ about_primary.height }}" alt="" class="border-radius-10px w-100">{% endif %}<img src="{% static 'cms/images/demo-modern-business-elements-04.png' %}" alt="" class="position-absolute left-60px bottom-minus-60px animation-rotation d-none d-md-block"></div>
+            <div class="w-50 overflow-hidden position-absolute right-20px xs-right-15px xs-w-60 bottom-minus-50px" data-shadow-animation="true" data-animation-delay="250" data-bottom-top="transform: translateY(50px)" data-top-bottom="transform: translateY(-50px)">{% if home_settings.about_secondary_image %}{% image home_settings.about_secondary_image width-350 as about_secondary %}<img src="{{ about_secondary.url }}" width="{{ about_secondary.width }}" height="{{ about_secondary.height }}" alt="" class="border-radius-10px w-100 box-shadow-quadruple-large">{% endif %}</div>
+        </div>
+        <div class="col-xl-6 col-lg-6 ps-6 md-ps-15px" data-anime='{ "el": "childs", "translateY": [30, 0], "opacity": [0,1], "duration": 600, "delay":0, "staggervalue": 200, "easing": "easeOutQuad" }'>
+            <span class="ps-20px pe-20px pt-5px pb-5px mb-15px text-uppercase alt-font text-base-color fs-12 lh-26 fw-600 border-radius-100px bg-gradient-very-light-gray-transparent d-inline-flex"><i class="bi bi-building-check fs-16 me-5px"></i>{{ home_settings.about_badge }}</span>
+            <h2 class="alt-font text-dark-gray fw-700 mb-20px md-w-90">{{ home_settings.about_title }}</h2>
+            <p class="mb-25px w-90 md-w-100">{{ home_settings.about_description }}</p>
+            <div class="row row-cols-1 row-cols-sm-2 mb-25px">{% for audience in home_settings.about_audiences %}<div class="col{% if not forloop.last %} sm-mb-20px{% endif %}"><div class="d-flex align-items-start"><div class="h-45px w-45px bg-base-transparent-light rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 me-15px"><i class="bi {{ audience.value.icon }} text-base-color fs-20"></i></div><div><span class="alt-font text-dark-gray fw-700 d-block mb-5px">{{ audience.value.title }}</span><p class="fs-14 lh-22 mb-0">{{ audience.value.description }}</p></div></div></div>{% endfor %}</div>
+            <div class="border-top border-color-extra-medium-gray pt-20px d-flex flex-wrap ks3-about-points">{% for highlight in home_settings.about_highlights %}<span class="fs-14 text-dark-gray fw-500{% if not forloop.last %} me-25px{% endif %} mb-5px"><i class="bi bi-check-circle-fill text-base-color me-5px"></i>{{ highlight.value.text }}</span>{% endfor %}</div>
+        </div>
+    </div></div>
+</section>

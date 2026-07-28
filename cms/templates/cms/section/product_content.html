@@ -1,0 +1,23 @@
+<section id="down-section" class="position-relative">
+    <div class="container"><div class="row">
+        <div class="col-lg-4 pe-6 order-2 order-lg-1 lg-pe-4 md-pe-15px" data-anime='{ "el": "childs", "translateY": [50, 0], "opacity": [0,1], "duration": 1200, "delay": 0, "staggervalue": 150, "easing": "easeOutQuad" }'>
+            <div class="position-sticky top-80px lg-top-40px">
+                <div class="mb-30px"><ul class="p-0 m-0 list-style-02 fs-18 fw-600">{% for product in products %}<li class="pb-15px{% if not forloop.last %} mb-15px border-bottom border-color-extra-medium-gray{% endif %}"><a href="{{ product.get_absolute_url }}" class="{% if selected_product.pk == product.pk %}text-base-color{% else %}text-dark-gray{% endif %} text-base-color-hover">{{ product.title }}</a><i class="bi {{ product.icon }} fs-22 ms-auto {% if selected_product.pk == product.pk %}text-base-color{% else %}text-dark-gray{% endif %}"></i></li>{% empty %}<li>Belum ada produk.</li>{% endfor %}</ul></div>
+                <div class="ps-14 pe-14 xl-ps-10 xl-pe-10 pt-10 pb-10 lg-p-25px bg-dark-gray border-radius-6px text-center text-lg-start">
+                    <span class="fs-20 fw-500 text-white mb-10px d-inline-block">Punya pertanyaan?</span>
+                    <p class="text-white opacity-5">Tim KS3 siap membantu Anda memahami produk yang paling sesuai dengan kebutuhan.</p>
+                    {% if contact_setting.whatsapp_link %}<a href="{{ contact_setting.whatsapp_link }}" target="_blank" rel="noopener noreferrer" class="btn btn-large btn-white btn-switch-text btn-box-shadow w-100 border-0 btn-rounded text-transform-none left-icon me-10px sm-mb-15px sm-mt-15px"><span><span><i class="bi bi-whatsapp"></i></span><span class="btn-double-text" data-text="{{ contact_setting.whatsapp_display|default:'Hubungi via WhatsApp' }}">{{ contact_setting.whatsapp_display|default:'Hubungi via WhatsApp' }}</span></span></a>{% else %}<span class="btn btn-large btn-white w-100 border-0 btn-rounded text-transform-none left-icon disabled"><i class="bi bi-whatsapp me-10px"></i>Hubungi via WhatsApp</span>{% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8 order-1 order-lg-2 md-mb-50px" data-anime='{ "el": "childs", "translateY": [50, 0], "opacity": [0,1], "duration": 1200, "delay": 0, "staggervalue": 150, "easing": "easeOutQuad" }'>
+            {% if selected_product %}
+                {% include 'cms/section/streamfield.html' %}
+            {% else %}
+                <h4 class="fw-700 text-dark-gray mb-20px alt-font">Produk simpanan untuk setiap kebutuhan</h4>
+                <p class="mb-30px">Koperasi KS3 menyediakan berbagai produk simpanan yang dirancang untuk mendukung rencana keuangan Anda, mulai dari simpanan rutin bulanan hingga simpanan berjangka dengan hasil yang kompetitif.</p>
+                <div class="row row-cols-1 row-cols-md-2">{% for product in products %}<div class="col transition-inner-all mb-30px"><div class="bg-white border border-color-extra-medium-gray border-radius-10px box-shadow-double-large-hover p-30px last-paragraph-no-margin h-100"><div class="h-60px w-60px d-flex align-items-center justify-content-center border-radius-10px bg-gradient-top-very-light-gray mb-25px"><i class="bi {{ product.icon }} fs-28 text-base-color"></i></div><a href="{{ product.get_absolute_url }}" class="d-inline-block alt-font text-dark-gray fw-700 fs-20 mb-10px ls-minus-05px">{{ product.title }}</a><p class="mb-15px">{{ product.summary }}</p><a href="{{ product.get_absolute_url }}" class="alt-font fs-15 fw-600 text-base-color">Lihat detail<i class="fa-solid fa-arrow-right fs-13 ms-5px align-middle"></i></a></div></div>{% empty %}<div class="col-12"><div class="alert alert-light border">Belum ada produk yang dipublikasikan.</div></div>{% endfor %}</div>
+            {% endif %}
+        </div>
+    </div></div>
+</section>

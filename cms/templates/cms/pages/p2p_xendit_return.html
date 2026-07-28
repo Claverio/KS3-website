@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Memeriksa pembayaran</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { min-height: 100vh; margin: 0; display: grid; place-items: center; padding: 24px; color: #273142; background: #fff; font: 16px/1.5 system-ui, sans-serif; text-align: center; }
+    .spinner { width: 42px; height: 42px; margin: 0 auto 18px; border: 4px solid #e8edf3; border-top-color: #00558c; border-radius: 50%; animation: spin .8s linear infinite; }
+    h2 { margin: 0 0 8px; }
+    p { margin: 0 0 18px; color: #6b7280; }
+    a { color: #00558c; font-weight: 700; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="spinner" aria-hidden="true"></div>
+    <h2>Pembayaran sedang dikonfirmasi</h2>
+    <p>Jangan tutup halaman utama. Status akan diperbarui otomatis.</p>
+    <a href="{{ target_url }}" target="_top">Kembali ke halaman pembayaran</a>
+  </main>
+  <script>
+    if (window.parent !== window) {
+      window.parent.postMessage({type: 'p2p-payment-return'}, '*');
+    } else {
+      window.location.replace('{{ target_url|escapejs }}');
+    }
+  </script>
+</body>
+</html>

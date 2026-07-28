@@ -1,0 +1,57 @@
+<style>
+    .ks3-graph-summary { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:1rem; margin-bottom:1.5rem; }
+    .ks3-graph-card,.ks3-chart,.ks3-funding { background:var(--w-color-surface-page,#fff); border:1px solid var(--w-color-border-furniture,#d9d9d9); border-radius:.65rem; padding:1.1rem; }
+    .ks3-graph-card small { color:var(--w-color-text-meta,#5c5c5c); display:block; margin-bottom:.35rem; }
+    .ks3-graph-card strong { display:block; font-size:1.35rem; line-height:1.25; }
+    .ks3-graph-card span { color:var(--w-color-text-meta,#5c5c5c); display:block; font-size:.78rem; margin-top:.35rem; }
+    .ks3-funding { margin-bottom:1.5rem; }
+    .ks3-funding-head,.ks3-funding-values { display:flex; align-items:flex-end; justify-content:space-between; gap:1rem; }
+    .ks3-funding-head p,.ks3-chart p { color:var(--w-color-text-meta,#5c5c5c); margin:.3rem 0 0; }
+    .ks3-funding-percentage { color:var(--ks3-primary,#005daa); font-size:1.65rem; font-weight:800; }
+    .ks3-progress { background:var(--w-color-surface-menus,#e7e7e7); border-radius:999px; height:1rem; margin:1.15rem 0 .8rem; overflow:hidden; }
+    .ks3-progress > div { background:var(--ks3-primary,#005daa); border-radius:inherit; height:100%; min-width:.25rem; }
+    .ks3-funding-values span { color:var(--w-color-text-meta,#5c5c5c); font-size:.82rem; }
+    .ks3-funding-values strong { color:var(--w-color-text-label,#262626); display:block; font-size:1rem; margin-top:.2rem; }
+    .ks3-chart-grid { align-items:start; display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr); gap:1.5rem; }
+    .ks3-chart h2 { margin-bottom:.2rem; }
+    .ks3-chart-intro { margin-bottom:1.25rem!important; }
+    .ks3-activity-row { display:grid; grid-template-columns:7rem minmax(8rem,1fr) 9rem; align-items:center; gap:1rem; margin:1rem 0; }
+    .ks3-buyer-row { margin:1.1rem 0; }
+    .ks3-buyer-head { display:flex; justify-content:space-between; gap:1rem; margin-bottom:.45rem; }
+    .ks3-buyer-name { font-weight:700; }
+    .ks3-buyer-meta,.ks3-bar-value { color:var(--w-color-text-meta,#5c5c5c); font-size:.78rem; }
+    .ks3-bar-track { background:var(--w-color-surface-menus,#e7e7e7); border-radius:999px; height:.65rem; overflow:hidden; }
+    .ks3-bar-fill { background:var(--ks3-primary,#005daa); border-radius:inherit; height:100%; min-width:.2rem; }
+    .ks3-bar-value { text-align:right; line-height:1.45; }
+    .ks3-status-list { border-top:1px solid var(--w-color-border-furniture,#d9d9d9); display:flex; flex-wrap:wrap; gap:.65rem 1.25rem; margin-top:1.25rem; padding-top:1rem; }
+    .ks3-status-item { display:flex; align-items:center; gap:.4rem; font-size:.8rem; }
+    .ks3-status-dot { background:var(--ks3-primary,#005daa); border-radius:50%; height:.55rem; width:.55rem; }
+    @media(max-width:900px){.ks3-graph-summary{grid-template-columns:1fr 1fr}.ks3-chart-grid{grid-template-columns:1fr}.ks3-activity-row{grid-template-columns:6rem minmax(6rem,1fr) 8rem;}}
+    @media(max-width:600px){.ks3-graph-summary,.ks3-chart-grid{grid-template-columns:1fr;}}
+</style>
+{% if self.instance.pk %}
+    <div class="ks3-graph-summary">
+        <div class="ks3-graph-card"><small>Dana pokok terkumpul</small><strong>{{ paid_principal_display }}</strong><span>Belum termasuk biaya layanan</span></div>
+        <div class="ks3-graph-card"><small>Sisa kebutuhan dana</small><strong>{{ remaining_funding_display }}</strong><span>Dari target {{ target_amount_display }}</span></div>
+        <div class="ks3-graph-card"><small>Rata-rata pembayaran</small><strong>{{ average_paid_display }}</strong><span>Per transaksi lunas</span></div>
+        <div class="ks3-graph-card"><small>Tingkat pembayaran</small><strong>{{ payment_rate }}%</strong><span>{{ paid_count }} lunas dari {{ purchase_count }} transaksi</span></div>
+    </div>
+    <section class="ks3-funding" aria-label="Progres pendanaan">
+        <div class="ks3-funding-head"><div><h2 class="w-h3">Progres terhadap target</h2><p>Dihitung dari dana pokok transaksi yang sudah lunas.</p></div><span class="ks3-funding-percentage">{{ funding_percentage }}%</span></div>
+        <div class="ks3-progress"><div style="width:{{ funding_percentage }}%"></div></div>
+        <div class="ks3-funding-values"><div><span>Terkumpul</span><strong>{{ paid_principal_display }}</strong></div><div><span>Slot lunas</span><strong>{{ paid_slots }} slot</strong></div><div><span>Slot tersedia</span><strong>{{ available_slots }} slot</strong></div><div><span>Target</span><strong>{{ target_amount_display }}</strong></div></div>
+    </section>
+    <div class="ks3-chart-grid">
+        <section class="ks3-chart" aria-label="Aktivitas transaksi harian">
+            <h2 class="w-h3">Aktivitas transaksi</h2><p class="ks3-chart-intro">Perbandingan nominal transaksi yang masuk setiap hari.</p>
+            {% for point in trend %}<div class="ks3-activity-row"><div><strong>{{ point.label }}</strong><div class="ks3-buyer-meta">{{ point.order_count }} transaksi · {{ point.slots }} slot</div></div><div class="ks3-bar-track"><div class="ks3-bar-fill" style="width:{{ point.percentage }}%"></div></div><div class="ks3-bar-value"><strong>{{ point.amount_display }}</strong></div></div>{% empty %}<p>Belum ada data transaksi.</p>{% endfor %}
+            {% if statuses %}<div class="ks3-status-list">{% for status in statuses %}<div class="ks3-status-item"><span class="ks3-status-dot"></span><span>{{ status.label }}: <strong>{{ status.count }}</strong></span></div>{% endfor %}</div>{% endif %}
+        </section>
+        <section class="ks3-chart" aria-label="Pembeli dengan pembayaran terbesar">
+            <h2 class="w-h3">Top pembeli</h2><p class="ks3-chart-intro">Diurutkan dari total pembayaran lunas terbesar.</p>
+            {% for buyer in top_buyers %}<div class="ks3-buyer-row"><div class="ks3-buyer-head"><div><span class="ks3-buyer-name">{{ buyer.full_name }}</span><div class="ks3-buyer-meta">{{ buyer.slots }} slot · {{ buyer.order_count }} transaksi</div></div><strong>{{ buyer.amount_display }}</strong></div><div class="ks3-bar-track"><div class="ks3-bar-fill" style="width:{{ buyer.percentage }}%"></div></div></div>{% empty %}<p>Belum ada transaksi lunas.</p>{% endfor %}
+        </section>
+    </div>
+{% else %}
+    <p class="help-block help-info">Simpan project terlebih dahulu untuk melihat grafik pembelian.</p>
+{% endif %}
