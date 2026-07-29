@@ -115,6 +115,21 @@
   transition: width 0.6s ease;
 }
 
+.ks3-purchase-total-row {
+  gap: 16px;
+}
+
+.ks3-purchase-total-label {
+  flex: 0 1 auto;
+}
+
+.ks3-purchase-total-value {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+}
+
 /* About metrics use one consistent primary treatment. */
 .ks3-about-section .progress-bar.bg-gradient-flamingo-red-transparent,
 .ks3-about-section .progress-bar.bg-gradient-base-color-transparent {
@@ -185,6 +200,21 @@
 }
 
 @media (max-width: 767px) {
+  .ks3-purchase-total-row {
+    align-items: flex-start !important;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .ks3-purchase-total-label {
+    font-size: 16px !important;
+  }
+
+  .ks3-purchase-total-value {
+    max-width: 100%;
+    font-size: clamp(23px, 7.5vw, 28px) !important;
+  }
+
   .ks3-app-cta-section {
     isolation: isolate;
     padding: 60px 0 !important;
