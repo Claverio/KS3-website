@@ -327,6 +327,31 @@
   font-size: 28px;
 }
 
+.ks3-booking-number {
+  overflow-wrap: anywhere;
+}
+
+.ks3-copy-booking {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 11px;
+  border: 1px solid rgba(0, 93, 170, 0.25);
+  border-radius: 100px;
+  background: #edf7ff;
+  color: #005daa;
+  font-size: 12px;
+  font-weight: 700;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.ks3-copy-booking:hover,
+.ks3-copy-booking.is-copied {
+  border-color: #005daa;
+  background: #005daa;
+  color: #fff;
+}
+
 /* About metrics use one consistent primary treatment. */
 .ks3-about-section .progress-bar.bg-gradient-flamingo-red-transparent,
 .ks3-about-section .progress-bar.bg-gradient-base-color-transparent {

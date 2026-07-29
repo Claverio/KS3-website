@@ -48,6 +48,9 @@ class P2PPurchase(models.Model):
     xendit_webhook_payload = models.JSONField(default=dict, blank=True)
     provider_updated_at = models.DateTimeField(null=True, blank=True)
     paid_at = models.DateTimeField(null=True, blank=True)
+    email_sent_at = models.DateTimeField(null=True, blank=True)
+    email_attempt_count = models.PositiveSmallIntegerField(default=0)
+    email_last_error = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -92,6 +95,8 @@ class P2PPurchase(models.Model):
                     FieldPanel("payment_id", read_only=True),
                     FieldPanel("payment_request_id", read_only=True),
                     FieldPanel("paid_at", read_only=True),
+                    FieldPanel("email_sent_at", read_only=True),
+                    FieldPanel("email_attempt_count", read_only=True),
                 ],
                 heading="Payment",
             ),
@@ -100,6 +105,7 @@ class P2PPurchase(models.Model):
                     FieldPanel("xendit_create_response", read_only=True),
                     FieldPanel("xendit_last_response", read_only=True),
                     FieldPanel("xendit_webhook_payload", read_only=True),
+                    FieldPanel("email_last_error", read_only=True),
                 ],
                 heading="Audit",
             ),

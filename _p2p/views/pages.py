@@ -104,25 +104,25 @@ def _whatsapp_confirmation_url(purchase):
     if not contact.whatsapp_link:
         return ""
     lines = [
-        "Halo KS3, saya ingin mengonfirmasi data pendanaan berikut:",
+        "Halo Koperasi KS3,",
         "",
-        f"Nomor booking: {purchase.booking_number}",
+        "Saya ingin mengonfirmasi pendanaan yang telah saya lakukan.",
+        "",
+        "Data pendana:",
         f"Nama: {purchase.full_name}",
         f"No. WhatsApp: {purchase.phone}",
         f"Email: {purchase.email}",
+        "",
+        "Detail pendanaan:",
+        f"Produk P2P: {purchase.project.title}",
+        f"Jumlah slot: {purchase.slot_quantity} slot",
+        f"Total pembayaran: Rp{purchase.total_amount:,.0f}".replace(",", "."),
+        f"Nomor booking: {purchase.booking_number}",
+        "Status pembayaran: Lunas",
     ]
-    if purchase.nik:
-        lines.append(f"NIK: {purchase.nik}")
-    lines.extend(
-        [
-            f"Project: {purchase.project.title}",
-            f"Jumlah slot: {purchase.slot_quantity}",
-            f"Total pembayaran: Rp{purchase.total_amount:,.0f}".replace(",", "."),
-        ]
-    )
     if purchase.note:
         lines.append(f"Catatan: {purchase.note}")
-    lines.extend(["", "Mohon bantu dicek. Terima kasih."])
+    lines.extend(["", "Mohon bantu konfirmasi data pendanaan saya. Terima kasih."])
     separator = "&" if "?" in contact.whatsapp_link else "?"
     return f"{contact.whatsapp_link}{separator}text={quote(chr(10).join(lines), safe='')}"
 
@@ -131,6 +131,11 @@ def p2p_complete(request, public_id):
     purchase = get_object_or_404(P2PPurchase.objects.select_related("project"), public_id=public_id)
     if purchase.status != P2PPurchase.Status.PAID:
         return redirect("p2p_purchase_waiting", public_id=purchase.public_id)
+    if not purchase.email_sent_at and purchase.email_attempt_count < 3:
+        from _p2p.services.email_notification import send_paid_email_safely
+
+        send_paid_email_safely(purchase.pk)
+        purchase.refresh_from_db()
     return render(
         request,
         "cms/pages/p2p_booking_complete.html",

@@ -4,7 +4,9 @@ from email.utils import formataddr
 
 from django.contrib.staticfiles import finders
 from django.core.mail import EmailMultiAlternatives, get_connection
+from django.db.models import F
 from django.template.loader import render_to_string
+from django.utils import timezone
 
 from _p2p.models import P2PPurchase
 from _setting.models import ContactSetting, EmailSetting
@@ -14,9 +16,14 @@ logger = logging.getLogger(__name__)
 
 def send_paid_email_safely(purchase_id):
     purchase = P2PPurchase.objects.select_related("project").get(pk=purchase_id)
+    if purchase.email_sent_at:
+        return True
+    P2PPurchase.objects.filter(pk=purchase_id).update(email_attempt_count=F("email_attempt_count") + 1)
     setting = EmailSetting.load()
     if not setting.email_host_user or not setting.email_host_password:
-        logger.warning("Paid email skipped for %s: SMTP credentials are incomplete.", purchase.reference_id)
+        error = "SMTP credentials are incomplete."
+        P2PPurchase.objects.filter(pk=purchase_id).update(email_last_error=error)
+        logger.warning("Paid email skipped for %s: %s", purchase.reference_id, error)
         return False
     try:
         connection = get_connection(
@@ -25,6 +32,7 @@ def send_paid_email_safely(purchase_id):
             username=setting.email_host_user,
             password=setting.email_host_password,
             use_tls=setting.email_use_tls,
+            timeout=15,
         )
         contact = ContactSetting.load()
         context = {"purchase": purchase, "contact_setting": contact}
@@ -47,8 +55,15 @@ def send_paid_email_safely(purchase_id):
             logo.add_header("Content-ID", "<ks3-logo>")
             logo.add_header("Content-Disposition", "inline", filename="ks3-logo.png")
             message.attach(logo)
-        message.send()
+        sent_count = message.send()
+        if sent_count != 1:
+            raise RuntimeError("SMTP backend did not accept the email.")
+        P2PPurchase.objects.filter(pk=purchase_id).update(
+            email_sent_at=timezone.now(),
+            email_last_error="",
+        )
         return True
-    except Exception:
+    except Exception as exc:
+        P2PPurchase.objects.filter(pk=purchase_id).update(email_last_error=str(exc)[:1000])
         logger.exception("Paid email failed for %s.", purchase.reference_id)
         return False

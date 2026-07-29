@@ -1,10 +1,42 @@
 {% load p2p_tags %}
 <section id="down-section"><div class="container"><div class="row justify-content-center"><div class="col-xl-8 col-lg-9">
     <div class="text-center mb-40px"><span class="h-80px w-80px bg-green-transparent-light border-radius-100px d-flex align-items-center justify-content-center mx-auto mb-25px"><i class="bi bi-check-lg fs-40 text-green"></i></span><h2 class="alt-font text-dark-gray fw-700 mb-15px">Pembayaran berhasil diterima!</h2><p class="w-80 md-w-100 mx-auto mb-0">Terima kasih, {{ purchase.full_name }}. Pembayaran telah terverifikasi dan slot pendanaan terkunci atas nama Anda.</p></div>
-    <div class="bg-white border border-color-extra-medium-gray border-radius-10px p-30px mb-30px text-center"><span class="fs-13 fw-600 text-uppercase text-medium-gray d-block mb-10px">Nomor booking</span><span class="alt-font fs-32 fw-700 text-base-color d-block mb-15px">{{ purchase.booking_number }}</span><span class="alt-font fs-12 fw-600 text-uppercase border-radius-100px ps-15px pe-15px pt-5px pb-5px bg-green-transparent-light text-green d-inline-block mb-10px"><i class="bi bi-check-circle-fill me-5px"></i>Lunas</span><span class="fs-13 text-medium-gray d-block">Dibayar pada {{ purchase.paid_at|date:'d M Y · H:i T' }} via Xendit</span></div>
+    <div class="bg-white border border-color-extra-medium-gray border-radius-10px p-30px mb-30px text-center"><span class="fs-13 fw-600 text-uppercase text-medium-gray d-block mb-10px">Nomor booking</span><div class="d-flex align-items-center justify-content-center flex-wrap gap-10px mb-15px"><span class="alt-font fs-32 fw-700 text-base-color ks3-booking-number">{{ purchase.booking_number }}</span><button type="button" class="ks3-copy-booking" data-booking-number="{{ purchase.booking_number }}" aria-label="Salin nomor booking"><i class="bi bi-copy" aria-hidden="true"></i><span>Salin</span></button></div><span class="alt-font fs-12 fw-600 text-uppercase border-radius-100px ps-15px pe-15px pt-5px pb-5px bg-green-transparent-light text-green d-inline-block mb-10px"><i class="bi bi-check-circle-fill me-5px"></i>Lunas</span><span class="fs-13 text-medium-gray d-block">Dibayar pada {{ purchase.paid_at|date:'d M Y · H:i T' }} via Xendit</span></div>
     <div class="bg-white border border-color-extra-medium-gray border-radius-10px p-30px mb-30px"><h5 class="alt-font text-dark-gray fw-700 mb-20px">Detail pendanaan</h5><div class="d-flex align-items-start justify-content-between gap-15px mb-5px"><span class="alt-font text-dark-gray fw-700 fs-18">{{ project.title }}</span><span class="alt-font fs-12 fw-600 text-uppercase text-nowrap flex-shrink-0 d-inline-flex align-items-center border-radius-100px ps-15px pe-15px pt-5px pb-5px bg-green-transparent-light text-green">{{ project.display_status }}</span></div><span class="fs-13 text-medium-gray d-block mb-20px">{{ project.interest_rate|percent }} p.a. · Tenor {{ project.tenor_months }} bulan · {{ project.get_installment_frequency_display }}</span><div class="bg-gradient-top-very-light-gray border-radius-6px p-20px fs-14"><div class="d-flex justify-content-between gap-15px pb-10px mb-10px border-bottom"><span>Harga per slot</span><span class="fw-600 text-end">{{ purchase.unit_price|rupiah }}</span></div><div class="d-flex justify-content-between gap-15px pb-10px mb-10px border-bottom"><span>Jumlah slot</span><span class="fw-600 text-end">{{ purchase.slot_quantity }} slot</span></div><div class="d-flex justify-content-between gap-15px pb-10px mb-10px border-bottom"><span>Biaya layanan</span><span class="fw-600 text-end">{{ purchase.service_fee|rupiah }}</span></div><div class="d-flex justify-content-between align-items-end gap-15px"><span class="fw-600">Total dibayar</span><span class="alt-font fs-20 fw-700 text-base-color text-end lh-26">{{ purchase.total_amount|rupiah }}</span></div></div></div>
     <div class="text-center d-flex flex-wrap justify-content-center gap-15px">
         {% if whatsapp_confirmation_url %}<a href="{{ whatsapp_confirmation_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-large btn-dark-gray btn-rounded"><i class="fa-brands fa-whatsapp me-10px"></i>Konfirmasi via WhatsApp</a>{% endif %}
         <a href="{% url 'p2p_list' %}" class="btn btn-large btn-base-color btn-rounded btn-switch-text"><span><span class="btn-double-text" data-text="Lihat project lainnya">Lihat project lainnya</span><span><i class="fa-solid fa-arrow-right"></i></span></span></a>
     </div>
 </div></div></div></section>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const button = document.querySelector('.ks3-copy-booking');
+  if (!button) return;
+  const label = button.querySelector('span');
+  const originalLabel = label.textContent;
+  async function copyBooking() {
+    const value = button.dataset.bookingNumber;
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(value);
+      } else {
+        const input = document.createElement('textarea');
+        input.value = value;
+        input.style.position = 'fixed';
+        input.style.opacity = '0';
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        input.remove();
+      }
+      button.classList.add('is-copied');
+      label.textContent = 'Tersalin';
+      window.setTimeout(function () { button.classList.remove('is-copied'); label.textContent = originalLabel; }, 1800);
+    } catch (error) {
+      label.textContent = 'Gagal menyalin';
+      window.setTimeout(function () { label.textContent = originalLabel; }, 1800);
+    }
+  }
+  button.addEventListener('click', copyBooking);
+});
+</script>
