@@ -12,7 +12,7 @@
         </form>
 
         {% if query %}
-            <div class="d-flex flex-wrap align-items-end justify-content-between gap-15px mb-25px">
+            <div class="d-flex flex-wrap align-items-end justify-content-between gap-15px mb-25px ks3-search-summary">
                 <div>
                     <span class="text-uppercase fs-12 fw-700 ls-1px text-base-color">Hasil pencarian</span>
                     <h2 class="alt-font fs-32 fw-700 text-dark-gray mb-0">“{{ query }}”</h2>
@@ -31,8 +31,8 @@
                 {% if active_category == 'all' or active_category == 'p2p' %}{% if p2p_results %}
                 <div class="ks3-search-group mb-45px">
                     <div class="d-flex align-items-center justify-content-between mb-20px"><h3 class="alt-font fs-24 fw-700 text-dark-gray mb-0"><i class="bi bi-graph-up-arrow text-base-color me-10px"></i>P2P Lending</h3>{% if active_category == 'all' %}<a href="?q={{ query|urlencode }}&category=p2p" class="fs-13 fw-600 text-base-color">Lihat {{ p2p_count }} hasil</a>{% endif %}</div>
-                    <div class="row row-cols-1 row-cols-lg-2">
-                        {% for item in p2p_results %}<div class="col mb-20px"><a href="{{ item.get_absolute_url }}" class="ks3-search-result-card"><span class="ks3-search-result-icon"><i class="bi bi-cash-coin"></i></span><span class="ks3-search-result-content"><span class="ks3-search-result-meta">P2P · {{ item.category.name }}</span><strong>{{ item.title }}</strong><span>{{ item.summary|truncatechars:125 }}</span><span class="ks3-search-result-link">Lihat pendanaan <i class="fa-solid fa-arrow-right"></i></span></span><span class="ks3-search-status">{{ item.display_status }}</span></a></div>{% endfor %}
+                    <div class="ks3-search-results-grid">
+                        {% for item in p2p_results %}<div><a href="{{ item.get_absolute_url }}" class="ks3-search-result-card ks3-search-result-card-p2p"><span class="ks3-search-result-icon"><i class="bi bi-cash-coin"></i></span><span class="ks3-search-result-content"><span class="ks3-search-result-meta">P2P · {{ item.category.name }}</span><strong>{{ item.title }}</strong><span>{{ item.summary|truncatechars:125 }}</span><span class="ks3-search-result-link">Lihat pendanaan <i class="fa-solid fa-arrow-right"></i></span></span><span class="ks3-search-status">{{ item.display_status }}</span></a></div>{% endfor %}
                     </div>
                 </div>
                 {% endif %}{% endif %}
@@ -40,8 +40,8 @@
                 {% if active_category == 'all' or active_category == 'product' %}{% if product_results %}
                 <div class="ks3-search-group mb-45px">
                     <div class="d-flex align-items-center justify-content-between mb-20px"><h3 class="alt-font fs-24 fw-700 text-dark-gray mb-0"><i class="bi bi-wallet2 text-base-color me-10px"></i>Produk KS3</h3>{% if active_category == 'all' %}<a href="?q={{ query|urlencode }}&category=product" class="fs-13 fw-600 text-base-color">Lihat {{ product_count }} hasil</a>{% endif %}</div>
-                    <div class="row row-cols-1 row-cols-lg-2">
-                        {% for item in product_results %}<div class="col mb-20px"><a href="{{ item.get_absolute_url }}" class="ks3-search-result-card">{% if item.card_image %}{% image item.card_image fill-96x96 as result_image %}<img src="{{ result_image.url }}" width="48" height="48" alt="" class="ks3-search-result-image">{% else %}<span class="ks3-search-result-icon"><i class="bi {{ item.icon }}"></i></span>{% endif %}<span class="ks3-search-result-content"><span class="ks3-search-result-meta">Produk · {{ item.category.name }}</span><strong>{{ item.title }}</strong><span>{{ item.summary|truncatechars:125 }}</span><span class="ks3-search-result-link">Lihat produk <i class="fa-solid fa-arrow-right"></i></span></span></a></div>{% endfor %}
+                    <div class="ks3-search-results-grid">
+                        {% for item in product_results %}<div><a href="{{ item.get_absolute_url }}" class="ks3-search-result-card">{% if item.card_image %}{% image item.card_image fill-96x96 as result_image %}<img src="{{ result_image.url }}" width="48" height="48" alt="" class="ks3-search-result-image">{% else %}<span class="ks3-search-result-icon"><i class="bi {{ item.icon }}"></i></span>{% endif %}<span class="ks3-search-result-content"><span class="ks3-search-result-meta">Produk · {{ item.category.name }}</span><strong>{{ item.title }}</strong><span>{{ item.summary|truncatechars:125 }}</span><span class="ks3-search-result-link">Lihat produk <i class="fa-solid fa-arrow-right"></i></span></span></a></div>{% endfor %}
                     </div>
                 </div>
                 {% endif %}{% endif %}
@@ -49,8 +49,8 @@
                 {% if active_category == 'all' or active_category == 'page' %}{% if page_results %}
                 <div class="ks3-search-group mb-20px">
                     <div class="d-flex align-items-center justify-content-between mb-20px"><h3 class="alt-font fs-24 fw-700 text-dark-gray mb-0"><i class="bi bi-file-earmark-text text-base-color me-10px"></i>Halaman Informasi</h3>{% if active_category == 'all' %}<a href="?q={{ query|urlencode }}&category=page" class="fs-13 fw-600 text-base-color">Lihat {{ page_count }} hasil</a>{% endif %}</div>
-                    <div class="row row-cols-1 row-cols-lg-2">
-                        {% for item in page_results %}<div class="col mb-20px"><a href="{{ item.url }}" class="ks3-search-result-card"><span class="ks3-search-result-icon"><i class="bi bi-file-text"></i></span><span class="ks3-search-result-content"><span class="ks3-search-result-meta">Halaman</span><strong>{{ item.title }}</strong><span>{{ item.introduction|truncatechars:125 }}</span><span class="ks3-search-result-link">Baca halaman <i class="fa-solid fa-arrow-right"></i></span></span></a></div>{% endfor %}
+                    <div class="ks3-search-results-grid">
+                        {% for item in page_results %}<div><a href="{{ item.url }}" class="ks3-search-result-card"><span class="ks3-search-result-icon"><i class="bi bi-file-text"></i></span><span class="ks3-search-result-content"><span class="ks3-search-result-meta">Halaman</span><strong>{{ item.title }}</strong><span>{{ item.introduction|truncatechars:125 }}</span><span class="ks3-search-result-link">Baca halaman <i class="fa-solid fa-arrow-right"></i></span></span></a></div>{% endfor %}
                     </div>
                 </div>
                 {% endif %}{% endif %}
