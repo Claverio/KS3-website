@@ -52,6 +52,7 @@
                                     </li>
                                     {% if header_misc_pages %}<li class="nav-item dropdown dropdown-with-icon"><a href="{% if misc_index_page %}{{ misc_index_page.url }}{% else %}/halaman/{% endif %}" class="nav-link">Halaman</a><i class="fa-solid fa-angle-down dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false"></i><ul class="dropdown-menu">{% for item in header_misc_pages %}<li><a href="{{ item.url }}"><i class="bi bi-file-text"></i><div class="submenu-icon-content"><span>{{ item.title }}</span><p>{% if item.menu_description %}{{ item.menu_description }}{% else %}{{ item.introduction|truncatechars:36 }}{% endif %}</p></div></a></li>{% endfor %}</ul></li>{% endif %}
                                     {% for item in main_menu_misc_pages %}<li class="nav-item"><a href="{{ item.url }}" class="nav-link">{{ item.title }}</a></li>{% endfor %}
+                                    <li class="nav-item d-sm-none"><a href="{% url 'search' %}" class="nav-link"><i class="feather icon-feather-search me-5px"></i>Cari</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -64,10 +65,10 @@
                                     <!-- start search input -->
                                     <div class="search-form-wrapper">
                                         <button title="Close" type="button" class="search-close">×</button>
-                                        <form id="search-form" role="search" method="get" class="search-form text-left" action="search-result.html">
+                                        <form id="search-form" role="search" method="get" class="search-form text-left" action="{% url 'search' %}">
                                             <div class="search-form-box">
                                                 <h2 class="text-dark-gray text-center fw-600 mb-4 ls-minus-2px">Cari produk, artikel, atau informasi</h2>
-                                                <input class="search-input" id="search-form-input5e219ef164995" placeholder="Ketik untuk mencari..." name="s" value="" type="text" autocomplete="off">
+                                                <input class="search-input" id="search-form-input5e219ef164995" placeholder="Cari P2P, produk, atau halaman..." name="q" value="{{ request.GET.q|default:'' }}" type="search" maxlength="100" autocomplete="off" required>
                                                 <button type="submit" class="search-button">
                                                     <i class="feather icon-feather-search" aria-hidden="true"></i> 
                                                 </button>
