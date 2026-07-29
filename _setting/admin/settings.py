@@ -1,8 +1,22 @@
+from django.urls import reverse
+from wagtail.admin.viewsets.base import ViewSet
 from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSetGroup
 
 from backend.helper.singleton import SingletonSnippetViewSet
 from _setting.models import ContactSetting, EmailSetting, XenditSetting
+
+
+class HomePageSettingViewSet(ViewSet):
+    name = "homepage-settings"
+    menu_label = "Homepage"
+    menu_icon = "home"
+
+    @property
+    def menu_url(self):
+        return reverse(
+            "wagtailsettings:edit", args=["_setting", "homepagesetting"]
+        )
 
 
 class ContactSettingViewSet(SingletonSnippetViewSet):
@@ -28,7 +42,12 @@ class GeneralSettingsGroup(SnippetViewSetGroup):
     menu_icon = "gear"
     menu_name = "general-settings"
     menu_order = 800
-    items = (ContactSettingViewSet, EmailSettingViewSet, XenditSettingViewSet)
+    items = (
+        HomePageSettingViewSet,
+        ContactSettingViewSet,
+        EmailSettingViewSet,
+        XenditSettingViewSet,
+    )
 
 
 register_snippet(GeneralSettingsGroup)

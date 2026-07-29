@@ -1,6 +1,12 @@
 from django.contrib.auth import get_user_model
 from django.contrib.staticfiles import finders
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
+from django.utils import timezone
+from wagtail.admin.menu import admin_menu, settings_menu
+
+from _p2p.models import P2PPurchase
+from _p2p.tests.factories import make_project, make_purchase
+from _product.tests.factories import make_product
 
 
 class WagtailAdminBrandingTests(TestCase):
@@ -37,3 +43,63 @@ class WagtailAdminBrandingTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "logo-koperasi-mark.svg")
+
+
+class KS3AdminDashboardTests(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_superuser(
+            username="operations-admin",
+            email="operations@example.com",
+            password="secret",
+        )
+        self.client.force_login(self.user)
+        self.project = make_project(title="Pendanaan Kopi Dashboard")
+        self.purchase = make_purchase(
+            project=self.project,
+            full_name="Pembeli Dashboard",
+            status=P2PPurchase.Status.PAID,
+            paid_at=timezone.now(),
+        )
+
+    def test_home_is_operational_dashboard(self):
+        response = self.client.get("/admin/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "P2P sedang berjalan")
+        self.assertContains(response, "Pendanaan Kopi Dashboard")
+        self.assertContains(response, "Pembeli Dashboard")
+        self.assertContains(response, "20 TERBARU")
+        self.assertContains(response, "/admin/global-search/")
+
+    def test_global_search_combines_operational_and_content_models(self):
+        make_product(title="Produk Kopi Anggota", summary="Tabungan usaha kopi")
+
+        project_response = self.client.get(
+            "/admin/global-search/", {"q": "Kopi"}
+        )
+        buyer_response = self.client.get(
+            "/admin/global-search/", {"q": "Pembeli Dashboard"}
+        )
+
+        self.assertEqual(project_response.status_code, 200)
+        self.assertContains(project_response, "Pendanaan Kopi Dashboard")
+        self.assertContains(project_response, "Produk Kopi Anggota")
+        self.assertContains(buyer_response, self.purchase.booking_number)
+        self.assertContains(buyer_response, "Transaksi P2P")
+
+    def test_sidebar_hides_unused_items_and_groups_homepage_settings(self):
+        request = RequestFactory().get("/admin/")
+        request.user = self.user
+        main_items = admin_menu.menu_items_for_request(request)
+        settings_items = settings_menu.menu_items_for_request(request)
+
+        self.assertFalse({"images", "documents"} & {item.name for item in main_items})
+        self.assertFalse(
+            {"homepage-setting", "redirects", "collections", "workflows", "workflow-tasks"}
+            & {item.name for item in settings_items}
+        )
+        general = next(item for item in main_items if item.name == "general-settings")
+        self.assertIn(
+            "homepage",
+            {item.name for item in general.menu.menu_items_for_request(request)},
+        )

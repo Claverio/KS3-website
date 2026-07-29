@@ -1,0 +1,34 @@
+{% extends "wagtailadmin/generic/base.html" %}
+{% load wagtailadmin_tags %}
+
+{% block extra_css %}
+    {{ block.super }}
+    {{ media.css }}
+{% endblock %}
+
+{% block content %}
+    <div class="ks3-admin-home">
+        <header class="ks3-admin-hero">
+            <div>
+                <span class="ks3-admin-eyebrow">OPERASIONAL KS3</span>
+                <h1>Selamat datang, {{ user.first_name|default:user.get_username }}</h1>
+                <p>Pantau pendanaan aktif dan pembayaran terbaru dari satu tempat.</p>
+            </div>
+        </header>
+
+        <form class="ks3-admin-global-search" action="{% url 'ks3_admin_search' %}" method="get" role="search">
+            <svg class="icon icon-search" aria-hidden="true"><use href="#icon-search"></use></svg>
+            <input type="search" name="q" placeholder="Cari project P2P, booking, pembeli, produk, atau halaman…" maxlength="100" required>
+            <button type="submit" class="button">Cari semua</button>
+        </form>
+
+        {% for panel in panels %}
+            {% component panel fallback_render_method=True %}
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    {{ block.super }}
+    {{ media.js }}
+{% endblock %}

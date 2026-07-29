@@ -1,0 +1,45 @@
+{% extends "wagtailadmin/generic/base.html" %}
+{% load wagtailadmin_tags %}
+
+{% block content %}
+    {% include "wagtailadmin/shared/header.html" with title="Pencarian KS3" icon="search" %}
+    <div class="nice-padding ks3-admin-search-page">
+        <form class="ks3-admin-global-search ks3-admin-global-search--results" method="get" role="search">
+            <svg class="icon icon-search" aria-hidden="true"><use href="#icon-search"></use></svg>
+            <input type="search" name="q" value="{{ query }}" placeholder="Cari project P2P, booking, pembeli, produk, atau halaman…" maxlength="100" autofocus required>
+            <button type="submit" class="button">Cari semua</button>
+        </form>
+
+        {% if query %}
+            <div class="ks3-admin-search-summary">
+                <div><span class="ks3-admin-eyebrow">HASIL PENCARIAN</span><h2>“{{ query }}”</h2></div>
+                <strong>{{ total_results }} hasil ditemukan</strong>
+            </div>
+
+            {% if total_results %}
+                <div class="ks3-admin-search-groups">
+                    {% for group in groups %}
+                        {% if group.items %}
+                            <section class="ks3-admin-card ks3-admin-search-group">
+                                <div class="ks3-admin-card__header"><h2>{% icon name=group.icon %} {{ group.title }} <span>{{ group.items|length }}</span></h2></div>
+                                <div class="ks3-admin-search-items">
+                                    {% for item in group.items %}
+                                        <a href="{{ item.url }}">
+                                            <span><strong>{{ item.title }}</strong><small>{{ item.description }}</small></span>
+                                            <em>{{ item.meta }}</em>
+                                            {% icon name="arrow-right" %}
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            </section>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="ks3-admin-empty ks3-admin-empty--large">Tidak ada data yang cocok. Coba nama pembeli, nomor booking, judul P2P, produk, atau halaman lain.</div>
+            {% endif %}
+        {% else %}
+            <div class="ks3-admin-empty ks3-admin-empty--large">Masukkan kata kunci untuk mencari seluruh data operasional dan konten KS3.</div>
+        {% endif %}
+    </div>
+{% endblock %}

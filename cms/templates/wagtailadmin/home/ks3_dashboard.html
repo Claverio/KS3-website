@@ -1,0 +1,90 @@
+{% load wagtailadmin_tags p2p_tags %}
+
+<section class="ks3-admin-stats" aria-label="Ringkasan transaksi">
+    <a class="ks3-admin-stat" href="{{ purchase_list_url }}?status=paid">
+        <span class="ks3-admin-stat__icon ks3-admin-stat__icon--blue">{% icon name="check" %}</span>
+        <span><small>Pembayaran lunas</small><strong>{{ paid_count }}</strong><em>{{ paid_slots }} slot terbayar</em></span>
+    </a>
+    <a class="ks3-admin-stat" href="{{ purchase_list_url }}?status=paid">
+        <span class="ks3-admin-stat__icon ks3-admin-stat__icon--gold">{% icon name="credit-card" %}</span>
+        <span><small>Nominal diterima</small><strong>{{ paid_amount|rupiah }}</strong><em>Total transaksi lunas</em></span>
+    </a>
+    <a class="ks3-admin-stat" href="{{ purchase_list_url }}?status=waiting_payment">
+        <span class="ks3-admin-stat__icon ks3-admin-stat__icon--soft">{% icon name="time" %}</span>
+        <span><small>Menunggu pembayaran</small><strong>{{ waiting_count }}</strong><em>Perlu dipantau</em></span>
+    </a>
+    <a class="ks3-admin-stat" href="{{ project_list_url }}?status=open">
+        <span class="ks3-admin-stat__icon ks3-admin-stat__icon--red">{% icon name="folder-open-inverse" %}</span>
+        <span><small>P2P sedang berjalan</small><strong>{{ project_rows|length }}</strong><em>Project aktif & published</em></span>
+    </a>
+</section>
+
+<div class="ks3-admin-dashboard-grid">
+    <section class="ks3-admin-card ks3-admin-card--projects">
+        <div class="ks3-admin-card__header">
+            <div><span class="ks3-admin-eyebrow">PENDANAAN AKTIF</span><h2>P2P sedang berjalan</h2></div>
+            <a href="{{ project_list_url }}" class="button button-secondary button-small">Lihat semua</a>
+        </div>
+
+        {% if project_rows %}
+            <div class="ks3-admin-project-list">
+                {% for row in project_rows %}
+                    <a class="ks3-admin-project" href="{{ row.edit_url }}">
+                        <div class="ks3-admin-project__top">
+                            <div><small>{{ row.project.category.name }}</small><strong>{{ row.project.title }}</strong></div>
+                            <span>{{ row.project.progress_percentage }}%</span>
+                        </div>
+                        <div class="ks3-admin-progress"><i style="width: {{ row.project.progress_percentage }}%"></i></div>
+                        <div class="ks3-admin-project__meta">
+                            <span><b>{{ row.project.funded_amount|rupiah }}</b> terkumpul</span>
+                            <span>{{ row.project.available_slots }} / {{ row.project.total_slots }} slot tersedia</span>
+                            <span>{{ row.project.lender_count }} pendana</span>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="ks3-admin-empty">Belum ada P2P aktif dan published saat ini.</div>
+        {% endif %}
+    </section>
+
+    <aside class="ks3-admin-card ks3-admin-card--attention">
+        <div class="ks3-admin-card__header"><div><span class="ks3-admin-eyebrow">PERLU PERHATIAN</span><h2>Status operasional</h2></div></div>
+        <a href="{{ purchase_list_url }}?status=waiting_payment"><span>Menunggu pembayaran</span><strong>{{ waiting_count }}</strong></a>
+        <a href="{{ purchase_list_url }}?status=failed"><span>Gagal / kedaluwarsa</span><strong>{{ failed_count }}</strong></a>
+        <div class="ks3-admin-quick-actions">
+            <h3>Akses cepat</h3>
+            <a href="{{ project_list_url }}">Kelola P2P {% icon name="arrow-right" %}</a>
+            <a href="{{ purchase_list_url }}">Semua transaksi {% icon name="arrow-right" %}</a>
+            <a href="{{ product_list_url }}">Kelola produk {% icon name="arrow-right" %}</a>
+        </div>
+    </aside>
+</div>
+
+<section class="ks3-admin-card ks3-admin-card--transactions">
+    <div class="ks3-admin-card__header">
+        <div><span class="ks3-admin-eyebrow">20 TERBARU</span><h2>Pembayaran berhasil</h2><p>Transaksi terbaru yang telah dikonfirmasi lunas.</p></div>
+        <a href="{{ purchase_list_url }}?status=paid" class="button button-secondary button-small">Semua pembayaran</a>
+    </div>
+    {% if latest_paid %}
+        <div class="ks3-admin-table-wrap">
+            <table class="listing ks3-admin-table">
+                <thead><tr><th>Booking</th><th>Pembeli</th><th>Project</th><th>Slot</th><th>Nominal</th><th>Waktu bayar</th></tr></thead>
+                <tbody>
+                    {% for purchase in latest_paid %}
+                        <tr>
+                            <td><a href="{% url 'wagtailsnippets__p2p_p2ppurchase:edit' purchase.pk %}"><strong>{{ purchase.booking_number }}</strong></a></td>
+                            <td>{{ purchase.full_name }}<small>{{ purchase.email }}</small></td>
+                            <td>{{ purchase.project.title }}</td>
+                            <td>{{ purchase.slot_quantity }}</td>
+                            <td><strong>{{ purchase.total_amount|rupiah }}</strong></td>
+                            <td>{{ purchase.paid_at|date:"d M Y, H:i" }} WIB</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="ks3-admin-empty">Belum ada pembayaran lunas.</div>
+    {% endif %}
+</section>
