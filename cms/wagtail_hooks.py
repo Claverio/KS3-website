@@ -46,7 +46,7 @@ def build_ks3_dashboard(request, panels):
 
 @hooks.register("construct_main_menu")
 def simplify_main_menu(request, menu_items):
-    hidden = {"images", "documents"}
+    hidden = {"images", "documents", "help"}
     menu_items[:] = [item for item in menu_items if item.name not in hidden]
 
 

@@ -93,7 +93,9 @@ class KS3AdminDashboardTests(TestCase):
         main_items = admin_menu.menu_items_for_request(request)
         settings_items = settings_menu.menu_items_for_request(request)
 
-        self.assertFalse({"images", "documents"} & {item.name for item in main_items})
+        self.assertFalse(
+            {"images", "documents", "help"} & {item.name for item in main_items}
+        )
         self.assertFalse(
             {"homepage-setting", "redirects", "collections", "workflows", "workflow-tasks"}
             & {item.name for item in settings_items}
