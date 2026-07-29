@@ -66,6 +66,7 @@ class MiscellaneousPageTests(TestCase):
         self.assertContains(response, dropdown.title)
         self.assertContains(response, main.title)
         self.assertContains(response, footer.title)
+        self.assertContains(response, f'href="{self.index.url}" class="nav-link">Halaman</a>')
         self.assertContains(response, dropdown.url)
         self.assertContains(response, dropdown.menu_description)
         self.assertContains(response, main.url)
