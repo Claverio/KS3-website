@@ -1,0 +1,1593 @@
+// Koperasi KS3 — reference C4 architecture model.
+//
+// Naming convention:
+// - L1 = System Context
+// - L2 = Container
+// - L3 = Component
+// - L4 = Code
+// - FLOW = Dynamic behavior using elements from L1-L4; this is not a fifth C4 level.
+//
+// Scope and evidence:
+// - Models the current Django 6 / Wagtail 7 monolith in this repository.
+// - Production uses Gunicorn, PostgreSQL, S3-compatible object storage, Xendit, and SMTP.
+// - Development/test storage and database implementations differ; see element descriptions.
+// - Source paths in L4 descriptions provide traceability to implementation.
+
+specification {
+  // L1 is green/gray, L2 is indigo/amber, L3 is secondary, and L4 uses
+  // interface/domain/operation colors. Prefixes remain in every title so the
+  // level is still unambiguous when colors are unavailable.
+  element person {
+    notation "L1 · Person"
+    style {
+      shape person
+      color green
+    }
+  }
+
+  element externalSystem {
+    notation "L1 · External System"
+    style {
+      color gray
+    }
+  }
+
+  element softwareSystem {
+    notation "L1 · Software System / Boundary"
+    style {
+      color indigo
+      opacity 10%
+      border solid
+    }
+  }
+
+  element container {
+    notation "L2 · Application / CLI Container"
+    style {
+      color primary
+      opacity 10%
+      border solid
+    }
+  }
+
+  element database {
+    notation "L2 · Data Container"
+    style {
+      shape cylinder
+      color amber
+    }
+  }
+
+  element component {
+    notation "L3 · Component / Responsibility Boundary"
+    style {
+      shape component
+      color secondary
+      opacity 10%
+      border dashed
+    }
+  }
+
+  element endpoint {
+    notation "L4 · HTTP Endpoint / Route"
+    style {
+      shape browser
+      color red
+    }
+  }
+
+  element viewFunction {
+    notation "L4 · HTTP View / Controller"
+    style {
+      color indigo
+    }
+  }
+
+  element form {
+    notation "L4 · Input Form / Validator"
+    style {
+      color green
+    }
+  }
+
+  element workflow {
+    notation "L4 · Application Workflow"
+    style {
+      shape component
+      color green
+    }
+  }
+
+  element service {
+    notation "L4 · Service"
+    style {
+      shape component
+      color green
+    }
+  }
+
+  element domainModel {
+    notation "L4 · Domain Model / Value Object"
+    style {
+      shape storage
+      color amber
+    }
+  }
+
+  element settingsModel {
+    notation "L4 · Runtime Configuration Model"
+    style {
+      shape document
+      color amber
+    }
+  }
+
+  element template {
+    notation "L4 · HTML/Text Template"
+    style {
+      shape document
+      color gray
+    }
+  }
+
+  element browserScript {
+    notation "L4 · Browser-side Script"
+    style {
+      color indigo
+    }
+  }
+
+  element managementCommand {
+    notation "L4 · Management Command"
+    style {
+      color red
+    }
+  }
+
+  element adminExtension {
+    notation "L4 · Wagtail Admin Extension"
+    style {
+      color secondary
+    }
+  }
+
+  element helper {
+    notation "L4 · Helper / Query Utility"
+    style {
+      color muted
+    }
+  }
+}
+
+model {
+  // ---------------------------------------------------------------------------
+  // L1 — People and external systems
+  // ---------------------------------------------------------------------------
+
+  person visitor {
+    title "L1 · Public Visitor"
+    description "Browses the KS3 homepage, products, public information, and published P2P opportunities."
+  }
+
+  person investor {
+    title "L1 · P2P Investor"
+    description "Submits personal data, reserves P2P slots, pays through Xendit, and receives confirmation."
+  }
+
+  person administrator {
+    title "L1 · Content & Operations Administrator"
+    description "Uses Wagtail Admin to manage content, products, P2P projects, purchases, settings, and reports."
+  }
+
+  person operator {
+    title "L1 · Developer / Operations Engineer"
+    description "Deploys the application and runs Django management commands, including the P2P acceptance harness."
+  }
+
+  externalSystem xendit {
+    title "L1 · Xendit Payment Gateway"
+    description "Creates Payment Sessions, hosts the payment link, returns session status, and sends signed payment-session webhooks."
+  }
+
+  externalSystem objectStorage {
+    title "L1 · S3-Compatible Object Storage"
+    description "Stores production static files and uploaded media through django-storages/boto3. The concrete endpoint and bucket are environment-configured."
+  }
+
+  externalSystem smtpProvider {
+    title "L1 · SMTP Email Provider"
+    description "Delivers transactional paid-purchase email using administrator-managed SMTP settings."
+  }
+
+  // ---------------------------------------------------------------------------
+  // L1 system with L2 containers
+  // ---------------------------------------------------------------------------
+
+  softwareSystem ks3Platform {
+    title "L1 · Koperasi KS3 Digital Platform"
+    description "Public website, Wagtail CMS, product catalogue, P2P funding workflow, payment reconciliation, notifications, search, and operational reporting."
+
+    container webApplication {
+      title "L2 · Django/Wagtail Web Application"
+      description "Single deployable web application serving public pages, Wagtail Admin, HTML forms, JSON status endpoints, and Xendit webhooks."
+      technology "Python 3.12 · Django 6 · Wagtail 7 · Gunicorn"
+
+      // -----------------------------------------------------------------------
+      // L3 components and their L4 code elements
+      // -----------------------------------------------------------------------
+
+      component publicExperience {
+        title "L3 · Public Website Composition"
+        description "Builds homepage and shared navigation from published content, products, P2P projects, miscellaneous pages, and site settings."
+        technology "Django views · Wagtail pages/settings · Django templates"
+
+        endpoint landingRoute {
+          title "L4 · GET /"
+          description "Named route: landing. Explicit homepage route registered before Wagtail's catch-all page router.\nSource: cms/urls.py"
+        }
+
+        viewFunction landingView {
+          title "L4 · LandingView.get_context_data()"
+          description "Loads homepage settings, featured P2P projects, and all featured products grouped into savings and loans for the homepage discovery section.\nSource: cms/views.py"
+        }
+
+        endpoint robotsRoute {
+          title "L4 · GET /robots.txt"
+          description "Named route: robots_txt. Returns crawler directives as text/plain.\nSource: cms/urls.py"
+        }
+
+        viewFunction robotsView {
+          title "L4 · robots_txt()"
+          description "Renders the repository-owned crawler policy template.\nSource: cms/views.py"
+        }
+
+        endpoint llmsRoute {
+          title "L4 · GET /llms.txt"
+          description "Named route: llms_txt. Returns the LLM-readable site summary as text/plain.\nSource: cms/urls.py"
+        }
+
+        viewFunction llmsView {
+          title "L4 · llms_txt()"
+          description "Renders the repository-owned LLM summary template.\nSource: cms/views.py"
+        }
+
+        endpoint sitemapRoute {
+          title "L4 · GET /sitemap.xml"
+          description "Named route: sitemap_xml. Returns the repository-owned XML sitemap.\nSource: cms/urls.py"
+        }
+
+        viewFunction sitemapView {
+          title "L4 · sitemap_xml()"
+          description "Renders the static sitemap template with application/xml content type.\nSource: cms/views.py"
+        }
+
+        endpoint wagtailPageRoutes {
+          title "L4 · GET /{wagtail_page_path}"
+          description "Framework route family: Wagtail resolves all otherwise-unmatched live page URLs. Generated framework internals are intentionally represented as one route family.\nSource: backend/urls.py"
+        }
+
+        endpoint debugStaticRoutes {
+          title "L4 · DEBUG GET /static/{asset_path}"
+          description "Development-only Django staticfiles route family, registered only when settings.DEBUG is true. Production static files use object storage.\nSource: backend/urls.py"
+        }
+
+        endpoint debugMediaRoutes {
+          title "L4 · DEBUG GET /media/{asset_path}"
+          description "Development fallback route family for locally stored media when settings.DEBUG is true and MEDIA_URL is local. Production/dev S3 media bypasses Django.\nSource: backend/urls.py"
+        }
+
+        viewFunction globalNavigation {
+          title "L4 · global_navigation()"
+          description "Builds header/footer navigation from all published products, exposes separate savings and loan menu groups, and loads Wagtail miscellaneous pages.\nSource: _setting/context_processors.py"
+        }
+
+        viewFunction globalContactSettings {
+          title "L4 · global_contact_settings()"
+          description "Injects singleton contact settings into every rendered template.\nSource: _setting/context_processors.py"
+        }
+
+        domainModel homePage {
+          title "L4 · HomePage"
+          description "Wagtail root page type.\nSource: home/models.py"
+        }
+
+        settingsModel homePageSetting {
+          title "L4 · HomePageSetting"
+          description "Site-scoped homepage content and section configuration.\nSource: _setting/models/homepage.py"
+        }
+
+        settingsModel contactSetting {
+          title "L4 · ContactSetting"
+          description "Singleton contact and WhatsApp configuration used by templates and paid confirmation.\nSource: _setting/models/contact.py"
+        }
+
+        domainModel miscellaneousIndexPage {
+          title "L4 · MiscellaneousIndexPage"
+          description "Wagtail index for public informational pages.\nSource: _misc/models/pages.py"
+        }
+
+        domainModel miscellaneousPage {
+          title "L4 · MiscellaneousPage"
+          description "Wagtail content page with navigation placement, SEO, and StreamField content.\nSource: _misc/models/pages.py"
+        }
+
+        helper contentBlockLibrary {
+          title "L4 · page_content_blocks()"
+          description "Reusable headings, paragraphs, images, lists, tables, callouts, accordions, documents, videos, and layout blocks.\nSource: backend/helper/streamfield.py"
+        }
+
+        template publicTemplates {
+          title "L4 · Public Django Templates"
+          description "Server-rendered homepage, content, product, P2P, search, and shared layout templates.\nSource: cms/templates/"
+        }
+      }
+
+      component productCatalogue {
+        title "L3 · Product Catalogue"
+        description "Publishes cooperative products and categories with detail content, SEO metadata, and an optional ready financial-simulator profile."
+        technology "Django ORM · Wagtail snippets/preview · Django templates"
+
+        endpoint productListRoute {
+          title "L4 · GET /product/"
+          description "Named route: product. Renders published products.\nSource: _product/urls.py"
+        }
+
+        endpoint productLegacyRedirect {
+          title "L4 · GET /product"
+          description "Named route: product_legacy. Permanent redirect to /product/.\nSource: _product/urls.py"
+        }
+
+        endpoint productDetailRoute {
+          title "L4 · GET /product/{slug}/"
+          description "Named route: product_detail. Renders one published product.\nSource: _product/urls.py"
+        }
+
+        viewFunction productListView {
+          title "L4 · product_list()"
+          description "Loads ProductSEOSettings and the published product query.\nSource: _product/views/pages.py"
+        }
+
+        viewFunction productDetailView {
+          title "L4 · product_detail()"
+          description "Loads a published product by slug, conditionally attaches a ready simulator configuration, and renders its StreamField content.\nSource: _product/views/pages.py"
+        }
+
+        helper publishedProducts {
+          title "L4 · _published_products()"
+          description "Central published-product queryset with active categories, card images, simulator profile, rate tiers, fees, and breakdown bands.\nSource: _product/views/pages.py"
+        }
+
+        domainModel product {
+          title "L4 · Product"
+          description "Catalogue product, publishing state, SEO metadata, media, and StreamField content.\nSource: _product/models/product.py"
+        }
+
+        domainModel productCategory {
+          title "L4 · ProductCategory"
+          description "Ordered and activatable product classification.\nSource: _product/models/category.py"
+        }
+
+        settingsModel productSeo {
+          title "L4 · ProductSEOSettings"
+          description "Singleton SEO defaults for the product listing.\nSource: _product/models/seo.py"
+        }
+      }
+
+      component productSimulator {
+        title "L3 · Product Financial Simulator"
+        description "Owns fail-closed product simulation configuration, Decimal-based savings/loan schedules, tiered rate and fee evaluation, adaptive breakdowns, and browser visualization."
+        technology "Django ORM · Python Decimal · JSON endpoint · SVG/JavaScript"
+
+        endpoint productSimulationRoute {
+          title "L4 · GET /product/{slug}/simulation/"
+          description "Named route: product_simulation. Public read-only JSON endpoint for published products; returns 404 when disabled/incomplete and 400 for invalid member inputs.\nSource: _product/urls.py"
+        }
+
+        viewFunction productSimulationView {
+          title "L4 · product_simulation()"
+          description "Requires GET, resolves a published product, enforces enabled/ready configuration, invokes the calculation engine, and returns normalized JSON results.\nSource: _product/views/pages.py"
+        }
+
+        helper simulationContext {
+          title "L4 · _simulation_context()"
+          description "Fail-closed page helper that exposes public simulator configuration only when the optional profile is enabled and complete.\nSource: _product/views/pages.py"
+        }
+
+        service simulationEngine {
+          title "L4 · simulate()"
+          description "Validates inputs, calculates monthly savings or loan schedules using Decimal/ROUND_HALF_UP, aggregates summaries, and returns audit metadata plus chart/table series.\nSource: _product/simulation/engine.py"
+        }
+
+        service rateResolver {
+          title "L4 · RateResolver"
+          description "Resolves fixed, locked tier, current-balance tier, and progressive-layer rates while recording the rules actually applied.\nSource: _product/simulation/engine.py"
+        }
+
+        service feeEvaluator {
+          title "L4 · FeeEvaluator"
+          description "Evaluates fixed/percentage fee and tax rules at upfront, per-period, or maturity timing with optional min/max caps.\nSource: _product/simulation/engine.py"
+        }
+
+        helper breakdownPolicy {
+          title "L4 · _breakdown_interval() / _aggregate_rows()"
+          description "Chooses auto-compact, auto-detailed, fixed, or custom intervals and aggregates monthly rows without changing financial totals; chart sampling is capped at 60 points.\nSource: _product/simulation/engine.py"
+        }
+
+        domainModel productSimulation {
+          title "L4 · ProductSimulation"
+          description "One-to-one optional product simulator profile with strategy, input domain, rate policy, display policy, readiness checks, and configuration version.\nSource: _product/models/simulation.py"
+        }
+
+        domainModel simulationRateTier {
+          title "L4 · SimulationRateTier"
+          description "Ordered amount/tenor rate band with lower-inclusive and upper-exclusive nominal bounds plus overlap and coverage validation.\nSource: _product/models/simulation.py"
+        }
+
+        domainModel simulationFeeRule {
+          title "L4 · SimulationFeeRule"
+          description "Ordered administration, provision, insurance, tax, or other charge rule with calculation basis, timing, and caps.\nSource: _product/models/simulation.py"
+        }
+
+        domainModel simulationBreakdownBand {
+          title "L4 · SimulationBreakdownBand"
+          description "Optional priority-based tenor band that overrides the display aggregation interval.\nSource: _product/models/simulation.py"
+        }
+
+        template productSimulatorTemplate {
+          title "L4 · product_simulator.html"
+          description "Conditionally rendered accessible form, summary cards, SVG chart shell, applied-rule note, breakdown table, and disclaimer.\nSource: cms/templates/cms/components/product_simulator.html"
+        }
+
+        browserScript productSimulatorBrowser {
+          title "L4 · product-simulator.js"
+          description "Auto-submits valid inputs, fetches the JSON endpoint, and renders summaries, SVG growth series, tooltips, rule labels, tables, and field errors.\nSource: cms/static/cms/js/product-simulator.js"
+        }
+
+        adminExtension productSimulationAdmin {
+          title "L4 · ProductSimulationViewSet"
+          description "Wagtail snippet editor with assistive setup, input, rate, fee/tax, display, custom breakdown, readiness, and advanced tabs.\nSource: _product/admin/product.py"
+        }
+      }
+
+      component p2pDiscovery {
+        title "L3 · P2P Project Discovery"
+        description "Publishes funding opportunities, investment terms, slot availability, funding progress, and SEO."
+        technology "Django ORM · Wagtail snippets/preview · Django templates"
+
+        endpoint p2pListRoute {
+          title "L4 · GET /peer-to-peer/"
+          description "Named route: p2p_list. Lists published projects.\nSource: _p2p/urls.py"
+        }
+
+        endpoint p2pDetailRoute {
+          title "L4 · GET /peer-to-peer/{slug}/"
+          description "Named route: p2p_details. Shows a published funding opportunity.\nSource: _p2p/urls.py"
+        }
+
+        viewFunction p2pListView {
+          title "L4 · p2p_list()"
+          description "Queries published P2P projects with active categories.\nSource: _p2p/views/pages.py"
+        }
+
+        viewFunction p2pDetailView {
+          title "L4 · p2p_detail()"
+          description "Loads project, category, prospectus, StreamField content, and SEO.\nSource: _p2p/views/pages.py"
+        }
+
+        helper seoContext {
+          title "L4 · _seo_context()"
+          description "Loads section-specific P2P SEO defaults.\nSource: _p2p/views/pages.py"
+        }
+
+        domainModel p2pProject {
+          title "L4 · P2P"
+          description "Funding opportunity, pricing, capacity, return terms, publication state, availability, and aggregate progress.\nSource: _p2p/models/project.py"
+        }
+
+        domainModel p2pCategory {
+          title "L4 · P2PCategory"
+          description "Ordered and activatable P2P project classification.\nSource: _p2p/models/category.py"
+        }
+
+        settingsModel p2pSeo {
+          title "L4 · P2PSEOSettings"
+          description "Singleton SEO defaults for P2P list, detail, purchase, and completion pages.\nSource: _p2p/models/seo.py"
+        }
+      }
+
+      component purchaseWorkflow {
+        title "L3 · P2P Purchase Workflow"
+        description "Validates investor input, locks project capacity, calculates immutable pricing, creates the purchase, and opens a Xendit Payment Session."
+        technology "Django forms · ORM transactions · application services"
+
+        endpoint purchaseRoute {
+          title "L4 · GET|POST /peer-to-peer/{slug}/purchase/"
+          description "Named route: p2p_purchase. Displays and submits the investor purchase form.\nSource: _p2p/urls.py"
+        }
+
+        viewFunction purchaseView {
+          title "L4 · p2p_purchase()"
+          description "Guards project availability, validates the form, invokes purchase creation, and redirects to the waiting page.\nSource: _p2p/views/pages.py"
+        }
+
+        form purchaseForm {
+          title "L4 · P2PPurchaseForm"
+          description "Validates name, phone, email, optional NIK/note, requested slots, and current availability.\nSource: _p2p/forms/purchase.py"
+        }
+
+        workflow createPurchase {
+          title "L4 · create_p2p_purchase()"
+          description "Locks the project, rechecks availability, snapshots price, creates P2PPurchase, creates a Xendit session, and moves creating → waiting_payment or failed.\nSource: _p2p/services/purchase_workflow.py"
+        }
+
+        service availabilityService {
+          title "L4 · available_slot_count()"
+          description "Calculates availability from purchases in reserving states.\nSource: _p2p/services/availability.py"
+        }
+
+        service pricingService {
+          title "L4 · calculate_purchase_price()"
+          description "Returns an immutable PurchasePrice snapshot from project slot price, quantity, and service fee.\nSource: _p2p/services/pricing.py"
+        }
+
+        domainModel purchasePrice {
+          title "L4 · PurchasePrice"
+          description "Immutable price snapshot: unit price, quantity, subtotal, service fee, and total.\nSource: _p2p/services/pricing.py"
+        }
+
+        domainModel p2pPurchase {
+          title "L4 · P2PPurchase"
+          description "Investor identity, price snapshot, status machine, Xendit identifiers/responses, webhook idempotency data, and email audit.\nSource: _p2p/models/purchase.py"
+        }
+      }
+
+      component paymentExperience {
+        title "L3 · Browser Payment Experience"
+        description "Displays the Xendit payment link, polls the local status endpoint, handles browser return, and redirects a paid investor to completion."
+        technology "Django templates · browser JavaScript · JSON endpoint"
+
+        endpoint waitingRoute {
+          title "L4 · GET /peer-to-peer/purchase/{public_id}/waiting/"
+          description "Named route: p2p_purchase_waiting. Displays the payment frame and polling UI.\nSource: _p2p/urls.py"
+        }
+
+        viewFunction waitingView {
+          title "L4 · p2p_waiting()"
+          description "Loads the purchase; redirects paid purchases to completion; otherwise renders the waiting page.\nSource: _p2p/views/pages.py"
+        }
+
+        template waitingTemplate {
+          title "L4 · p2p_waiting.html"
+          description "Embeds purchase.payment_link_url in an iframe and initializes local status polling.\nSource: cms/templates/cms/pages/p2p_waiting.html"
+        }
+
+        browserScript paymentStatusPoller {
+          title "L4 · checkPaymentStatus()"
+          description "Calls the local status endpoint, updates UI state, stops on a final state, and redirects when redirect_url is returned.\nSource: cms/templates/cms/pages/p2p_waiting.html"
+        }
+
+        endpoint statusRoute {
+          title "L4 · GET /api/p2p/purchases/{public_id}/status/"
+          description "Named route: p2p_purchase_status. Returns local/provider status, final flag, and optional completion redirect.\nSource: _p2p/urls.py"
+        }
+
+        viewFunction statusView {
+          title "L4 · purchase_status()"
+          description "Reads the purchase and rate-limits active Xendit reconciliation to at most once per 10 seconds per purchase.\nSource: _p2p/views/status.py"
+        }
+
+        endpoint returnRoute {
+          title "L4 · GET /api/p2p/xendit/return/{public_id}/"
+          description "Iframe-safe Xendit browser return route.\nSource: _p2p/urls.py"
+        }
+
+        viewFunction returnView {
+          title "L4 · p2p_xendit_return()"
+          description "Builds a local absolute waiting-page URL and renders the browser-return bridge.\nSource: _p2p/views/pages.py"
+        }
+
+        endpoint completionRoute {
+          title "L4 · GET /peer-to-peer/purchase/{public_id}/complete/"
+          description "Named route: p2p_booking_complete. Available only after payment is paid.\nSource: _p2p/urls.py"
+        }
+
+        viewFunction completionView {
+          title "L4 · p2p_complete()"
+          description "Guards paid state, retries paid email up to three attempts, and builds WhatsApp confirmation.\nSource: _p2p/views/pages.py"
+        }
+      }
+
+      component paymentReconciliation {
+        title "L3 · Payment Reconciliation"
+        description "Normalizes provider status from polling or webhook into one validated, transactional, and idempotent local transition."
+        technology "Django JSON view · ORM transaction · shared transition service"
+
+        endpoint webhookRoute {
+          title "L4 · POST /api/p2p/webhooks/xendit/payment-session/"
+          description "Named route: xendit_payment_session_webhook. Public Xendit callback endpoint.\nSource: _p2p/urls.py"
+        }
+
+        viewFunction webhookView {
+          title "L4 · xendit_payment_session_webhook()"
+          description "Validates callback token, JSON/event/reference, derives webhook id, rejects duplicates, and invokes the shared transition.\nSource: _p2p/views/webhook.py"
+        }
+
+        service synchronizePayment {
+          title "L4 · synchronize_xendit_purchase()"
+          description "Fetches Xendit session status and passes the response to the shared transition service.\nSource: _p2p/services/payment_sync.py"
+        }
+
+        service applyPaymentUpdate {
+          title "L4 · apply_xendit_payment_update()"
+          description "Locks purchase, validates reference/session/amount/currency, maps provider status, prevents paid-state regression, stores audit data, and schedules paid email after commit.\nSource: _p2p/services/payment_transition.py"
+        }
+      }
+
+      component xenditAdapter {
+        title "L3 · Xendit Adapter"
+        description "Owns Xendit credentials, Basic authentication, Payment Session creation, status retrieval, timeout, and API error normalization."
+        technology "requests · Xendit Payment Sessions API"
+
+        service xenditService {
+          title "L4 · XenditService"
+          description "Provider adapter exposing create_invoice() and get_session_status().\nSource: backend/services/xendit.py"
+        }
+
+        helper xenditRequest {
+          title "L4 · XenditService._request()"
+          description "Executes authenticated JSON requests, applies timeouts, validates object responses, and converts provider/network errors.\nSource: backend/services/xendit.py"
+        }
+
+        service createXenditSession {
+          title "L4 · XenditService.create_invoice()"
+          description "Validates a positive whole-number IDR amount and POSTs a PAY/PAYMENT_LINK session to /sessions.\nSource: backend/services/xendit.py"
+        }
+
+        service getXenditSession {
+          title "L4 · XenditService.get_session_status()"
+          description "GETs /sessions/{session_id} for active reconciliation.\nSource: backend/services/xendit.py"
+        }
+
+        settingsModel xenditSetting {
+          title "L4 · XenditSetting"
+          description "Singleton provider configuration: activation, API URL/key, callback token, public/return base URLs, and session duration.\nSource: _setting/models/xendit.py"
+        }
+      }
+
+      component notificationService {
+        title "L3 · Paid Purchase Notification"
+        description "Sends an idempotent HTML/text confirmation email after a purchase first becomes paid and records delivery attempts."
+        technology "Django email · SMTP · Django templates"
+
+        service sendPaidEmail {
+          title "L4 · send_paid_email_safely()"
+          description "Checks idempotency, increments attempts, loads SMTP/contact settings, renders email, attaches logo, sends, and records success/error.\nSource: _p2p/services/email_notification.py"
+        }
+
+        settingsModel emailSetting {
+          title "L4 · EmailSetting"
+          description "Singleton SMTP host, port, credentials, and TLS settings.\nSource: _setting/models/email.py"
+        }
+
+        template paymentEmailTemplates {
+          title "L4 · Paid Purchase Email Templates"
+          description "Subject, text, and HTML payment-success templates.\nSource: cms/templates/cms/emails/p2p/"
+        }
+      }
+
+      component searchComponent {
+        title "L3 · Unified Public Search"
+        description "Ranks published P2P projects, products, and miscellaneous pages within the current Wagtail site."
+        technology "Django ORM · Wagtail site/page queries"
+
+        endpoint searchRoute {
+          title "L4 · GET /search/"
+          description "Named route: search. Accepts q and category.\nSource: backend/urls.py"
+        }
+
+        viewFunction searchView {
+          title "L4 · search()"
+          description "Builds and counts P2P, product, and page result sets with category selection.\nSource: search/views.py"
+        }
+
+        helper rankedQuery {
+          title "L4 · _ranked()"
+          description "Ranks exact, prefix, and substring title matches.\nSource: search/views.py"
+        }
+      }
+
+      component cmsAdministration {
+        title "L3 · Wagtail CMS & Settings"
+        description "Manages pages, products, P2P projects/purchases, singleton settings, media, preview, and structured StreamField content."
+        technology "Wagtail Admin · snippets · settings · images/documents"
+
+        endpoint wagtailAdminRoutes {
+          title "L4 · /admin/{wagtail_admin_path}"
+          description "Framework route family: authenticated Wagtail dashboard, page/snippet/settings/image administration, previews, and registered custom admin URLs. Framework-generated routes are intentionally grouped.\nSource: backend/urls.py"
+        }
+
+        endpoint djangoAdminRoutes {
+          title "L4 · /django-admin/{django_admin_path}"
+          description "Framework route family: Django's built-in administrator site. Framework-generated routes are intentionally grouped.\nSource: backend/urls.py"
+        }
+
+        endpoint wagtailDocumentRoutes {
+          title "L4 · /documents/{document_path}"
+          description "Framework route family: Wagtail document serving. Framework-generated routes are intentionally grouped.\nSource: backend/urls.py"
+        }
+
+        adminExtension singletonSnippetFramework {
+          title "L4 · SingletonSnippetViewSet"
+          description "Redirects singleton snippet index/create paths to the one editable settings row.\nSource: backend/helper/singleton.py"
+        }
+
+        domainModel singletonModel {
+          title "L4 · SingletonModel"
+          description "Abstract load-or-create singleton persistence contract.\nSource: backend/helper/singleton_model.py"
+        }
+
+        adminExtension p2pAdminGroup {
+          title "L4 · P2PAdminGroup"
+          description "Groups project, category, purchase, and P2P SEO administration.\nSource: _p2p/admin/p2p.py"
+        }
+
+        adminExtension productAdmin {
+          title "L4 · Product Admin ViewSets"
+          description "Registers product and category management in Wagtail snippets.\nSource: _product/admin/product.py"
+        }
+
+        adminExtension settingsAdmin {
+          title "L4 · General Settings Admin"
+          description "Registers contact, email, Xendit, homepage, and other singleton settings.\nSource: _setting/admin/settings.py"
+        }
+      }
+
+      component adminOperations {
+        title "L3 · Admin Operations & Reporting"
+        description "Provides an operational dashboard, global search, funding reports, purchase inspection, and CSV export."
+        technology "Wagtail hooks/components · Django ORM aggregation · CSV"
+
+        endpoint globalAdminSearchRoute {
+          title "L4 · GET /admin/global-search/"
+          description "Named route: ks3_admin_search. Custom authenticated Wagtail global-search endpoint.\nSource: cms/wagtail_hooks.py"
+        }
+
+        adminExtension adminDashboard {
+          title "L4 · KS3DashboardPanel"
+          description "Summarizes paid/waiting/failed purchases and open project progress on the Wagtail homepage.\nSource: cms/admin_dashboard.py"
+        }
+
+        viewFunction globalAdminSearch {
+          title "L4 · global_admin_search()"
+          description "Searches P2P projects, purchases, products, and Wagtail pages for authorized administrators.\nSource: cms/admin_views.py"
+        }
+
+        service projectReport {
+          title "L4 · build_project_report()"
+          description "Aggregates funding totals, conversion, trends, statuses, and top buyers.\nSource: _p2p/reporting.py"
+        }
+
+        endpoint exportPurchasesRoute {
+          title "L4 · GET /admin/p2p/projects/{project_id}/purchases.csv"
+          description "Named route: p2p_project_purchase_export. Permission-gated CSV download registered through Wagtail admin hooks.\nSource: _p2p/wagtail_hooks.py"
+        }
+
+        viewFunction exportPurchases {
+          title "L4 · export_project_purchases()"
+          description "Exports a project's purchase data as CSV for authorized administrators.\nSource: _p2p/admin/views.py"
+        }
+      }
+    }
+
+    database postgres {
+      title "L2 · PostgreSQL Database"
+      description "Production relational store for Django/Wagtail auth, sessions, pages, settings, catalogue, P2P projects, purchases, and audit payloads. Development base settings fall back to SQLite; tests use in-memory SQLite."
+      technology "PostgreSQL in production/dev · SQLite fallback/test"
+    }
+
+    container operationsCli {
+      title "L2 · Django Operational CLI"
+      description "On-demand management-command runtime using the same Django code, settings, database, and provider integrations as the web application."
+      technology "python manage.py"
+
+      component acceptanceHarness {
+        title "L3 · P2P End-to-End Acceptance Harness"
+        description "Creates or resumes a real purchase, validates form data, opens a Xendit session, and observes payment via polling or webhook."
+        technology "Django management command"
+
+        managementCommand simulatePurchase {
+          title "L4 · simulate_p2p_purchase"
+          description "Interactive real-provider scenario runner with poll/webhook modes, timeout, resume support, and non-zero failure exits.\nSource: _p2p/management/commands/simulate_p2p_purchase.py"
+        }
+
+        helper selectProject {
+          title "L4 · Command._select_project()"
+          description "Lists and selects currently purchasable projects.\nSource: _p2p/management/commands/simulate_p2p_purchase.py"
+        }
+
+        helper collectForm {
+          title "L4 · Command._collect_form()"
+          description "Collects investor data and validates it with the production P2PPurchaseForm.\nSource: _p2p/management/commands/simulate_p2p_purchase.py"
+        }
+
+        helper waitForPayment {
+          title "L4 · Command._wait()"
+          description "Observes local state; optionally polls Xendit until paid, terminal failure, or timeout.\nSource: _p2p/management/commands/simulate_p2p_purchase.py"
+        }
+      }
+
+      component seedCommands {
+        title "L3 · Content Seed Commands"
+        description "Seeds showcase products, projects, settings, and miscellaneous pages for controlled environments."
+        technology "Django management commands"
+
+        managementCommand seedP2p {
+          title "L4 · seed_p2p_showcase"
+          description "Seeds P2P demonstration content.\nSource: _p2p/management/commands/seed_p2p_showcase.py"
+        }
+
+        managementCommand seedProducts {
+          title "L4 · seed_product_showcase"
+          description "Seeds seven savings and loan product pages and invokes the deterministic simulator seed helper in the same transaction.\nSource: _product/management/commands/seed_product_showcase.py"
+        }
+
+        managementCommand seedProductSimulators {
+          title "L4 · seed_product_simulators"
+          description "Seeds or replaces simulator profiles for existing known product slugs without downloading images or rewriting product content; --strict rejects missing products.\nSource: _product/management/commands/seed_product_simulators.py"
+        }
+
+        helper currentProductSimulationSeeds {
+          title "L4 · seed_product_simulations() / SIMULATION_SEEDS"
+          description "Idempotently maps the seven current product slugs to strategy-specific illustrative savings and loan profiles, tiers, fees, display state, and disclaimers inside a database transaction.\nSource: _product/management/simulation_seed.py"
+        }
+
+        managementCommand seedSettings {
+          title "L4 · seed_homepage_settings"
+          description "Seeds homepage singleton settings.\nSource: _setting/management/commands/seed_homepage_settings.py"
+        }
+
+        managementCommand seedPages {
+          title "L4 · seed_misc_pages"
+          description "Seeds public miscellaneous Wagtail pages.\nSource: _misc/management/commands/seed_misc_pages.py"
+        }
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // L1 relationships
+  // ---------------------------------------------------------------------------
+
+  visitor -> ks3Platform "Browses public products, content, search, and P2P opportunities"
+  investor -> ks3Platform "Creates and pays for P2P purchases"
+  administrator -> ks3Platform "Manages content, settings, purchases, and reports"
+  operator -> ks3Platform "Deploys, configures, seeds, and verifies"
+
+  ks3Platform -> xendit "Creates and reconciles Payment Sessions"
+  xendit -> ks3Platform "Sends payment-session callbacks"
+  ks3Platform -> objectStorage "Stores and serves static/media objects"
+  ks3Platform -> smtpProvider "Sends paid-purchase email"
+
+  // ---------------------------------------------------------------------------
+  // L2 relationships
+  // ---------------------------------------------------------------------------
+
+  visitor -> ks3Platform.webApplication "GET public HTML pages"
+  investor -> ks3Platform.webApplication "Submits forms and polls payment status"
+  administrator -> ks3Platform.webApplication "Uses authenticated Wagtail Admin"
+  operator -> ks3Platform.operationsCli "Runs management commands"
+
+  ks3Platform.webApplication -> ks3Platform.postgres "Reads and writes application state"
+  ks3Platform.operationsCli -> ks3Platform.postgres "Reads, seeds, and verifies application state"
+  ks3Platform.webApplication -> xendit "HTTPS Payment Sessions API"
+  xendit -> ks3Platform.webApplication "HTTPS webhook callback"
+  ks3Platform.operationsCli -> xendit "HTTPS status polling in acceptance mode"
+  ks3Platform.webApplication -> objectStorage "S3 API for static/media"
+  ks3Platform.webApplication -> smtpProvider "SMTP over configured TLS"
+
+  // ---------------------------------------------------------------------------
+  // L3 relationships
+  // ---------------------------------------------------------------------------
+
+  ks3Platform.webApplication.publicExperience -> ks3Platform.webApplication.productCatalogue "Loads featured products and shared navigation"
+  ks3Platform.webApplication.publicExperience -> ks3Platform.webApplication.p2pDiscovery "Loads featured projects"
+  ks3Platform.webApplication.publicExperience -> ks3Platform.webApplication.cmsAdministration "Reads pages, settings, and media"
+  ks3Platform.webApplication.productCatalogue -> ks3Platform.postgres "Queries catalogue and SEO data"
+  ks3Platform.webApplication.productCatalogue -> ks3Platform.webApplication.productSimulator "Conditionally exposes ready simulator profiles on product detail pages"
+  ks3Platform.webApplication.productSimulator -> ks3Platform.postgres "Reads simulator configuration, tiers, fee rules, and breakdown bands"
+  ks3Platform.webApplication.p2pDiscovery -> ks3Platform.postgres "Queries project, capacity, and SEO data"
+  ks3Platform.webApplication.purchaseWorkflow -> ks3Platform.webApplication.p2pDiscovery "Validates project purchaseability"
+  ks3Platform.webApplication.purchaseWorkflow -> ks3Platform.postgres "Locks capacity and stores purchase snapshot"
+  ks3Platform.webApplication.purchaseWorkflow -> ks3Platform.webApplication.xenditAdapter "Creates Payment Session"
+  ks3Platform.webApplication.paymentExperience -> ks3Platform.webApplication.paymentReconciliation "Requests current local/provider status"
+  ks3Platform.webApplication.paymentExperience -> ks3Platform.postgres "Reads purchase state"
+  ks3Platform.webApplication.paymentReconciliation -> ks3Platform.webApplication.xenditAdapter "Retrieves provider session status"
+  ks3Platform.webApplication.paymentReconciliation -> ks3Platform.postgres "Applies transactional status transition"
+  xendit -> ks3Platform.webApplication.paymentReconciliation "Sends authenticated payment-session event"
+  ks3Platform.webApplication.xenditAdapter -> xendit "POST/GET Xendit /sessions"
+  ks3Platform.webApplication.xenditAdapter -> ks3Platform.postgres "Loads Xendit singleton configuration"
+  ks3Platform.webApplication.paymentReconciliation -> ks3Platform.webApplication.notificationService "Schedules email after first paid transition"
+  ks3Platform.webApplication.notificationService -> ks3Platform.postgres "Reads purchase/settings and stores delivery audit"
+  ks3Platform.webApplication.notificationService -> smtpProvider "Sends multipart email"
+  ks3Platform.webApplication.searchComponent -> ks3Platform.webApplication.productCatalogue "Searches products"
+  ks3Platform.webApplication.searchComponent -> ks3Platform.webApplication.p2pDiscovery "Searches P2P projects"
+  ks3Platform.webApplication.searchComponent -> ks3Platform.webApplication.publicExperience "Searches public pages"
+  ks3Platform.webApplication.cmsAdministration -> ks3Platform.postgres "Manages pages, snippets, settings, and media metadata"
+  ks3Platform.webApplication.cmsAdministration -> objectStorage "Uploads and reads media/static objects"
+  ks3Platform.webApplication.cmsAdministration -> ks3Platform.webApplication.productSimulator "Configures and validates product simulator profiles"
+  ks3Platform.webApplication.adminOperations -> ks3Platform.webApplication.productCatalogue "Searches and manages catalogue"
+  ks3Platform.webApplication.adminOperations -> ks3Platform.webApplication.p2pDiscovery "Searches projects and reports funding"
+  ks3Platform.webApplication.adminOperations -> ks3Platform.webApplication.purchaseWorkflow "Inspects and exports purchases"
+  ks3Platform.operationsCli.acceptanceHarness -> ks3Platform.webApplication.purchaseWorkflow "Reuses production validation and creation workflow"
+  ks3Platform.operationsCli.acceptanceHarness -> ks3Platform.webApplication.paymentReconciliation "Reuses provider synchronization"
+  ks3Platform.operationsCli.acceptanceHarness -> ks3Platform.webApplication.xenditAdapter "Verifies real provider status"
+  ks3Platform.operationsCli.seedCommands -> ks3Platform.postgres "Seeds controlled content"
+
+  // ---------------------------------------------------------------------------
+  // L4 relationships — public content, catalogue, and discovery
+  // ---------------------------------------------------------------------------
+
+  visitor -> ks3Platform.webApplication.publicExperience.landingRoute "GET homepage"
+  ks3Platform.webApplication.publicExperience.landingRoute -> ks3Platform.webApplication.publicExperience.landingView "Routes request"
+  ks3Platform.webApplication.publicExperience.landingView -> ks3Platform.webApplication.publicExperience.homePageSetting "Loads site-scoped homepage settings"
+  ks3Platform.webApplication.publicExperience.landingView -> ks3Platform.webApplication.p2pDiscovery.p2pProject "Queries featured published projects"
+  ks3Platform.webApplication.publicExperience.landingView -> ks3Platform.webApplication.productCatalogue.product "Queries featured published products"
+  ks3Platform.webApplication.publicExperience.landingView -> ks3Platform.webApplication.publicExperience.publicTemplates "Renders homepage"
+  visitor -> ks3Platform.webApplication.publicExperience.robotsRoute "GET crawler directives"
+  ks3Platform.webApplication.publicExperience.robotsRoute -> ks3Platform.webApplication.publicExperience.robotsView "Routes request"
+  ks3Platform.webApplication.publicExperience.robotsView -> ks3Platform.webApplication.publicExperience.publicTemplates "Renders cms/robots.txt"
+  visitor -> ks3Platform.webApplication.publicExperience.llmsRoute "GET LLM summary"
+  ks3Platform.webApplication.publicExperience.llmsRoute -> ks3Platform.webApplication.publicExperience.llmsView "Routes request"
+  ks3Platform.webApplication.publicExperience.llmsView -> ks3Platform.webApplication.publicExperience.publicTemplates "Renders cms/llms.txt"
+  visitor -> ks3Platform.webApplication.publicExperience.sitemapRoute "GET sitemap"
+  ks3Platform.webApplication.publicExperience.sitemapRoute -> ks3Platform.webApplication.publicExperience.sitemapView "Routes request"
+  ks3Platform.webApplication.publicExperience.sitemapView -> ks3Platform.webApplication.publicExperience.publicTemplates "Renders cms/sitemap.xml"
+  visitor -> ks3Platform.webApplication.publicExperience.wagtailPageRoutes "GET live Wagtail page"
+  ks3Platform.webApplication.publicExperience.wagtailPageRoutes -> ks3Platform.webApplication.publicExperience.homePage "Resolves live HomePage URLs"
+  ks3Platform.webApplication.publicExperience.wagtailPageRoutes -> ks3Platform.webApplication.publicExperience.miscellaneousPage "Resolves live miscellaneous page URLs"
+  visitor -> ks3Platform.webApplication.publicExperience.debugStaticRoutes "DEBUG-only static asset request"
+  visitor -> ks3Platform.webApplication.publicExperience.debugMediaRoutes "DEBUG-only local media request"
+  ks3Platform.webApplication.publicExperience.globalNavigation -> ks3Platform.webApplication.productCatalogue.product "Loads top published products"
+  ks3Platform.webApplication.publicExperience.globalNavigation -> ks3Platform.webApplication.publicExperience.miscellaneousIndexPage "Finds site information index"
+  ks3Platform.webApplication.publicExperience.globalNavigation -> ks3Platform.webApplication.publicExperience.miscellaneousPage "Builds header/main/footer page menus"
+  ks3Platform.webApplication.publicExperience.globalContactSettings -> ks3Platform.webApplication.publicExperience.contactSetting "Loads singleton"
+  ks3Platform.webApplication.publicExperience.miscellaneousIndexPage -> ks3Platform.webApplication.publicExperience.miscellaneousPage "Contains child pages"
+  ks3Platform.webApplication.publicExperience.miscellaneousPage -> ks3Platform.webApplication.publicExperience.contentBlockLibrary "Stores structured content"
+  ks3Platform.webApplication.publicExperience.homePageSetting -> ks3Platform.webApplication.publicExperience.contentBlockLibrary "Uses homepage block definitions"
+
+  ks3Platform.webApplication.productCatalogue.productLegacyRedirect -> ks3Platform.webApplication.productCatalogue.productListRoute "Permanent redirect"
+  ks3Platform.webApplication.productCatalogue.productListRoute -> ks3Platform.webApplication.productCatalogue.productListView "Routes request"
+  ks3Platform.webApplication.productCatalogue.productDetailRoute -> ks3Platform.webApplication.productCatalogue.productDetailView "Routes request"
+  ks3Platform.webApplication.productCatalogue.productListView -> ks3Platform.webApplication.productCatalogue.publishedProducts "Builds published queryset"
+  ks3Platform.webApplication.productCatalogue.productListView -> ks3Platform.webApplication.productCatalogue.productSeo "Loads listing SEO"
+  ks3Platform.webApplication.productCatalogue.productDetailView -> ks3Platform.webApplication.productCatalogue.publishedProducts "Finds product by slug"
+  ks3Platform.webApplication.productCatalogue.productDetailView -> ks3Platform.webApplication.productSimulator.simulationContext "Attach simulator only when enabled and ready"
+  ks3Platform.webApplication.productCatalogue.product -> ks3Platform.webApplication.productCatalogue.productCategory "Belongs to active category"
+  ks3Platform.webApplication.productCatalogue.product -> ks3Platform.webApplication.publicExperience.contentBlockLibrary "Stores structured detail content"
+
+  visitor -> ks3Platform.webApplication.productSimulator.productSimulationRoute "GET simulation JSON from product page"
+  ks3Platform.webApplication.productSimulator.simulationContext -> ks3Platform.webApplication.productSimulator.productSimulation "Check optional enabled/ready profile"
+  ks3Platform.webApplication.productSimulator.simulationContext -> ks3Platform.webApplication.productSimulator.productSimulatorTemplate "Provide public input bounds and display flags"
+  ks3Platform.webApplication.productSimulator.productSimulatorTemplate -> ks3Platform.webApplication.productSimulator.productSimulatorBrowser "Load conditional browser controller"
+  ks3Platform.webApplication.productSimulator.productSimulatorBrowser -> ks3Platform.webApplication.productSimulator.productSimulationRoute "Fetch amount, tenor, and optional recurring amount"
+  ks3Platform.webApplication.productSimulator.productSimulationRoute -> ks3Platform.webApplication.productSimulator.productSimulationView "Route GET request"
+  ks3Platform.webApplication.productSimulator.productSimulationView -> ks3Platform.webApplication.productCatalogue.publishedProducts "Resolve published product in active category"
+  ks3Platform.webApplication.productSimulator.productSimulationView -> ks3Platform.webApplication.productSimulator.productSimulation "Reject disabled or incomplete configuration"
+  ks3Platform.webApplication.productSimulator.productSimulationView -> ks3Platform.webApplication.productSimulator.simulationEngine "Validate inputs and calculate result"
+  ks3Platform.webApplication.productSimulator.simulationEngine -> ks3Platform.webApplication.productSimulator.rateResolver "Resolve fixed, tiered, or progressive rate"
+  ks3Platform.webApplication.productSimulator.simulationEngine -> ks3Platform.webApplication.productSimulator.feeEvaluator "Evaluate upfront, periodic, and maturity charges"
+  ks3Platform.webApplication.productSimulator.simulationEngine -> ks3Platform.webApplication.productSimulator.breakdownPolicy "Aggregate monthly schedule for table and chart"
+  ks3Platform.webApplication.productSimulator.rateResolver -> ks3Platform.webApplication.productSimulator.simulationRateTier "Match amount/tenor bands"
+  ks3Platform.webApplication.productSimulator.feeEvaluator -> ks3Platform.webApplication.productSimulator.simulationFeeRule "Apply charge rules and caps"
+  ks3Platform.webApplication.productSimulator.breakdownPolicy -> ks3Platform.webApplication.productSimulator.simulationBreakdownBand "Choose highest-priority custom interval when configured"
+  ks3Platform.webApplication.productSimulator.productSimulation -> ks3Platform.webApplication.productCatalogue.product "Belongs one-to-one to a product"
+  ks3Platform.webApplication.productSimulator.productSimulation -> ks3Platform.webApplication.productSimulator.simulationRateTier "Owns ordered rate tiers"
+  ks3Platform.webApplication.productSimulator.productSimulation -> ks3Platform.webApplication.productSimulator.simulationFeeRule "Owns ordered fee and tax rules"
+  ks3Platform.webApplication.productSimulator.productSimulation -> ks3Platform.webApplication.productSimulator.simulationBreakdownBand "Owns optional breakdown overrides"
+  ks3Platform.webApplication.productSimulator.productSimulationAdmin -> ks3Platform.webApplication.productSimulator.productSimulation "Manage profile and readiness"
+  ks3Platform.webApplication.productSimulator.productSimulatorBrowser -> ks3Platform.webApplication.productSimulator.productSimulatorTemplate "Render result, graph, rules, table, or field errors"
+
+  ks3Platform.webApplication.p2pDiscovery.p2pListRoute -> ks3Platform.webApplication.p2pDiscovery.p2pListView "Routes request"
+  ks3Platform.webApplication.p2pDiscovery.p2pDetailRoute -> ks3Platform.webApplication.p2pDiscovery.p2pDetailView "Routes request"
+  ks3Platform.webApplication.p2pDiscovery.p2pListView -> ks3Platform.webApplication.p2pDiscovery.p2pProject "Queries published opportunities"
+  ks3Platform.webApplication.p2pDiscovery.p2pListView -> ks3Platform.webApplication.p2pDiscovery.seoContext "Loads list SEO"
+  ks3Platform.webApplication.p2pDiscovery.p2pDetailView -> ks3Platform.webApplication.p2pDiscovery.p2pProject "Loads project and prospectus"
+  ks3Platform.webApplication.p2pDiscovery.p2pDetailView -> ks3Platform.webApplication.p2pDiscovery.seoContext "Loads detail SEO"
+  ks3Platform.webApplication.p2pDiscovery.seoContext -> ks3Platform.webApplication.p2pDiscovery.p2pSeo "Reads singleton SEO"
+  ks3Platform.webApplication.p2pDiscovery.p2pProject -> ks3Platform.webApplication.p2pDiscovery.p2pCategory "Belongs to active category"
+  ks3Platform.webApplication.p2pDiscovery.p2pProject -> ks3Platform.webApplication.purchaseWorkflow.p2pPurchase "Aggregates reserving and paid slots"
+  ks3Platform.webApplication.p2pDiscovery.p2pProject -> ks3Platform.webApplication.publicExperience.contentBlockLibrary "Stores structured opportunity content"
+
+  // ---------------------------------------------------------------------------
+  // L4 relationships — purchase creation
+  // ---------------------------------------------------------------------------
+
+  ks3Platform.webApplication.purchaseWorkflow.purchaseRoute -> ks3Platform.webApplication.purchaseWorkflow.purchaseView "Routes GET/POST"
+  ks3Platform.webApplication.purchaseWorkflow.purchaseView -> ks3Platform.webApplication.p2pDiscovery.p2pProject "Loads purchasable published project"
+  ks3Platform.webApplication.purchaseWorkflow.purchaseView -> ks3Platform.webApplication.purchaseWorkflow.purchaseForm "Validates investor input"
+  ks3Platform.webApplication.purchaseWorkflow.purchaseView -> ks3Platform.webApplication.purchaseWorkflow.createPurchase "Starts purchase after valid POST"
+  ks3Platform.webApplication.purchaseWorkflow.purchaseForm -> ks3Platform.webApplication.purchaseWorkflow.p2pPurchase "Defines ModelForm fields"
+  ks3Platform.webApplication.purchaseWorkflow.purchaseForm -> ks3Platform.webApplication.p2pDiscovery.p2pProject "Validates requested slots against availability"
+  ks3Platform.webApplication.purchaseWorkflow.createPurchase -> ks3Platform.webApplication.p2pDiscovery.p2pProject "SELECT FOR UPDATE and rechecks can_purchase"
+  ks3Platform.webApplication.purchaseWorkflow.createPurchase -> ks3Platform.webApplication.purchaseWorkflow.availabilityService "Rechecks remaining slots"
+  ks3Platform.webApplication.purchaseWorkflow.availabilityService -> ks3Platform.webApplication.purchaseWorkflow.p2pPurchase "Sums reserving statuses"
+  ks3Platform.webApplication.purchaseWorkflow.createPurchase -> ks3Platform.webApplication.purchaseWorkflow.pricingService "Calculates immutable snapshot"
+  ks3Platform.webApplication.purchaseWorkflow.pricingService -> ks3Platform.webApplication.purchaseWorkflow.purchasePrice "Returns value object"
+  ks3Platform.webApplication.purchaseWorkflow.createPurchase -> ks3Platform.webApplication.purchaseWorkflow.p2pPurchase "Creates status=creating and stores snapshot"
+  ks3Platform.webApplication.purchaseWorkflow.createPurchase -> ks3Platform.webApplication.xenditAdapter.createXenditSession "Creates provider session"
+  ks3Platform.webApplication.xenditAdapter.createXenditSession -> ks3Platform.webApplication.xenditAdapter.xenditRequest "POST /sessions"
+  ks3Platform.webApplication.xenditAdapter.xenditRequest -> xendit "Authenticated HTTPS JSON"
+  ks3Platform.webApplication.xenditAdapter.xenditService -> ks3Platform.webApplication.xenditAdapter.xenditSetting "Loads active credentials"
+  ks3Platform.webApplication.xenditAdapter.createXenditSession -> ks3Platform.webApplication.xenditAdapter.xenditSetting "Uses duration and API URL"
+  ks3Platform.webApplication.purchaseWorkflow.createPurchase -> ks3Platform.webApplication.purchaseWorkflow.p2pPurchase "Stores session/link/expiry; transitions to waiting_payment or failed"
+
+  // ---------------------------------------------------------------------------
+  // L4 relationships — payment experience and reconciliation
+  // ---------------------------------------------------------------------------
+
+  ks3Platform.webApplication.paymentExperience.waitingRoute -> ks3Platform.webApplication.paymentExperience.waitingView "Routes request"
+  ks3Platform.webApplication.paymentExperience.waitingView -> ks3Platform.webApplication.purchaseWorkflow.p2pPurchase "Loads purchase and checks paid state"
+  ks3Platform.webApplication.paymentExperience.waitingView -> ks3Platform.webApplication.paymentExperience.waitingTemplate "Renders waiting page"
+  ks3Platform.webApplication.paymentExperience.waitingTemplate -> xendit "Embeds payment_link_url in iframe"
+  ks3Platform.webApplication.paymentExperience.waitingTemplate -> ks3Platform.webApplication.paymentExperience.paymentStatusPoller "Starts polling after DOM ready"
+  ks3Platform.webApplication.paymentExperience.paymentStatusPoller -> ks3Platform.webApplication.paymentExperience.statusRoute "GET JSON status"
+  ks3Platform.webApplication.paymentExperience.statusRoute -> ks3Platform.webApplication.paymentExperience.statusView "Routes request"
+  ks3Platform.webApplication.paymentExperience.statusView -> ks3Platform.webApplication.purchaseWorkflow.p2pPurchase "Loads current local state"
+  ks3Platform.webApplication.paymentExperience.statusView -> ks3Platform.webApplication.paymentReconciliation.synchronizePayment "Reconciles pending purchase at most every 10 seconds"
+  ks3Platform.webApplication.paymentReconciliation.synchronizePayment -> ks3Platform.webApplication.xenditAdapter.getXenditSession "Fetches provider status"
+  ks3Platform.webApplication.xenditAdapter.getXenditSession -> ks3Platform.webApplication.xenditAdapter.xenditRequest "GET /sessions/{session_id}"
+  ks3Platform.webApplication.paymentReconciliation.synchronizePayment -> ks3Platform.webApplication.paymentReconciliation.applyPaymentUpdate "Applies normalized transition"
+
+  xendit -> ks3Platform.webApplication.paymentReconciliation.webhookRoute "POST payment-session event"
+  ks3Platform.webApplication.paymentReconciliation.webhookRoute -> ks3Platform.webApplication.paymentReconciliation.webhookView "Routes callback"
+  ks3Platform.webApplication.paymentReconciliation.webhookView -> ks3Platform.webApplication.xenditAdapter.xenditSetting "Validates callback token"
+  ks3Platform.webApplication.paymentReconciliation.webhookView -> ks3Platform.webApplication.purchaseWorkflow.p2pPurchase "Finds purchase and rejects duplicate webhook id"
+  ks3Platform.webApplication.paymentReconciliation.webhookView -> ks3Platform.webApplication.paymentReconciliation.applyPaymentUpdate "Applies normalized transition"
+
+  ks3Platform.webApplication.paymentReconciliation.applyPaymentUpdate -> ks3Platform.webApplication.purchaseWorkflow.p2pPurchase "Locks and validates reference/session/amount/currency; stores state and audit"
+  ks3Platform.webApplication.paymentReconciliation.applyPaymentUpdate -> ks3Platform.webApplication.notificationService.sendPaidEmail "Schedules once after first paid commit"
+  ks3Platform.webApplication.notificationService.sendPaidEmail -> ks3Platform.webApplication.purchaseWorkflow.p2pPurchase "Checks/stores idempotency and delivery audit"
+  ks3Platform.webApplication.notificationService.sendPaidEmail -> ks3Platform.webApplication.notificationService.emailSetting "Loads SMTP configuration"
+  ks3Platform.webApplication.notificationService.sendPaidEmail -> ks3Platform.webApplication.publicExperience.contactSetting "Loads reply-to/contact data"
+  ks3Platform.webApplication.notificationService.sendPaidEmail -> ks3Platform.webApplication.notificationService.paymentEmailTemplates "Renders subject/text/HTML"
+  ks3Platform.webApplication.notificationService.sendPaidEmail -> smtpProvider "Sends multipart confirmation"
+
+  ks3Platform.webApplication.paymentExperience.returnRoute -> ks3Platform.webApplication.paymentExperience.returnView "Routes iframe return"
+  ks3Platform.webApplication.paymentExperience.returnView -> ks3Platform.webApplication.xenditAdapter.xenditSetting "Builds configured local return target"
+  ks3Platform.webApplication.paymentExperience.completionRoute -> ks3Platform.webApplication.paymentExperience.completionView "Routes request"
+  ks3Platform.webApplication.paymentExperience.completionView -> ks3Platform.webApplication.purchaseWorkflow.p2pPurchase "Requires paid purchase"
+  ks3Platform.webApplication.paymentExperience.completionView -> ks3Platform.webApplication.notificationService.sendPaidEmail "Retries if not sent and attempts < 3"
+  ks3Platform.webApplication.paymentExperience.completionView -> ks3Platform.webApplication.publicExperience.contactSetting "Builds WhatsApp confirmation"
+
+  // ---------------------------------------------------------------------------
+  // L4 relationships — search, CMS, and administration
+  // ---------------------------------------------------------------------------
+
+  ks3Platform.webApplication.searchComponent.searchRoute -> ks3Platform.webApplication.searchComponent.searchView "Routes query"
+  ks3Platform.webApplication.searchComponent.searchView -> ks3Platform.webApplication.searchComponent.rankedQuery "Ranks each result set"
+  ks3Platform.webApplication.searchComponent.searchView -> ks3Platform.webApplication.p2pDiscovery.p2pProject "Searches published projects"
+  ks3Platform.webApplication.searchComponent.searchView -> ks3Platform.webApplication.productCatalogue.product "Searches published products"
+  ks3Platform.webApplication.searchComponent.searchView -> ks3Platform.webApplication.publicExperience.miscellaneousPage "Searches live public pages"
+
+  administrator -> ks3Platform.webApplication.cmsAdministration.wagtailAdminRoutes "Uses authenticated Wagtail Admin"
+  administrator -> ks3Platform.webApplication.cmsAdministration.djangoAdminRoutes "Uses Django Admin when explicitly required"
+  ks3Platform.webApplication.cmsAdministration.wagtailAdminRoutes -> ks3Platform.webApplication.cmsAdministration.singletonSnippetFramework "Dispatches custom snippet/settings administration"
+  ks3Platform.webApplication.cmsAdministration.wagtailAdminRoutes -> ks3Platform.webApplication.cmsAdministration.p2pAdminGroup "Dispatches P2P administration"
+  ks3Platform.webApplication.cmsAdministration.wagtailAdminRoutes -> ks3Platform.webApplication.cmsAdministration.productAdmin "Dispatches product administration"
+  ks3Platform.webApplication.cmsAdministration.wagtailAdminRoutes -> ks3Platform.webApplication.cmsAdministration.settingsAdmin "Dispatches settings administration"
+  ks3Platform.webApplication.cmsAdministration.wagtailDocumentRoutes -> objectStorage "Serves stored documents"
+  ks3Platform.webApplication.cmsAdministration.singletonSnippetFramework -> ks3Platform.webApplication.cmsAdministration.singletonModel "Provides singleton edit behavior"
+  ks3Platform.webApplication.cmsAdministration.p2pAdminGroup -> ks3Platform.webApplication.p2pDiscovery.p2pProject "Manages projects"
+  ks3Platform.webApplication.cmsAdministration.p2pAdminGroup -> ks3Platform.webApplication.purchaseWorkflow.p2pPurchase "Manages purchases"
+  ks3Platform.webApplication.cmsAdministration.productAdmin -> ks3Platform.webApplication.productCatalogue.product "Manages products"
+  administrator -> ks3Platform.webApplication.productSimulator.productSimulationAdmin "Configure optional product simulations"
+  ks3Platform.webApplication.cmsAdministration.settingsAdmin -> ks3Platform.webApplication.publicExperience.homePageSetting "Manages homepage"
+  ks3Platform.webApplication.cmsAdministration.settingsAdmin -> ks3Platform.webApplication.xenditAdapter.xenditSetting "Manages provider settings"
+  ks3Platform.webApplication.cmsAdministration.settingsAdmin -> ks3Platform.webApplication.notificationService.emailSetting "Manages SMTP settings"
+
+  ks3Platform.webApplication.cmsAdministration.wagtailAdminRoutes -> ks3Platform.webApplication.adminOperations.adminDashboard "Renders custom dashboard"
+  ks3Platform.webApplication.cmsAdministration.wagtailAdminRoutes -> ks3Platform.webApplication.adminOperations.globalAdminSearchRoute "Mounts custom search URL"
+  ks3Platform.webApplication.adminOperations.globalAdminSearchRoute -> ks3Platform.webApplication.adminOperations.globalAdminSearch "Routes authorized search"
+  ks3Platform.webApplication.cmsAdministration.wagtailAdminRoutes -> ks3Platform.webApplication.adminOperations.exportPurchasesRoute "Mounts project CSV URL"
+  ks3Platform.webApplication.adminOperations.exportPurchasesRoute -> ks3Platform.webApplication.adminOperations.exportPurchases "Routes authorized export"
+  ks3Platform.webApplication.adminOperations.adminDashboard -> ks3Platform.webApplication.p2pDiscovery.p2pProject "Summarizes open projects"
+  ks3Platform.webApplication.adminOperations.adminDashboard -> ks3Platform.webApplication.purchaseWorkflow.p2pPurchase "Aggregates payment state and totals"
+  ks3Platform.webApplication.adminOperations.globalAdminSearch -> ks3Platform.webApplication.p2pDiscovery.p2pProject "Searches projects"
+  ks3Platform.webApplication.adminOperations.globalAdminSearch -> ks3Platform.webApplication.purchaseWorkflow.p2pPurchase "Searches transactions"
+  ks3Platform.webApplication.adminOperations.globalAdminSearch -> ks3Platform.webApplication.productCatalogue.product "Searches products"
+  ks3Platform.webApplication.adminOperations.globalAdminSearch -> ks3Platform.webApplication.publicExperience.miscellaneousPage "Searches Wagtail pages"
+  ks3Platform.webApplication.adminOperations.projectReport -> ks3Platform.webApplication.purchaseWorkflow.p2pPurchase "Aggregates project funding metrics"
+  ks3Platform.webApplication.adminOperations.exportPurchases -> ks3Platform.webApplication.purchaseWorkflow.p2pPurchase "Exports project transactions"
+
+  // ---------------------------------------------------------------------------
+  // L4 relationships — operational CLI
+  // ---------------------------------------------------------------------------
+
+  ks3Platform.operationsCli.acceptanceHarness.simulatePurchase -> ks3Platform.operationsCli.acceptanceHarness.selectProject "Selects scenario project"
+  ks3Platform.operationsCli.acceptanceHarness.selectProject -> ks3Platform.webApplication.p2pDiscovery.p2pProject "Queries purchasable projects"
+  ks3Platform.operationsCli.acceptanceHarness.simulatePurchase -> ks3Platform.operationsCli.acceptanceHarness.collectForm "Collects scenario data"
+  ks3Platform.operationsCli.acceptanceHarness.collectForm -> ks3Platform.webApplication.purchaseWorkflow.purchaseForm "Reuses production validation"
+  ks3Platform.operationsCli.acceptanceHarness.simulatePurchase -> ks3Platform.webApplication.purchaseWorkflow.createPurchase "Runs real creation workflow"
+  ks3Platform.operationsCli.acceptanceHarness.simulatePurchase -> ks3Platform.operationsCli.acceptanceHarness.waitForPayment "Observes completion"
+  ks3Platform.operationsCli.acceptanceHarness.waitForPayment -> ks3Platform.webApplication.paymentReconciliation.synchronizePayment "Poll mode reconciles provider"
+  ks3Platform.operationsCli.acceptanceHarness.waitForPayment -> ks3Platform.webApplication.purchaseWorkflow.p2pPurchase "Webhook mode observes database state"
+  ks3Platform.operationsCli.seedCommands.seedP2p -> ks3Platform.webApplication.p2pDiscovery.p2pProject "Creates showcase opportunities"
+  ks3Platform.operationsCli.seedCommands.seedProducts -> ks3Platform.webApplication.productCatalogue.product "Creates showcase products"
+  ks3Platform.operationsCli.seedCommands.seedProducts -> ks3Platform.operationsCli.seedCommands.currentProductSimulationSeeds "Seed simulator profiles after products"
+  ks3Platform.operationsCli.seedCommands.seedProductSimulators -> ks3Platform.operationsCli.seedCommands.currentProductSimulationSeeds "Seed profiles without rewriting product content"
+  ks3Platform.operationsCli.seedCommands.currentProductSimulationSeeds -> ks3Platform.webApplication.productSimulator.productSimulation "Upsert seven product-specific profiles and replace child rules atomically"
+  ks3Platform.operationsCli.seedCommands.seedSettings -> ks3Platform.webApplication.publicExperience.homePageSetting "Creates homepage configuration"
+  ks3Platform.operationsCli.seedCommands.seedPages -> ks3Platform.webApplication.publicExperience.miscellaneousPage "Creates information pages"
+}
+
+views {
+  // ---------------------------------------------------------------------------
+  // L1 — System Context
+  // ---------------------------------------------------------------------------
+
+  view L1_01_System_Context {
+    title "L1 — System Context — Koperasi KS3 Digital Platform"
+    description "Who uses the platform and which external systems it depends on. No containers, components, or code are expanded."
+    include visitor, investor, administrator, operator, ks3Platform, xendit, objectStorage, smtpProvider
+  }
+
+  view L1_02_P2P_Payment_Context {
+    title "L1 — System Context — P2P Funding & Payment"
+    description "Context focused on the investor journey and external payment/email dependencies."
+    include investor, administrator, ks3Platform, xendit, smtpProvider
+  }
+
+  // ---------------------------------------------------------------------------
+  // L2 — Containers
+  // ---------------------------------------------------------------------------
+
+  view L2_01_Container_Overview {
+    title "L2 — Container — Runtime & Data Boundaries"
+    description "Deployable/runnable units: web process, relational database, and on-demand operational CLI."
+    include visitor, investor, administrator, operator
+    include ks3Platform.webApplication, ks3Platform.postgres, ks3Platform.operationsCli
+    include xendit, objectStorage, smtpProvider
+  }
+
+  view L2_02_Production_Deployment_Responsibilities {
+    title "L2 — Container — Production Responsibilities"
+    description "Production web runtime and its external infrastructure dependencies. Reverse proxy/host infrastructure is not present in repository configuration and is intentionally not invented."
+    include administrator, investor
+    include ks3Platform.webApplication, ks3Platform.postgres
+    include xendit, objectStorage, smtpProvider
+  }
+
+  // ---------------------------------------------------------------------------
+  // L3 — Components
+  // ---------------------------------------------------------------------------
+
+  view L3_01_Web_Application_Components {
+    title "L3 — Component — Django/Wagtail Web Application"
+    description "Major responsibilities inside the monolith and their runtime collaborations."
+    include visitor, investor, administrator
+    include ks3Platform.webApplication.publicExperience
+    include ks3Platform.webApplication.productCatalogue
+    include ks3Platform.webApplication.productSimulator
+    include ks3Platform.webApplication.p2pDiscovery
+    include ks3Platform.webApplication.purchaseWorkflow
+    include ks3Platform.webApplication.paymentExperience
+    include ks3Platform.webApplication.paymentReconciliation
+    include ks3Platform.webApplication.xenditAdapter
+    include ks3Platform.webApplication.notificationService
+    include ks3Platform.webApplication.searchComponent
+    include ks3Platform.webApplication.cmsAdministration
+    include ks3Platform.webApplication.adminOperations
+    include ks3Platform.postgres, xendit, objectStorage, smtpProvider
+  }
+
+  view L3_02_P2P_Payment_Components {
+    title "L3 — Component — P2P Purchase & Payment"
+    description "Business components responsible for discovery, purchase creation, browser payment, reconciliation, provider access, and notification."
+    include investor, administrator
+    include ks3Platform.webApplication.p2pDiscovery
+    include ks3Platform.webApplication.purchaseWorkflow
+    include ks3Platform.webApplication.paymentExperience
+    include ks3Platform.webApplication.paymentReconciliation
+    include ks3Platform.webApplication.xenditAdapter
+    include ks3Platform.webApplication.notificationService
+    include ks3Platform.postgres, xendit, smtpProvider
+  }
+
+  view L3_03_Content_Catalogue_Search_Components {
+    title "L3 — Component — Content, Catalogue & Search"
+    description "Public content composition, product/P2P discovery, optional product simulation, unified search, and Wagtail management."
+    include visitor, administrator
+    include ks3Platform.webApplication.publicExperience
+    include ks3Platform.webApplication.productCatalogue
+    include ks3Platform.webApplication.productSimulator
+    include ks3Platform.webApplication.p2pDiscovery
+    include ks3Platform.webApplication.searchComponent
+    include ks3Platform.webApplication.cmsAdministration
+    include ks3Platform.webApplication.adminOperations
+    include ks3Platform.postgres, objectStorage
+  }
+
+  view L3_04_Operational_CLI_Components {
+    title "L3 — Component — Operational CLI"
+    description "Management-command components and the production services they deliberately reuse, including deterministic product-simulator profiles."
+    include operator
+    include ks3Platform.operationsCli.acceptanceHarness
+    include ks3Platform.operationsCli.seedCommands
+    include ks3Platform.webApplication.productSimulator
+    include ks3Platform.webApplication.purchaseWorkflow
+    include ks3Platform.webApplication.paymentReconciliation
+    include ks3Platform.webApplication.xenditAdapter
+    include ks3Platform.postgres, xendit
+  }
+
+  // ---------------------------------------------------------------------------
+  // L4 — Code
+  // ---------------------------------------------------------------------------
+
+  view L4_01_Purchase_Creation_Code {
+    title "L4 — Code — P2P Purchase Creation"
+    description "Exact route → view → form → workflow → availability/pricing → models → Xendit call chain."
+    include investor
+    include ks3Platform.webApplication.purchaseWorkflow.purchaseRoute
+    include ks3Platform.webApplication.purchaseWorkflow.purchaseView
+    include ks3Platform.webApplication.purchaseWorkflow.purchaseForm
+    include ks3Platform.webApplication.purchaseWorkflow.createPurchase
+    include ks3Platform.webApplication.purchaseWorkflow.availabilityService
+    include ks3Platform.webApplication.purchaseWorkflow.pricingService
+    include ks3Platform.webApplication.purchaseWorkflow.purchasePrice
+    include ks3Platform.webApplication.purchaseWorkflow.p2pPurchase
+    include ks3Platform.webApplication.p2pDiscovery.p2pProject
+    include ks3Platform.webApplication.xenditAdapter.createXenditSession
+    include ks3Platform.webApplication.xenditAdapter.xenditRequest
+    include ks3Platform.webApplication.xenditAdapter.xenditSetting
+    include xendit
+  }
+
+  view L4_02_Browser_Payment_Code {
+    title "L4 — Code — Browser Payment & Polling"
+    description "Waiting page, Xendit iframe, local JSON polling, active reconciliation, browser return, and paid completion."
+    include investor
+    include ks3Platform.webApplication.paymentExperience.waitingRoute
+    include ks3Platform.webApplication.paymentExperience.waitingView
+    include ks3Platform.webApplication.paymentExperience.waitingTemplate
+    include ks3Platform.webApplication.paymentExperience.paymentStatusPoller
+    include ks3Platform.webApplication.paymentExperience.statusRoute
+    include ks3Platform.webApplication.paymentExperience.statusView
+    include ks3Platform.webApplication.paymentReconciliation.synchronizePayment
+    include ks3Platform.webApplication.xenditAdapter.getXenditSession
+    include ks3Platform.webApplication.xenditAdapter.xenditRequest
+    include ks3Platform.webApplication.paymentReconciliation.applyPaymentUpdate
+    include ks3Platform.webApplication.purchaseWorkflow.p2pPurchase
+    include ks3Platform.webApplication.paymentExperience.returnRoute
+    include ks3Platform.webApplication.paymentExperience.returnView
+    include ks3Platform.webApplication.paymentExperience.completionRoute
+    include ks3Platform.webApplication.paymentExperience.completionView
+    include xendit
+  }
+
+  view L4_03_Webhook_Transition_Email_Code {
+    title "L4 — Code — Xendit Webhook, State Transition & Email"
+    description "Callback authentication/idempotency, validated state transition, after-commit email, and delivery audit."
+    include xendit
+    include ks3Platform.webApplication.paymentReconciliation.webhookRoute
+    include ks3Platform.webApplication.paymentReconciliation.webhookView
+    include ks3Platform.webApplication.xenditAdapter.xenditSetting
+    include ks3Platform.webApplication.purchaseWorkflow.p2pPurchase
+    include ks3Platform.webApplication.paymentReconciliation.applyPaymentUpdate
+    include ks3Platform.webApplication.notificationService.sendPaidEmail
+    include ks3Platform.webApplication.notificationService.emailSetting
+    include ks3Platform.webApplication.publicExperience.contactSetting
+    include ks3Platform.webApplication.notificationService.paymentEmailTemplates
+    include smtpProvider
+  }
+
+  view L4_04_Public_Content_Catalogue_Code {
+    title "L4 — Code — Homepage, Products & Public Content"
+    description "Homepage composition, global navigation, catalogue queries, Wagtail pages/settings, and structured content."
+    include visitor
+    include ks3Platform.webApplication.publicExperience.landingRoute
+    include ks3Platform.webApplication.publicExperience.landingView
+    include ks3Platform.webApplication.publicExperience.globalNavigation
+    include ks3Platform.webApplication.publicExperience.globalContactSettings
+    include ks3Platform.webApplication.publicExperience.homePage
+    include ks3Platform.webApplication.publicExperience.homePageSetting
+    include ks3Platform.webApplication.publicExperience.contactSetting
+    include ks3Platform.webApplication.publicExperience.miscellaneousIndexPage
+    include ks3Platform.webApplication.publicExperience.miscellaneousPage
+    include ks3Platform.webApplication.publicExperience.contentBlockLibrary
+    include ks3Platform.webApplication.publicExperience.publicTemplates
+    include ks3Platform.webApplication.productCatalogue.productLegacyRedirect
+    include ks3Platform.webApplication.productCatalogue.productListRoute
+    include ks3Platform.webApplication.productCatalogue.productDetailRoute
+    include ks3Platform.webApplication.productCatalogue.productListView
+    include ks3Platform.webApplication.productCatalogue.productDetailView
+    include ks3Platform.webApplication.productCatalogue.publishedProducts
+    include ks3Platform.webApplication.productCatalogue.product
+    include ks3Platform.webApplication.productCatalogue.productCategory
+    include ks3Platform.webApplication.productCatalogue.productSeo
+  }
+
+  view L4_05_P2P_Discovery_Search_Code {
+    title "L4 — Code — P2P Discovery & Unified Search"
+    description "Published project queries, project aggregates, SEO, and cross-domain public search."
+    include visitor
+    include ks3Platform.webApplication.p2pDiscovery.p2pListRoute
+    include ks3Platform.webApplication.p2pDiscovery.p2pDetailRoute
+    include ks3Platform.webApplication.p2pDiscovery.p2pListView
+    include ks3Platform.webApplication.p2pDiscovery.p2pDetailView
+    include ks3Platform.webApplication.p2pDiscovery.seoContext
+    include ks3Platform.webApplication.p2pDiscovery.p2pProject
+    include ks3Platform.webApplication.p2pDiscovery.p2pCategory
+    include ks3Platform.webApplication.p2pDiscovery.p2pSeo
+    include ks3Platform.webApplication.purchaseWorkflow.p2pPurchase
+    include ks3Platform.webApplication.searchComponent.searchRoute
+    include ks3Platform.webApplication.searchComponent.searchView
+    include ks3Platform.webApplication.searchComponent.rankedQuery
+    include ks3Platform.webApplication.productCatalogue.product
+    include ks3Platform.webApplication.publicExperience.miscellaneousPage
+  }
+
+  view L4_06_Admin_Reporting_Code {
+    title "L4 — Code — Wagtail Administration & Reporting"
+    description "Singleton settings administration, operational dashboard, global search, funding analytics, and CSV export."
+    include administrator
+    include ks3Platform.webApplication.cmsAdministration.wagtailAdminRoutes
+    include ks3Platform.webApplication.cmsAdministration.djangoAdminRoutes
+    include ks3Platform.webApplication.cmsAdministration.wagtailDocumentRoutes
+    include ks3Platform.webApplication.cmsAdministration.singletonSnippetFramework
+    include ks3Platform.webApplication.cmsAdministration.singletonModel
+    include ks3Platform.webApplication.cmsAdministration.p2pAdminGroup
+    include ks3Platform.webApplication.cmsAdministration.productAdmin
+    include ks3Platform.webApplication.productSimulator.productSimulationAdmin
+    include ks3Platform.webApplication.productSimulator.productSimulation
+    include ks3Platform.webApplication.cmsAdministration.settingsAdmin
+    include ks3Platform.webApplication.adminOperations.adminDashboard
+    include ks3Platform.webApplication.adminOperations.globalAdminSearchRoute
+    include ks3Platform.webApplication.adminOperations.globalAdminSearch
+    include ks3Platform.webApplication.adminOperations.projectReport
+    include ks3Platform.webApplication.adminOperations.exportPurchasesRoute
+    include ks3Platform.webApplication.adminOperations.exportPurchases
+    include ks3Platform.webApplication.p2pDiscovery.p2pProject
+    include ks3Platform.webApplication.purchaseWorkflow.p2pPurchase
+    include ks3Platform.webApplication.productCatalogue.product
+    include ks3Platform.webApplication.publicExperience.miscellaneousPage
+  }
+
+  view L4_07_Acceptance_CLI_Code {
+    title "L4 — Code — P2P End-to-End Acceptance CLI"
+    description "Interactive scenario runner reusing production validation, workflow, persistence, and provider reconciliation."
+    include operator
+    include ks3Platform.operationsCli.acceptanceHarness.simulatePurchase
+    include ks3Platform.operationsCli.acceptanceHarness.selectProject
+    include ks3Platform.operationsCli.acceptanceHarness.collectForm
+    include ks3Platform.operationsCli.acceptanceHarness.waitForPayment
+    include ks3Platform.webApplication.p2pDiscovery.p2pProject
+    include ks3Platform.webApplication.purchaseWorkflow.purchaseForm
+    include ks3Platform.webApplication.purchaseWorkflow.createPurchase
+    include ks3Platform.webApplication.paymentReconciliation.synchronizePayment
+    include ks3Platform.webApplication.purchaseWorkflow.p2pPurchase
+    include ks3Platform.webApplication.xenditAdapter.xenditService
+    include ks3Platform.webApplication.xenditAdapter.xenditSetting
+    include xendit
+  }
+
+  view L4_08_Public_and_API_Endpoint_Inventory {
+    title "L4 — Code — Public & API Endpoint Inventory"
+    description "Complete inventory: 17 repository-owned public/API route declarations plus 3 framework-owned public route families (Wagtail catch-all and DEBUG-only static/media). Every concrete route is paired with its handler."
+    include visitor, investor, xendit
+    include ks3Platform.webApplication.publicExperience.landingRoute
+    include ks3Platform.webApplication.publicExperience.landingView
+    include ks3Platform.webApplication.publicExperience.robotsRoute
+    include ks3Platform.webApplication.publicExperience.robotsView
+    include ks3Platform.webApplication.publicExperience.llmsRoute
+    include ks3Platform.webApplication.publicExperience.llmsView
+    include ks3Platform.webApplication.publicExperience.sitemapRoute
+    include ks3Platform.webApplication.publicExperience.sitemapView
+    include ks3Platform.webApplication.publicExperience.wagtailPageRoutes
+    include ks3Platform.webApplication.publicExperience.debugStaticRoutes
+    include ks3Platform.webApplication.publicExperience.debugMediaRoutes
+    include ks3Platform.webApplication.publicExperience.homePage
+    include ks3Platform.webApplication.publicExperience.miscellaneousPage
+    include ks3Platform.webApplication.productCatalogue.productLegacyRedirect
+    include ks3Platform.webApplication.productCatalogue.productListRoute
+    include ks3Platform.webApplication.productCatalogue.productListView
+    include ks3Platform.webApplication.productCatalogue.productDetailRoute
+    include ks3Platform.webApplication.productCatalogue.productDetailView
+    include ks3Platform.webApplication.productSimulator.productSimulationRoute
+    include ks3Platform.webApplication.productSimulator.productSimulationView
+    include ks3Platform.webApplication.p2pDiscovery.p2pListRoute
+    include ks3Platform.webApplication.p2pDiscovery.p2pListView
+    include ks3Platform.webApplication.p2pDiscovery.p2pDetailRoute
+    include ks3Platform.webApplication.p2pDiscovery.p2pDetailView
+    include ks3Platform.webApplication.purchaseWorkflow.purchaseRoute
+    include ks3Platform.webApplication.purchaseWorkflow.purchaseView
+    include ks3Platform.webApplication.paymentExperience.waitingRoute
+    include ks3Platform.webApplication.paymentExperience.waitingView
+    include ks3Platform.webApplication.paymentExperience.completionRoute
+    include ks3Platform.webApplication.paymentExperience.completionView
+    include ks3Platform.webApplication.paymentExperience.returnRoute
+    include ks3Platform.webApplication.paymentExperience.returnView
+    include ks3Platform.webApplication.paymentExperience.statusRoute
+    include ks3Platform.webApplication.paymentExperience.statusView
+    include ks3Platform.webApplication.paymentReconciliation.webhookRoute
+    include ks3Platform.webApplication.paymentReconciliation.webhookView
+    include ks3Platform.webApplication.searchComponent.searchRoute
+    include ks3Platform.webApplication.searchComponent.searchView
+  }
+
+  view L4_09_Admin_and_Framework_Route_Inventory {
+    title "L4 — Code — Admin & Framework Route Inventory"
+    description "Complete inventory: 2 repository-owned custom admin routes plus 3 framework-owned route families. Framework-generated child routes are grouped rather than misleadingly enumerated."
+    include administrator
+    include ks3Platform.webApplication.cmsAdministration.wagtailAdminRoutes
+    include ks3Platform.webApplication.cmsAdministration.djangoAdminRoutes
+    include ks3Platform.webApplication.cmsAdministration.wagtailDocumentRoutes
+    include ks3Platform.webApplication.cmsAdministration.singletonSnippetFramework
+    include ks3Platform.webApplication.cmsAdministration.p2pAdminGroup
+    include ks3Platform.webApplication.cmsAdministration.productAdmin
+    include ks3Platform.webApplication.productSimulator.productSimulationAdmin
+    include ks3Platform.webApplication.cmsAdministration.settingsAdmin
+    include ks3Platform.webApplication.adminOperations.adminDashboard
+    include ks3Platform.webApplication.adminOperations.globalAdminSearchRoute
+    include ks3Platform.webApplication.adminOperations.globalAdminSearch
+    include ks3Platform.webApplication.adminOperations.exportPurchasesRoute
+    include ks3Platform.webApplication.adminOperations.exportPurchases
+    include objectStorage
+  }
+
+  view L4_10_Product_Financial_Simulator_Code {
+    title "L4 — Code — Product Financial Simulator"
+    description "Exact product page → fail-closed configuration → browser consumer → GET endpoint → Decimal schedule → tier/fee evaluation → adaptive graph/table chain."
+    include visitor
+    include ks3Platform.webApplication.productCatalogue.productDetailRoute
+    include ks3Platform.webApplication.productCatalogue.productDetailView
+    include ks3Platform.webApplication.productSimulator.simulationContext
+    include ks3Platform.webApplication.productSimulator.productSimulation
+    include ks3Platform.webApplication.productSimulator.productSimulatorTemplate
+    include ks3Platform.webApplication.productSimulator.productSimulatorBrowser
+    include ks3Platform.webApplication.productSimulator.productSimulationRoute
+    include ks3Platform.webApplication.productSimulator.productSimulationView
+    include ks3Platform.webApplication.productSimulator.simulationEngine
+    include ks3Platform.webApplication.productSimulator.rateResolver
+    include ks3Platform.webApplication.productSimulator.feeEvaluator
+    include ks3Platform.webApplication.productSimulator.breakdownPolicy
+    include ks3Platform.webApplication.productSimulator.simulationRateTier
+    include ks3Platform.webApplication.productSimulator.simulationFeeRule
+    include ks3Platform.webApplication.productSimulator.simulationBreakdownBand
+  }
+
+  view L4_11_Product_Simulator_Seed_Code {
+    title "L4 — Code — Current Product Simulator Seed"
+    description "Two idempotent command entry points share one transactional seven-product preset map and persist strategy-specific profiles, tiers, fees, display flags, and disclaimers."
+    include operator
+    include ks3Platform.operationsCli.seedCommands.seedProducts
+    include ks3Platform.operationsCli.seedCommands.seedProductSimulators
+    include ks3Platform.operationsCli.seedCommands.currentProductSimulationSeeds
+    include ks3Platform.webApplication.productCatalogue.product
+    include ks3Platform.webApplication.productSimulator.productSimulation
+    include ks3Platform.webApplication.productSimulator.simulationRateTier
+    include ks3Platform.webApplication.productSimulator.simulationFeeRule
+  }
+
+  // ---------------------------------------------------------------------------
+  // FLOW — Dynamic views (supporting C4 views, not a fifth level)
+  // ---------------------------------------------------------------------------
+
+  dynamic view FLOW_01_Browse_and_Discover {
+    title "FLOW — Browse Homepage, Products & P2P Opportunities"
+    description "Public discovery flow across homepage composition, catalogue, and published P2P data."
+    visitor -> ks3Platform.webApplication.publicExperience.landingRoute "GET /"
+    ks3Platform.webApplication.publicExperience.landingRoute -> ks3Platform.webApplication.publicExperience.landingView "Dispatch route"
+    ks3Platform.webApplication.publicExperience.landingView -> ks3Platform.webApplication.publicExperience.homePageSetting "Load homepage configuration"
+    ks3Platform.webApplication.publicExperience.landingView -> ks3Platform.webApplication.productCatalogue.product "Query featured products"
+    ks3Platform.webApplication.publicExperience.landingView -> ks3Platform.webApplication.p2pDiscovery.p2pProject "Query featured opportunities"
+    ks3Platform.webApplication.publicExperience.landingView -> ks3Platform.webApplication.publicExperience.publicTemplates "Render public homepage"
+  }
+
+  dynamic view FLOW_02_Create_P2P_Purchase {
+    title "FLOW — Create P2P Purchase & Xendit Session"
+    description "Happy-path transaction from investor form submission to waiting-payment state."
+    investor -> ks3Platform.webApplication.purchaseWorkflow.purchaseRoute "POST purchase form"
+    ks3Platform.webApplication.purchaseWorkflow.purchaseRoute -> ks3Platform.webApplication.purchaseWorkflow.purchaseView "Route request"
+    ks3Platform.webApplication.purchaseWorkflow.purchaseView -> ks3Platform.webApplication.purchaseWorkflow.purchaseForm "Validate identity and slots"
+    ks3Platform.webApplication.purchaseWorkflow.purchaseView -> ks3Platform.webApplication.purchaseWorkflow.createPurchase "Execute workflow"
+    ks3Platform.webApplication.purchaseWorkflow.createPurchase -> ks3Platform.webApplication.p2pDiscovery.p2pProject "Lock and recheck project"
+    ks3Platform.webApplication.purchaseWorkflow.createPurchase -> ks3Platform.webApplication.purchaseWorkflow.pricingService "Snapshot price"
+    ks3Platform.webApplication.purchaseWorkflow.createPurchase -> ks3Platform.webApplication.purchaseWorkflow.p2pPurchase "Create status=creating"
+    ks3Platform.webApplication.purchaseWorkflow.createPurchase -> ks3Platform.webApplication.xenditAdapter.createXenditSession "Create Payment Session"
+    ks3Platform.webApplication.xenditAdapter.createXenditSession -> xendit "POST /sessions"
+    ks3Platform.webApplication.purchaseWorkflow.createPurchase -> ks3Platform.webApplication.purchaseWorkflow.p2pPurchase "Store session and status=waiting_payment"
+  }
+
+  dynamic view FLOW_03_Browser_Status_Polling {
+    title "FLOW — Browser Payment Status Polling"
+    description "Browser polls the local backend; backend rate-limits active reconciliation with Xendit."
+    investor -> ks3Platform.webApplication.paymentExperience.waitingTemplate "Open waiting page"
+    ks3Platform.webApplication.paymentExperience.waitingTemplate -> xendit "Display payment iframe"
+    ks3Platform.webApplication.paymentExperience.paymentStatusPoller -> ks3Platform.webApplication.paymentExperience.statusRoute "GET local status"
+    ks3Platform.webApplication.paymentExperience.statusRoute -> ks3Platform.webApplication.paymentExperience.statusView "Route request"
+    ks3Platform.webApplication.paymentExperience.statusView -> ks3Platform.webApplication.paymentReconciliation.synchronizePayment "Reconcile if pending and throttle acquired"
+    ks3Platform.webApplication.paymentReconciliation.synchronizePayment -> ks3Platform.webApplication.xenditAdapter.getXenditSession "Request provider state"
+    ks3Platform.webApplication.xenditAdapter.getXenditSession -> xendit "GET /sessions/{id}"
+    ks3Platform.webApplication.paymentReconciliation.synchronizePayment -> ks3Platform.webApplication.paymentReconciliation.applyPaymentUpdate "Apply validated transition"
+    ks3Platform.webApplication.paymentExperience.statusView -> ks3Platform.webApplication.paymentExperience.paymentStatusPoller "Return JSON status/redirect"
+    ks3Platform.webApplication.paymentExperience.paymentStatusPoller -> ks3Platform.webApplication.paymentExperience.completionRoute "Redirect when paid"
+  }
+
+  dynamic view FLOW_04_Xendit_Webhook {
+    title "FLOW — Xendit Webhook Reconciliation"
+    description "Provider callback reaches the same idempotent transition service used by polling."
+    xendit -> ks3Platform.webApplication.paymentReconciliation.webhookRoute "POST payment-session event"
+    ks3Platform.webApplication.paymentReconciliation.webhookRoute -> ks3Platform.webApplication.paymentReconciliation.webhookView "Route callback"
+    ks3Platform.webApplication.paymentReconciliation.webhookView -> ks3Platform.webApplication.xenditAdapter.xenditSetting "Validate x-callback-token"
+    ks3Platform.webApplication.paymentReconciliation.webhookView -> ks3Platform.webApplication.purchaseWorkflow.p2pPurchase "Resolve reference and reject duplicate webhook id"
+    ks3Platform.webApplication.paymentReconciliation.webhookView -> ks3Platform.webApplication.paymentReconciliation.applyPaymentUpdate "Validate and apply provider state"
+    ks3Platform.webApplication.paymentReconciliation.applyPaymentUpdate -> ks3Platform.webApplication.purchaseWorkflow.p2pPurchase "Persist status and audit atomically"
+    ks3Platform.webApplication.paymentReconciliation.applyPaymentUpdate -> ks3Platform.webApplication.notificationService.sendPaidEmail "On first paid transition, schedule after commit"
+  }
+
+  dynamic view FLOW_05_Paid_Email_Notification {
+    title "FLOW — Paid Purchase Email"
+    description "Idempotent email delivery and audit after a successful payment."
+    ks3Platform.webApplication.paymentReconciliation.applyPaymentUpdate -> ks3Platform.webApplication.notificationService.sendPaidEmail "Invoke after database commit"
+    ks3Platform.webApplication.notificationService.sendPaidEmail -> ks3Platform.webApplication.purchaseWorkflow.p2pPurchase "Check sent flag and increment attempt"
+    ks3Platform.webApplication.notificationService.sendPaidEmail -> ks3Platform.webApplication.notificationService.emailSetting "Load SMTP credentials"
+    ks3Platform.webApplication.notificationService.sendPaidEmail -> ks3Platform.webApplication.publicExperience.contactSetting "Load reply-to identity"
+    ks3Platform.webApplication.notificationService.sendPaidEmail -> ks3Platform.webApplication.notificationService.paymentEmailTemplates "Render subject/text/HTML"
+    ks3Platform.webApplication.notificationService.sendPaidEmail -> smtpProvider "Send email"
+    ks3Platform.webApplication.notificationService.sendPaidEmail -> ks3Platform.webApplication.purchaseWorkflow.p2pPurchase "Record success or truncated error"
+  }
+
+  dynamic view FLOW_06_Admin_Funding_Report {
+    title "FLOW — Administrator Funding Report"
+    description "Admin opens project operations and receives aggregated funding and transaction data."
+    administrator -> ks3Platform.webApplication.adminOperations.adminDashboard "Open Wagtail dashboard"
+    ks3Platform.webApplication.adminOperations.adminDashboard -> ks3Platform.webApplication.p2pDiscovery.p2pProject "Load open projects"
+    ks3Platform.webApplication.adminOperations.adminDashboard -> ks3Platform.webApplication.purchaseWorkflow.p2pPurchase "Aggregate paid/waiting/failed totals"
+    administrator -> ks3Platform.webApplication.adminOperations.projectReport "Open project report"
+    ks3Platform.webApplication.adminOperations.projectReport -> ks3Platform.webApplication.purchaseWorkflow.p2pPurchase "Build trends/statuses/top buyers"
+    administrator -> ks3Platform.webApplication.adminOperations.exportPurchases "Export CSV when required"
+  }
+
+  dynamic view FLOW_07_Acceptance_CLI {
+    title "FLOW — End-to-End P2P Acceptance CLI"
+    description "Operator executes the same production flow and chooses provider polling or webhook-only observation."
+    operator -> ks3Platform.operationsCli.acceptanceHarness.simulatePurchase "Run manage.py simulate_p2p_purchase"
+    ks3Platform.operationsCli.acceptanceHarness.simulatePurchase -> ks3Platform.operationsCli.acceptanceHarness.selectProject "Select purchasable project"
+    ks3Platform.operationsCli.acceptanceHarness.simulatePurchase -> ks3Platform.operationsCli.acceptanceHarness.collectForm "Collect and validate investor data"
+    ks3Platform.operationsCli.acceptanceHarness.simulatePurchase -> ks3Platform.webApplication.purchaseWorkflow.createPurchase "Create real purchase/session"
+    ks3Platform.operationsCli.acceptanceHarness.simulatePurchase -> ks3Platform.operationsCli.acceptanceHarness.waitForPayment "Observe selected mode"
+    ks3Platform.operationsCli.acceptanceHarness.waitForPayment -> ks3Platform.webApplication.paymentReconciliation.synchronizePayment "Poll mode: reconcile Xendit"
+    ks3Platform.operationsCli.acceptanceHarness.waitForPayment -> ks3Platform.webApplication.purchaseWorkflow.p2pPurchase "Webhook mode: observe local state"
+  }
+
+  dynamic view FLOW_08_Product_Financial_Simulation {
+    title "FLOW — Calculate and Render Product Financial Simulation"
+    description "A visitor opens a published product with a ready profile, submits bounded inputs, and receives reconciled summary, growth graph, applied rules, and adaptive breakdown."
+    visitor -> ks3Platform.webApplication.productCatalogue.productDetailRoute "Open published product"
+    ks3Platform.webApplication.productCatalogue.productDetailRoute -> ks3Platform.webApplication.productCatalogue.productDetailView "Route request"
+    ks3Platform.webApplication.productCatalogue.productDetailView -> ks3Platform.webApplication.productSimulator.simulationContext "Check optional profile readiness"
+    ks3Platform.webApplication.productSimulator.simulationContext -> ks3Platform.webApplication.productSimulator.productSimulation "Require enabled and complete configuration"
+    ks3Platform.webApplication.productCatalogue.productDetailView -> ks3Platform.webApplication.productSimulator.productSimulatorTemplate "Render bounded form and disclaimer"
+    ks3Platform.webApplication.productSimulator.productSimulatorTemplate -> ks3Platform.webApplication.productSimulator.productSimulatorBrowser "Auto-submit default or member inputs"
+    ks3Platform.webApplication.productSimulator.productSimulatorBrowser -> ks3Platform.webApplication.productSimulator.productSimulationRoute "GET amount, tenor, and recurring amount"
+    ks3Platform.webApplication.productSimulator.productSimulationRoute -> ks3Platform.webApplication.productSimulator.productSimulationView "Dispatch read-only request"
+    ks3Platform.webApplication.productSimulator.productSimulationView -> ks3Platform.webApplication.productSimulator.simulationEngine "Validate domain and calculate monthly schedule"
+    ks3Platform.webApplication.productSimulator.simulationEngine -> ks3Platform.webApplication.productSimulator.rateResolver "Resolve and audit applied rate"
+    ks3Platform.webApplication.productSimulator.simulationEngine -> ks3Platform.webApplication.productSimulator.feeEvaluator "Apply fee and tax timing"
+    ks3Platform.webApplication.productSimulator.simulationEngine -> ks3Platform.webApplication.productSimulator.breakdownPolicy "Aggregate table and chart series"
+    ks3Platform.webApplication.productSimulator.productSimulationView -> ks3Platform.webApplication.productSimulator.productSimulatorBrowser "Return normalized JSON or field errors"
+    ks3Platform.webApplication.productSimulator.productSimulatorBrowser -> ks3Platform.webApplication.productSimulator.productSimulatorTemplate "Render summary, graph, rules, table, and disclaimer"
+  }
+
+  dynamic view FLOW_09_Seed_Current_Product_Simulators {
+    title "FLOW — Seed Current Product Simulator Profiles"
+    description "An operator runs the dedicated command; one transaction maps known existing slugs to deterministic strategy-specific profiles and child rules, or fails in strict mode when a product is missing."
+    operator -> ks3Platform.operationsCli.seedCommands.seedProductSimulators "Run manage.py seed_product_simulators --strict"
+    ks3Platform.operationsCli.seedCommands.seedProductSimulators -> ks3Platform.operationsCli.seedCommands.currentProductSimulationSeeds "Start transactional preset upsert"
+    ks3Platform.operationsCli.seedCommands.currentProductSimulationSeeds -> ks3Platform.webApplication.productCatalogue.product "Resolve seven known product slugs"
+    ks3Platform.operationsCli.seedCommands.currentProductSimulationSeeds -> ks3Platform.webApplication.productSimulator.productSimulation "Upsert validated profile and public display state"
+    ks3Platform.operationsCli.seedCommands.currentProductSimulationSeeds -> ks3Platform.webApplication.productSimulator.simulationRateTier "Replace deterministic tenor/amount tiers"
+    ks3Platform.operationsCli.seedCommands.currentProductSimulationSeeds -> ks3Platform.webApplication.productSimulator.simulationFeeRule "Replace deterministic fee and tax rules"
+  }
+}

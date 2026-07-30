@@ -108,9 +108,9 @@ class HomePageSetting(BaseSiteSetting):
 
     products_enabled = models.BooleanField(default=True)
     products_background_image = models.ForeignKey("wagtailimages.Image", null=True, blank=True, on_delete=models.SET_NULL, related_name="+")
-    products_small_title = models.CharField(max_length=120, default="Produk KSP KS3")
-    products_title = models.CharField(max_length=255, default="Produk Simpanan untuk Setiap Kebutuhan")
-    products_description = models.TextField(default="Mulai dari simpanan keanggotaan, dana fleksibel, hingga simpanan berjangka untuk rencana keuangan Anda.")
+    products_small_title = models.CharField(max_length=120, default="Produk Anggota KS3")
+    products_title = models.CharField(max_length=255, default="Simpanan dan Pinjaman untuk Setiap Kebutuhan")
+    products_description = models.TextField(default="Bangun simpanan sesuai tujuan atau pilih pembiayaan dengan simulasi pokok, bunga, biaya, dan angsuran yang transparan.")
 
     advantages_enabled = models.BooleanField(default=True)
     advantages_badge = models.CharField(max_length=120, default="Keunggulan KS3")

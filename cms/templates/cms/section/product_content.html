@@ -1,3 +1,4 @@
+{% regroup products by category as product_navigation_groups %}
 <section id="down-section" class="position-relative">
     <div class="container"><div class="row">
         <div class="col-lg-4 pe-6 order-2 order-lg-1 lg-pe-4 md-pe-15px" data-anime='{ "el": "childs", "translateY": [50, 0], "opacity": [0,1], "duration": 1200, "delay": 0, "staggervalue": 150, "easing": "easeOutQuad" }'>
@@ -13,10 +14,26 @@
         <div class="col-lg-8 order-1 order-lg-2 md-mb-50px" data-anime='{ "el": "childs", "translateY": [50, 0], "opacity": [0,1], "duration": 1200, "delay": 0, "staggervalue": 150, "easing": "easeOutQuad" }'>
             {% if selected_product %}
                 {% include 'cms/section/streamfield.html' %}
+                {% if simulation_profile %}{% include 'cms/components/product_simulator.html' %}{% endif %}
             {% else %}
-                <h4 class="fw-700 text-dark-gray mb-20px alt-font">Produk simpanan untuk setiap kebutuhan</h4>
-                <p class="mb-30px">Koperasi KS3 menyediakan berbagai produk simpanan yang dirancang untuk mendukung rencana keuangan Anda, mulai dari simpanan rutin bulanan hingga simpanan berjangka dengan hasil yang kompetitif.</p>
-                <div class="row row-cols-1 row-cols-md-2">{% for product in products %}<div class="col transition-inner-all mb-30px"><div class="bg-white border border-color-extra-medium-gray border-radius-10px box-shadow-double-large-hover p-30px last-paragraph-no-margin h-100"><div class="h-60px w-60px d-flex align-items-center justify-content-center border-radius-10px bg-gradient-top-very-light-gray mb-25px"><i class="bi {{ product.icon }} fs-28 text-base-color"></i></div><a href="{{ product.get_absolute_url }}" class="d-inline-block alt-font text-dark-gray fw-700 fs-20 mb-10px ls-minus-05px">{{ product.title }}</a><p class="mb-15px">{{ product.summary }}</p><a href="{{ product.get_absolute_url }}" class="alt-font fs-15 fw-600 text-base-color">Lihat detail<i class="fa-solid fa-arrow-right fs-13 ms-5px align-middle"></i></a></div></div>{% empty %}<div class="col-12"><div class="alert alert-light border">Belum ada produk yang dipublikasikan.</div></div>{% endfor %}</div>
+                <h4 class="fw-700 text-dark-gray mb-20px alt-font">Simpanan dan pinjaman untuk setiap kebutuhan</h4>
+                <p class="mb-30px">Koperasi KS3 menyediakan pilihan simpanan untuk membangun dana secara bertahap serta pinjaman dengan rincian pokok, bunga, biaya, dan angsuran yang transparan.</p>
+                {% for group in product_navigation_groups %}
+                    <div class="ks3-product-catalogue-group{% if not forloop.last %} mb-50px{% endif %}" data-product-section-group="{{ group.grouper.slug }}">
+                        <div class="ks3-product-catalogue-group__heading">
+                            <div>
+                                <span>Produk anggota</span>
+                                <h5 class="alt-font text-dark-gray fw-700 mb-0">{{ group.grouper.name }}</h5>
+                            </div>
+                            <span class="ks3-product-catalogue-group__count">{{ group.list|length }} produk</span>
+                        </div>
+                        <div class="row row-cols-1 row-cols-md-2">
+                            {% for product in group.list %}<div class="col transition-inner-all mb-30px"><div class="bg-white border border-color-extra-medium-gray border-radius-10px box-shadow-double-large-hover p-30px last-paragraph-no-margin h-100"><div class="h-60px w-60px d-flex align-items-center justify-content-center border-radius-10px bg-gradient-top-very-light-gray mb-25px"><i class="bi {{ product.icon }} fs-28 text-base-color"></i></div><a href="{{ product.get_absolute_url }}" class="d-inline-block alt-font text-dark-gray fw-700 fs-20 mb-10px ls-minus-05px">{{ product.title }}</a><p class="mb-15px">{{ product.summary }}</p><a href="{{ product.get_absolute_url }}" class="alt-font fs-15 fw-600 text-base-color">Lihat detail<i class="fa-solid fa-arrow-right fs-13 ms-5px align-middle"></i></a></div></div>{% endfor %}
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="alert alert-light border">Belum ada produk yang dipublikasikan.</div>
+                {% endfor %}
             {% endif %}
         </div>
     </div></div>

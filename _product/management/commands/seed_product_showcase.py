@@ -11,6 +11,7 @@ from PIL import Image as PillowImage
 from wagtail.images import get_image_model
 from wagtail.models import Collection
 
+from _product.management.simulation_seed import seed_product_simulations
 from _product.models import Product, ProductCategory, ProductSEOSettings
 
 
@@ -20,6 +21,8 @@ IMAGE_SPECS = {
     "berjangka": ("KS3 Product - Simpanan Berjangka", "6C63FF", "Simpanan+Berjangka"),
     "pokok": ("KS3 Product - Simpanan Pokok", "FFAC0A", "Simpanan+Pokok"),
     "lain": ("KS3 Product - Simpanan Lain", "C84B31", "Simpanan+Lain"),
+    "pinjaman-reguler": ("KS3 Product - Pinjaman Reguler", "005DAA", "Pinjaman+Reguler"),
+    "pinjaman-usaha": ("KS3 Product - Pinjaman Usaha Produktif", "147D64", "Pinjaman+Usaha"),
 }
 
 
@@ -86,11 +89,21 @@ def product_specs(images):
             "summary": "Alokasi dana mandiri untuk kebutuhan pendidikan, hari tua, rekreasi, dan tujuan lainnya.", "menu": "Untuk beragam tujuan.",
             "content": [callout(), heading("Satu tempat untuk berbagai tujuan", "h2"), paragraph("<p>Simpanan Lain menggambarkan pilihan alokasi dana berdasarkan tujuan personal anggota, seperti pendidikan, hari tua, rekreasi, atau kebutuhan terencana lainnya.</p>"), image_text(images["lain"], "right", "Buat tujuan yang lebih spesifik", "<p>Pemisahan tujuan membantu anggota melihat progres dan menjaga disiplin alokasi dana.</p>"), block("two_column_text", {"left": "<p><strong>Tujuan jangka menengah</strong><br/>Pendidikan, renovasi, atau pembelian terencana.</p>", "right": "<p><strong>Tujuan jangka panjang</strong><br/>Persiapan hari tua dan rencana keluarga.</p>"}), heading("Contoh kategori tujuan"), item_list(["Dana pendidikan", "Dana hari tua", "Dana rekreasi", "Dana pembelian terencana", "Tujuan personal lainnya"]), accordion([("Apakah setiap tujuan memiliki rekening terpisah?", "<p>Struktur pencatatan final akan disesuaikan dengan kapabilitas sistem dan kebijakan produk KS3.</p>"), ("Bisakah tujuan diubah?", "<p>Fleksibilitas perubahan tujuan akan dijelaskan pada ketentuan produk final.</p>")])],
         },
+        {
+            "title": "Pinjaman Reguler", "slug": "pinjaman-reguler", "icon": "bi-cash-stack", "image": images["pinjaman-reguler"],
+            "category": "pinjaman", "summary": "Pinjaman anggota dengan skema bunga flat dan angsuran bulanan yang mudah dipahami.", "menu": "Angsuran flat dan sederhana.",
+            "content": [callout(), heading("Pinjaman sederhana untuk kebutuhan anggota", "h2"), paragraph("<p>Pinjaman Reguler adalah contoh produk pembiayaan dengan bunga flat. Porsi bunga dihitung dari nominal awal sehingga jumlah pokok dan bunga bulanan mudah diperiksa selama tenor.</p>"), image_text(images["pinjaman-reguler"], "right", "Angsuran mudah diproyeksikan", "<p>Simulator memisahkan pokok, bunga, total pembayaran, dan sisa pinjaman pada setiap periode.</p>"), table("Contoh pilihan tenor", ["Tenor", "Karakteristik", "Breakdown"], [["6 bulan", "Jangka pendek", "Bulanan"], ["12 bulan", "Jangka menengah", "Bulanan"], ["18–24 bulan", "Angsuran lebih panjang", "Adaptif"]], "Bunga 12% p.a. pada simulator merupakan asumsi demonstrasi, bukan penawaran resmi."), heading("Tahapan umum"), item_list(["Tentukan kebutuhan dan nominal pinjaman", "Pilih tenor yang sesuai kemampuan pembayaran", "Pelajari estimasi pokok dan bunga", "Ajukan dokumen untuk proses analisis koperasi"], "ordered"), accordion([("Apakah hasil simulator merupakan persetujuan kredit?", "<p>Tidak. Persetujuan, plafon, tenor, dan rate final tetap mengikuti analisis serta kebijakan KS3.</p>"), ("Mengapa disebut bunga flat?", "<p>Karena bunga periodik dihitung dari nominal pinjaman awal, bukan dari sisa pokok berjalan.</p>")])],
+        },
+        {
+            "title": "Pinjaman Usaha Produktif", "slug": "pinjaman-usaha-produktif", "icon": "bi-building", "image": images["pinjaman-usaha"],
+            "category": "pinjaman", "summary": "Pembiayaan usaha dengan skema anuitas, tier bunga progresif, dan komponen biaya lengkap.", "menu": "Pembiayaan usaha bertingkat.",
+            "content": [callout(), heading("Pembiayaan usaha dengan simulasi lebih lengkap", "h2"), paragraph("<p>Pinjaman Usaha Produktif mendemonstrasikan skenario pembiayaan yang lebih kompleks: angsuran anuitas, rate progresif berdasarkan lapisan sisa pokok, biaya awal, serta biaya layanan periodik.</p>"), image_text(images["pinjaman-usaha"], "left", "Lihat arus pembayaran secara rinci", "<p>Grafik dan tabel menampilkan dana bersih diterima, porsi pokok, bunga efektif, biaya, total pembayaran, dan sisa pinjaman.</p>"), table("Lapisan bunga ilustratif", ["Lapisan sisa pokok", "Rate p.a.", "Penerapan"], [["Rp0–&lt;Rp50 juta", "10%", "Lapisan pertama"], ["Rp50–&lt;Rp150 juta", "11,5%", "Lapisan kedua"], ["Mulai Rp150 juta", "13%", "Lapisan berikutnya"]], "Rate efektif merupakan rata-rata tertimbang lapisan yang terpakai dan dapat berubah saat sisa pokok turun."), heading("Komponen simulasi"), item_list(["Angsuran pokok dan bunga dengan metode anuitas", "Provisi, administrasi, dan asuransi dipotong di awal", "Biaya layanan ditambahkan setiap bulan", "Breakdown otomatis menyesuaikan panjang tenor", "Seluruh aturan yang terpakai ditampilkan untuk audit"]), accordion([("Apakah rate progresif sama dengan rate final anggota?", "<p>Tidak. Tier pada halaman ini hanya data demonstrasi. Rate final mengikuti hasil analisis pembiayaan dan dokumen produk resmi.</p>"), ("Mengapa dana bersih lebih kecil dari nominal pinjaman?", "<p>Simulator memperlihatkan potongan biaya awal secara terpisah agar anggota dapat memahami jumlah dana bersih yang diterima.</p>")])],
+        },
     ]
 
 
 class Command(BaseCommand):
-    help = "Seed five current KS3 products with contextual StreamField showcase content."
+    help = "Seed the current KS3 savings and loan products with contextual StreamField showcase content."
 
     def add_arguments(self, parser):
         parser.add_argument("--reset", action="store_true", help="Delete all product data before seeding.")
@@ -101,13 +114,15 @@ class Command(BaseCommand):
             if options["reset"]:
                 Product.objects.all().delete()
                 ProductCategory.objects.all().delete()
-            category, _ = ProductCategory.objects.update_or_create(slug="simpanan", defaults={"name": "Simpanan", "is_active": True, "sort_order": 10})
+            savings_category, _ = ProductCategory.objects.update_or_create(slug="simpanan", defaults={"name": "Simpanan", "is_active": True, "sort_order": 10})
+            loan_category, _ = ProductCategory.objects.update_or_create(slug="pinjaman", defaults={"name": "Pinjaman", "is_active": True, "sort_order": 20})
+            categories = {"simpanan": savings_category, "pinjaman": loan_category}
             specs = product_specs(images)
             for order, spec in enumerate(specs, start=1):
                 product, _ = Product.objects.update_or_create(
                     slug=spec["slug"],
                     defaults={
-                        "category": category,
+                        "category": categories[spec.get("category", "simpanan")],
                         "title": spec["title"],
                         "summary": spec["summary"],
                         "menu_description": spec["menu"],
@@ -120,8 +135,14 @@ class Command(BaseCommand):
                     },
                 )
                 self.stdout.write(f"  [{order}/{len(specs)}] {product.title}")
+            simulations, _ = seed_product_simulations(strict=True)
             ProductSEOSettings.load()
-        self.stdout.write(self.style.SUCCESS(f"Product showcase ready: {len(specs)} products and {len(images)} S3-backed images."))
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Product showcase ready: {len(specs)} products, {len(simulations)} simulators, "
+                f"and {len(images)} S3-backed images."
+            )
+        )
 
     def _ensure_images(self):
         collection = Collection.objects.filter(name="KS3 Products").first()

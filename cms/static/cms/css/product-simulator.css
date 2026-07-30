@@ -1,0 +1,446 @@
+.ks3-simulator {
+    --sim-blue: #005daa;
+    --sim-blue-dark: #003d76;
+    --sim-green: #159a80;
+    --sim-gold: #f3a712;
+    --sim-ink: #172235;
+    --sim-muted: #65728a;
+    --sim-border: #dfe7f1;
+    color: var(--sim-ink);
+}
+
+.ks3-simulator__shell {
+    overflow: hidden;
+    border: 1px solid rgba(0, 93, 170, .14);
+    border-radius: 24px;
+    background: #f8fbff;
+}
+
+.ks3-simulator__intro {
+    position: relative;
+    padding: 42px 44px 24px;
+}
+
+.ks3-simulator__eyebrow,
+.ks3-simulator__section-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 9px;
+    color: var(--sim-blue);
+    font-size: 12px;
+    font-weight: 750;
+    letter-spacing: .11em;
+    text-transform: uppercase;
+}
+
+.ks3-simulator__title {
+    margin: 0 0 8px;
+    color: var(--sim-ink);
+    font-size: clamp(27px, 3vw, 38px);
+    font-weight: 750;
+    letter-spacing: -.035em;
+}
+
+.ks3-simulator__description {
+    max-width: 650px;
+    margin: 0;
+    color: var(--sim-muted);
+    font-size: 16px;
+}
+
+.ks3-simulator__form {
+    margin: 0 24px 30px;
+    padding: 24px;
+    border: 1px solid rgba(0, 93, 170, .12);
+    border-radius: 18px;
+    background: #fff;
+}
+
+.ks3-simulator__fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 18px;
+}
+
+.ks3-simulator__field {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}
+
+.ks3-simulator__label {
+    margin-bottom: 8px;
+    color: var(--sim-ink);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.ks3-simulator__field small {
+    margin-top: 7px;
+    color: var(--sim-muted);
+    font-size: 11px;
+}
+
+.ks3-simulator__money-input,
+.ks3-simulator__suffix-input,
+.ks3-simulator__select-wrap {
+    display: flex;
+    min-height: 51px;
+    align-items: center;
+    overflow: hidden;
+    border: 1px solid var(--sim-border);
+    border-radius: 12px;
+    background: #fff;
+    transition: border-color .2s ease, outline-color .2s ease;
+}
+
+.ks3-simulator__money-input:focus-within,
+.ks3-simulator__suffix-input:focus-within,
+.ks3-simulator__select-wrap:focus-within {
+    border-color: var(--sim-blue);
+    outline: 3px solid rgba(0, 93, 170, .1);
+}
+
+.ks3-simulator__money-input > span,
+.ks3-simulator__suffix-input > span {
+    flex: 0 0 auto;
+    padding: 0 0 0 15px;
+    color: var(--sim-blue);
+    font-size: 14px;
+    font-weight: 750;
+    white-space: nowrap;
+}
+
+.ks3-simulator__suffix-input > span {
+    padding: 0 15px 0 6px;
+    color: var(--sim-muted);
+    font-weight: 600;
+}
+
+.ks3-simulator input,
+.ks3-simulator select {
+    width: 100%;
+    height: 49px;
+    padding: 0 14px;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--sim-ink);
+    font-size: 15px;
+    font-weight: 650;
+}
+
+.ks3-simulator__select-wrap {
+    position: relative;
+}
+
+.ks3-simulator__select-wrap select {
+    appearance: none;
+}
+
+.ks3-simulator__select-wrap i {
+    position: absolute;
+    right: 15px;
+    color: var(--sim-blue);
+    pointer-events: none;
+}
+
+.ks3-simulator__submit {
+    display: inline-flex;
+    min-height: 52px;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+    padding: 0 24px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--sim-blue);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    transition: background-color .2s ease;
+}
+
+.ks3-simulator__submit:hover {
+    background: var(--sim-blue-dark);
+}
+
+.ks3-simulator__submit:disabled {
+    cursor: wait;
+    opacity: .75;
+    transform: none;
+}
+
+.ks3-simulator__spinner {
+    display: none;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, .4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: sim-spin .8s linear infinite;
+}
+
+.ks3-simulator__submit.is-loading .ks3-simulator__spinner { display: block; }
+.ks3-simulator__submit.is-loading > i { display: none; }
+
+@keyframes sim-spin { to { transform: rotate(360deg); } }
+
+.ks3-simulator__error {
+    margin: -12px 24px 28px;
+    padding: 14px 17px;
+    border: 1px solid #f2b9b9;
+    border-radius: 12px;
+    background: #fff4f4;
+    color: #a62a2a;
+    font-size: 13px;
+}
+
+.ks3-simulator__results {
+    padding: 36px 44px 42px;
+    border-top: 1px solid rgba(0, 93, 170, .1);
+    background: #fff;
+}
+
+.ks3-simulator__result-heading,
+.ks3-simulator__chart-header,
+.ks3-simulator__table-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.ks3-simulator__result-heading h4,
+.ks3-simulator__chart-header h5,
+.ks3-simulator__table-heading h5 {
+    margin: 0;
+    color: var(--sim-ink);
+    font-weight: 750;
+    letter-spacing: -.025em;
+}
+
+.ks3-simulator__method,
+.ks3-simulator__row-count {
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: #edf6ff;
+    color: var(--sim-blue);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.ks3-simulator__summary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin: 22px 0 26px;
+}
+
+.ks3-simulator__summary-card {
+    position: relative;
+    overflow: hidden;
+    min-height: 120px;
+    padding: 18px;
+    border: 1px solid var(--sim-border);
+    border-radius: 15px;
+    background: #fff;
+}
+
+.ks3-simulator__summary-card:first-child {
+    border-color: transparent;
+    background: var(--sim-blue);
+    color: #fff;
+}
+
+.ks3-simulator__summary-label {
+    display: block;
+    min-height: 34px;
+    color: var(--sim-muted);
+    font-size: 11px;
+    font-weight: 650;
+}
+
+.ks3-simulator__summary-card:first-child .ks3-simulator__summary-label { color: rgba(255, 255, 255, .7); }
+
+.ks3-simulator__summary-value {
+    display: block;
+    margin-top: 8px;
+    color: var(--sim-ink);
+    font-size: clamp(16px, 2vw, 21px);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -.025em;
+    white-space: nowrap;
+}
+
+.ks3-simulator__summary-card:first-child .ks3-simulator__summary-value { color: #fff; }
+
+.ks3-simulator__chart-card,
+.ks3-simulator__table-card {
+    margin-top: 20px;
+    padding: 24px;
+    border: 1px solid var(--sim-border);
+    border-radius: 18px;
+    background: #fff;
+}
+
+.ks3-simulator__legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.ks3-simulator__legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--sim-muted);
+    font-size: 11px;
+    font-weight: 650;
+}
+
+.ks3-simulator__legend-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+}
+
+.ks3-simulator__chart {
+    position: relative;
+    min-height: 300px;
+    margin-top: 15px;
+}
+
+.ks3-simulator__chart svg {
+    display: block;
+    width: 100%;
+    min-width: 560px;
+    height: auto;
+}
+
+.ks3-simulator__chart-scroll { overflow-x: auto; }
+.ks3-chart-grid { stroke: #e9eff6; stroke-width: 1; }
+.ks3-chart-axis-label { fill: #7a8799; font-size: 11px; font-family: inherit; }
+.ks3-chart-line { fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.ks3-chart-hit { fill: transparent; cursor: crosshair; }
+.ks3-chart-focus-line { stroke: #9ca9b8; stroke-width: 1; stroke-dasharray: 4 5; }
+.ks3-chart-focus-dot { stroke: #fff; stroke-width: 3; }
+
+.ks3-simulator__tooltip {
+    position: absolute;
+    z-index: 3;
+    min-width: 170px;
+    max-width: calc(100% - 16px);
+    padding: 11px 13px;
+    border-radius: 10px;
+    background: var(--sim-ink);
+    color: #fff;
+    font-size: 11px;
+    pointer-events: none;
+    transform: translate(-50%, calc(-100% - 14px));
+}
+
+.ks3-simulator__tooltip strong { display: block; margin-bottom: 5px; color: #fff; }
+.ks3-simulator__tooltip span { display: block; color: rgba(255, 255, 255, .8); }
+
+.ks3-simulator__rule-note {
+    margin-top: 15px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    background: #f3f9ff;
+    color: var(--sim-muted);
+    font-size: 12px;
+}
+
+.ks3-simulator__table-wrap {
+    overflow-x: auto;
+    margin: 18px -24px -24px;
+}
+
+.ks3-simulator__table {
+    width: 100%;
+    min-width: 820px;
+    margin: 0;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.ks3-simulator__table th {
+    padding: 11px 13px;
+    border-top: 1px solid var(--sim-border);
+    border-bottom: 1px solid var(--sim-border);
+    background: #f7f9fc;
+    color: var(--sim-muted);
+    font-size: 10px;
+    font-weight: 750;
+    letter-spacing: .04em;
+    text-align: right;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.ks3-simulator__table td {
+    padding: 13px;
+    border-bottom: 1px solid #eef2f6;
+    color: #3d4960;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.ks3-simulator__table th:first-child,
+.ks3-simulator__table td:first-child { padding-left: 24px; text-align: left; }
+.ks3-simulator__table th:last-child,
+.ks3-simulator__table td:last-child { padding-right: 24px; }
+.ks3-simulator__table tbody tr:last-child td { border-bottom: 0; }
+.ks3-simulator__table tbody tr:hover { background: #fbfdff; }
+
+.ks3-simulator__disclaimer {
+    display: grid;
+    grid-template-columns: 18px minmax(0, 1fr);
+    align-items: start;
+    column-gap: 12px;
+    margin-top: 18px;
+    padding: 16px 18px;
+    border-radius: 12px;
+    background: #fff9ec;
+    color: #7f6733;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.ks3-simulator__disclaimer i {
+    margin-top: 2px;
+    color: var(--sim-gold);
+    font-size: 16px;
+    line-height: 1;
+}
+
+.ks3-simulator__disclaimer p {
+    min-width: 0;
+    margin: 0;
+    color: inherit;
+    font-size: inherit;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 575px) {
+    .ks3-simulator__shell { border-radius: 17px; }
+    .ks3-simulator__intro { padding: 30px 22px 20px; }
+    .ks3-simulator__form { margin: 0 12px 20px; padding: 18px; }
+    .ks3-simulator__results { padding: 28px 16px 30px; }
+    .ks3-simulator__result-heading,
+    .ks3-simulator__chart-header,
+    .ks3-simulator__table-heading { align-items: flex-start; flex-direction: column; }
+    .ks3-simulator__summary { grid-template-columns: 1fr; }
+    .ks3-simulator__summary-card { min-height: auto; }
+    .ks3-simulator__summary-label { min-height: 0; }
+    .ks3-simulator__chart-card,
+    .ks3-simulator__table-card { padding: 18px; }
+    .ks3-simulator__table-wrap { margin: 18px -18px -18px; }
+    .ks3-simulator__legend { justify-content: flex-start; }
+    .ks3-simulator__chart svg { min-width: 620px; }
+}

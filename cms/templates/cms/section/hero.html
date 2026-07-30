@@ -1,7 +1,7 @@
 {% load static wagtailimages_tags %}
 {% if home_settings.hero_background_image %}{% image home_settings.hero_background_image width-1920 as hero_background %}{% endif %}
 <section id="home-hero" class="p-0 top-space-margin position-relative cover-background border-radius-10px lg-no-border-radius overflow-visible" style="background-image: url('{% if hero_background %}{{ hero_background.url }}{% else %}{% static 'cms/images/main-hero-bg.webp' %}{% endif %}')">
-    {% if home_settings.hero_decorative_image %}{% image home_settings.hero_decorative_image width-81 as hero_decorative %}<div class="absolute-middle-left left-minus-25px"><img src="{{ hero_decorative.url }}" width="{{ hero_decorative.width }}" height="{{ hero_decorative.height }}" class="animation-zoom d-none d-md-block" data-bottom-top="transform:translateY(-50px)" data-top-bottom="transform: translateY(50px)" alt=""></div>{% endif %}
+<!--    {% if home_settings.hero_decorative_image %}{% image home_settings.hero_decorative_image width-81 as hero_decorative %}<div class="absolute-middle-left left-minus-25px"><img src="{{ hero_decorative.url }}" width="{{ hero_decorative.width }}" height="{{ hero_decorative.height }}" class="animation-zoom d-none d-md-block" data-bottom-top="transform:translateY(-50px)" data-top-bottom="transform: translateY(50px)" alt=""></div>{% endif %}-->
     <div class="container-fluid">
         <div class="row align-items-xxl-center align-items-xl-start">
             <div class="col-xxl-5 col-lg-6 col-md-12 ps-8 pe-5 sm-p-15px xxl-ps-6 xxl-pe-3 xl-p-4 order-lg-1 order-2" data-anime='{ "el": "childs", "translateY": [30, 0], "opacity": [0,1], "duration": 600, "delay": 0, "staggervalue": 300, "easing": "easeOutQuad" }'>

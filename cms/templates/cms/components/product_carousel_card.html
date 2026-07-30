@@ -1,1 +1,22 @@
-{% load wagtailimages_tags %}<div class="swiper-slide box-shadow-extra-large"><div class="border-radius-10px bg-white pt-40px pb-40px ps-50px pe-50px xxl-p-30px h-100"><a href="{{ product.get_absolute_url }}" class="text-center d-block mb-40px md-mb-30px">{% if product.card_image %}{% image product.card_image width-244 as card_image %}<img src="{{ card_image.url }}" width="{{ card_image.width }}" height="{{ card_image.height }}" alt="{{ product.title }}">{% else %}<span class="h-150px d-flex align-items-center justify-content-center"><i class="bi {{ product.icon }} fs-60 text-base-color"></i></span>{% endif %}</a><div class="last-paragraph-no-margin text-center text-md-start"><a href="{{ product.get_absolute_url }}" class="d-inline-block alt-font text-dark-gray fw-600 fs-20 mb-5px ls-minus-05px">{{ product.title }}</a><p>{{ product.summary }}</p></div></div></div>
+{% load wagtailimages_tags %}
+<div class="swiper-slide box-shadow-extra-large ks3-product-carousel-card">
+    <div class="border-radius-10px bg-white pt-40px pb-40px ps-50px pe-50px xxl-p-30px h-100">
+        <a href="{{ product.get_absolute_url }}" class="text-center d-flex align-items-center justify-content-center mb-35px md-mb-30px ks3-product-carousel-card__media">
+            {% if product.card_image %}
+                {% image product.card_image width-244 as card_image %}
+                <img src="{{ card_image.url }}" width="{{ card_image.width }}" height="{{ card_image.height }}" alt="{{ product.title }}" class="ks3-product-carousel-card__image">
+            {% else %}
+                <span class="h-150px d-flex align-items-center justify-content-center"><i class="bi {{ product.icon }} fs-60 text-base-color"></i></span>
+            {% endif %}
+        </a>
+        <div class="last-paragraph-no-margin text-center text-md-start ks3-product-carousel-card__content">
+            <span class="ks3-product-carousel-card__category ks3-product-carousel-card__category--{% if product.category.slug == 'pinjaman' %}loan{% else %}savings{% endif %} align-self-center align-self-md-start">
+                <i class="bi {% if product.category.slug == 'pinjaman' %}bi-cash-stack{% else %}bi-piggy-bank{% endif %}" aria-hidden="true"></i>
+                {{ product.category.name }}
+            </span>
+            <a href="{{ product.get_absolute_url }}" class="d-block alt-font text-dark-gray fw-600 fs-20 mb-5px ls-minus-05px">{{ product.title }}</a>
+            <p class="ks3-product-carousel-card__summary">{{ product.summary }}</p>
+            <a href="{{ product.get_absolute_url }}" class="alt-font fs-14 fw-600 text-base-color mt-auto pt-15px">Lihat detail<i class="fa-solid fa-arrow-right fs-12 ms-5px align-middle"></i></a>
+        </div>
+    </div>
+</div>

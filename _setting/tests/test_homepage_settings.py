@@ -13,8 +13,8 @@ class HomePageSettingTests(TestCase):
         ("hero_enabled", "home-hero"),
         ("marquee_enabled", "home-marquee"),
         ("about_enabled", "home-about"),
-        ("p2p_enabled", "home-p2p"),
         ("products_enabled", "home-products"),
+        ("p2p_enabled", "home-p2p"),
         ("advantages_enabled", "home-advantages"),
         ("faq_enabled", "home-faq"),
         ("app_enabled", "home-app"),
@@ -32,7 +32,7 @@ class HomePageSettingTests(TestCase):
         self.assertEqual(self.setting.p2p_title, "P2P Investment Pilihan")
         self.assertEqual(
             self.setting.products_title,
-            "Produk Simpanan untuk Setiap Kebutuhan",
+            "Simpanan dan Pinjaman untuk Setiap Kebutuhan",
         )
         self.assertEqual(len(self.setting.marquee_items), 6)
         self.assertEqual(len(self.setting.about_audiences), 2)
@@ -90,7 +90,10 @@ class HomePageSettingTests(TestCase):
         self.assertContains(response, project.get_absolute_url())
 
     def test_product_section_only_exposes_heading_copy_not_card_content(self):
-        product = make_product(title="Simpanan Wajib", is_featured=True)
+        from _product.models import ProductCategory
+
+        category = ProductCategory.objects.create(name="Simpanan", slug="simpanan")
+        product = make_product(title="Simpanan Wajib", category=category, is_featured=True)
         self.setting.products_small_title = "Small Product Copy"
         self.setting.products_title = "Custom Product Heading"
         self.setting.products_description = "Custom Product description."

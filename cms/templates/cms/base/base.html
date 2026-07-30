@@ -24,10 +24,10 @@
         <link rel="stylesheet" href="{% static 'cms/css/icon.min.css' %}"/>
         <link rel="stylesheet" href="{% static 'cms/css/style.css' %}"/>
         <link rel="stylesheet" href="{% static 'cms/css/responsive.css' %}"/>
-        <link rel="stylesheet" href="{% static 'cms/demos/modern-business/modern-business.css' %}" />
-        <link rel="stylesheet" href="{% static 'cms/css/ks3-theme.css' %}?v=20260730-4"/>
+        <link rel="stylesheet" href="{% static 'cms/css/ks3-theme.css' %}?v=20260731-4"/>
+        {% block extra_css %}{% endblock %}
     </head>
-    <body data-mobile-nav-style="classic" class="custom-cursor background-position-center-top {% block body_class %}{% endblock %}" style="background-image: url('{% static 'cms/images/vertical-line-bg.svg' %}')">
+    <body data-mobile-nav-style="classic" class="background-position-center-top {% block body_class %}{% endblock %}" style="background-image: url('{% static 'cms/images/vertical-line-bg.svg' %}')">
         <div class="box-layout">
             {% include 'cms/base/header.html' %}
 
@@ -43,5 +43,6 @@
         <script type="text/javascript" src="{% static 'cms/js/jquery.js' %}"></script>
         <script type="text/javascript" src="{% static 'cms/js/vendors.min.js' %}"></script>
         <script type="text/javascript" src="{% static 'cms/js/main.js' %}"></script>
+        {% block extra_js %}{% endblock %}
     </body>
 </html>

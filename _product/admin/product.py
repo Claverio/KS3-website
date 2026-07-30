@@ -2,7 +2,7 @@ from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet, SnippetViewSetGroup
 
 from backend.helper.singleton import SingletonSnippetViewSet
-from _product.models import Product, ProductCategory, ProductSEOSettings
+from _product.models import Product, ProductCategory, ProductSEOSettings, ProductSimulation
 
 
 class ProductSEOViewSet(SingletonSnippetViewSet):
@@ -32,12 +32,23 @@ class ProductViewSet(SnippetViewSet):
     inspect_view_enabled = True
 
 
+class ProductSimulationViewSet(SnippetViewSet):
+    model = ProductSimulation
+    menu_label = "Simulators"
+    icon = "calculator"
+    list_display = ("product", "product_kind", "strategy", "is_enabled", "readiness", "updated_at")
+    list_filter = ("is_enabled", "product_kind", "strategy")
+    search_fields = ("product__title", "product__slug", "simulator_title")
+    ordering = ("product__title",)
+    inspect_view_enabled = True
+
+
 class ProductAdminGroup(SnippetViewSetGroup):
     menu_label = "Products"
     menu_icon = "folder-open-inverse"
     menu_name = "products"
     menu_order = 210
-    items = (ProductSEOViewSet, ProductCategoryViewSet, ProductViewSet)
+    items = (ProductSEOViewSet, ProductCategoryViewSet, ProductViewSet, ProductSimulationViewSet)
 
 
 register_snippet(ProductAdminGroup)

@@ -1,7 +1,15 @@
 {% extends 'cms/base/base.html' %}
 {% load static %}
 
+{% block extra_css %}
+    {% if simulation_profile %}<link rel="stylesheet" href="{% static 'cms/css/product-simulator.css' %}?v=20260731-2">{% endif %}
+{% endblock %}
+
 {% block content %}
     {% include 'cms/components/page_title.html' %}
     {% include 'cms/section/product_content.html' %}
+{% endblock %}
+
+{% block extra_js %}
+    {% if simulation_profile %}<script src="{% static 'cms/js/product-simulator.js' %}?v=20260731-4" defer></script>{% endif %}
 {% endblock %}

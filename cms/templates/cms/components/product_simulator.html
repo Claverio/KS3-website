@@ -1,0 +1,148 @@
+{% load static %}
+<section
+    class="ks3-simulator mt-60px"
+    data-simulator
+    data-endpoint="{% url 'product_simulation' selected_product.slug %}"
+    data-product-kind="{{ simulation_profile.product_kind }}"
+    aria-labelledby="simulator-title-{{ simulation_profile.pk }}"
+>
+        {{ simulation_config|json_script:"product-simulation-config" }}
+    <div class="ks3-simulator__shell">
+        <div class="ks3-simulator__intro">
+            <h3 id="simulator-title-{{ simulation_profile.pk }}" class="ks3-simulator__title">{{ simulation_profile.simulator_title }}</h3>
+            {% if simulation_profile.simulator_description %}<p class="ks3-simulator__description">{{ simulation_profile.simulator_description }}</p>{% endif %}
+        </div>
+
+        <form class="ks3-simulator__form" data-simulator-form novalidate>
+            <div class="ks3-simulator__fields">
+                <label class="ks3-simulator__field">
+                    <span class="ks3-simulator__label">{{ simulation_config.amount.label }}</span>
+                    <span class="ks3-simulator__money-input">
+                        <span aria-hidden="true">Rp</span>
+                        <input
+                            name="amount"
+                            type="number"
+                            inputmode="decimal"
+                            min="{{ simulation_config.amount.min }}"
+                            max="{{ simulation_config.amount.max }}"
+                            step="{{ simulation_config.amount.step }}"
+                            value="{{ simulation_config.amount.default }}"
+                            required
+                        >
+                    </span>
+                    <small>Rp {{ simulation_config.amount.min|floatformat:"0g" }} – Rp {{ simulation_config.amount.max|floatformat:"0g" }}</small>
+                </label>
+
+                <label class="ks3-simulator__field">
+                    <span class="ks3-simulator__label">Tenor</span>
+                    {% if simulation_config.tenor.mode == "options" %}
+                        <span class="ks3-simulator__select-wrap">
+                            <select name="tenor_months" required>
+                                {% for tenor in simulation_config.tenor.options %}<option value="{{ tenor }}"{% if tenor == simulation_config.tenor.default %} selected{% endif %}>{{ tenor }} bulan</option>{% endfor %}
+                            </select>
+                            <i class="bi bi-chevron-down" aria-hidden="true"></i>
+                        </span>
+                    {% else %}
+                        <span class="ks3-simulator__suffix-input">
+                            <input
+                                name="tenor_months"
+                                type="number"
+                                inputmode="numeric"
+                                min="{{ simulation_config.tenor.min }}"
+                                max="{{ simulation_config.tenor.max }}"
+                                step="{{ simulation_config.tenor.step }}"
+                                value="{{ simulation_config.tenor.default }}"
+                                required
+                            >
+                            <span>bulan</span>
+                        </span>
+                    {% endif %}
+                    <small>Pilih jangka waktu produk</small>
+                </label>
+
+                {% if simulation_config.requires_recurring_amount %}
+                    <label class="ks3-simulator__field">
+                        <span class="ks3-simulator__label">{{ simulation_config.recurring.label }}</span>
+                        <span class="ks3-simulator__money-input">
+                            <span aria-hidden="true">Rp</span>
+                            <input
+                                name="recurring_amount"
+                                type="number"
+                                inputmode="decimal"
+                                min="{{ simulation_config.recurring.min }}"
+                                max="{{ simulation_config.recurring.max }}"
+                                step="{{ simulation_config.recurring.step }}"
+                                value="{{ simulation_config.recurring.default }}"
+                                required
+                            >
+                        </span>
+                        <small>Setoran tambahan setiap bulan</small>
+                    </label>
+                {% endif %}
+            </div>
+            <button class="ks3-simulator__submit" type="submit" data-simulator-submit>
+                <span data-submit-label>Hitung simulasi</span>
+                <span class="ks3-simulator__spinner" data-submit-spinner aria-hidden="true"></span>
+                <i class="bi bi-arrow-right" aria-hidden="true"></i>
+            </button>
+        </form>
+
+        <div class="ks3-simulator__error" data-simulator-error role="alert" aria-live="assertive" hidden></div>
+
+        <div class="ks3-simulator__results" data-simulator-results aria-live="polite" hidden>
+            <div class="ks3-simulator__result-heading">
+                <div>
+                    <span class="ks3-simulator__eyebrow">Hasil estimasi</span>
+                    <h4>Proyeksi keuangan Anda</h4>
+                </div>
+                <span class="ks3-simulator__method" data-simulator-method></span>
+            </div>
+            <div class="ks3-simulator__summary" data-simulator-summary></div>
+
+            {% if simulation_profile.show_chart %}
+                <div class="ks3-simulator__chart-card">
+                    <div class="ks3-simulator__chart-header">
+                        <div>
+                            <span class="ks3-simulator__section-kicker">Grafik pertumbuhan</span>
+                            <h5 data-chart-title>Perkembangan total, pokok, dan bunga</h5>
+                        </div>
+                        <div class="ks3-simulator__legend" data-chart-legend></div>
+                    </div>
+                    <div class="ks3-simulator__chart" data-simulator-chart>
+                        <div class="ks3-simulator__chart-scroll">
+                            <svg role="img" aria-label="Grafik proyeksi simulasi" viewBox="0 0 900 350" preserveAspectRatio="xMidYMid meet"></svg>
+                        </div>
+                        <div class="ks3-simulator__tooltip" data-chart-tooltip hidden></div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="ks3-simulator__rule-note" data-simulator-rules hidden></div>
+
+            {% if simulation_profile.show_table %}
+                <div class="ks3-simulator__table-card">
+                    <div class="ks3-simulator__table-heading">
+                        <div>
+                            <span class="ks3-simulator__section-kicker">Rincian periode</span>
+                            <h5 data-breakdown-title>Breakdown simulasi</h5>
+                        </div>
+                        <span class="ks3-simulator__row-count" data-breakdown-count></span>
+                    </div>
+                    <div class="ks3-simulator__table-wrap">
+                        <table class="ks3-simulator__table">
+                            <thead data-breakdown-head></thead>
+                            <tbody data-breakdown-body></tbody>
+                        </table>
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if simulation_profile.disclaimer %}
+                <div class="ks3-simulator__disclaimer">
+                    <i class="bi bi-info-circle" aria-hidden="true"></i>
+                    <p>{{ simulation_profile.disclaimer }}</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>

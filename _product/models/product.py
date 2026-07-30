@@ -56,11 +56,22 @@ class Product(PreviewableMixin, models.Model):
         return "cms/pages/product.html"
 
     def get_preview_context(self, request, mode_name):
-        products = list(Product.objects.select_related("category").filter(is_published=True, category__is_active=True))
+        products = list(
+            Product.objects.select_related("category")
+            .filter(is_published=True, category__is_active=True)
+            .order_by("category__sort_order", "category__name", "sort_order", "title")
+        )
         if not any(product.pk == self.pk for product in products):
             products.append(self)
-            products.sort(key=lambda product: (product.sort_order, product.title))
-        return {
+            products.sort(
+                key=lambda product: (
+                    product.category.sort_order,
+                    product.category.name,
+                    product.sort_order,
+                    product.title,
+                )
+            )
+        context = {
             "products": products,
             "selected_product": self,
             "streamfield": self.content,
@@ -71,6 +82,15 @@ class Product(PreviewableMixin, models.Model):
             "seo_keywords": self.seo_keywords,
             "seo_og_image": self.seo_og_image,
         }
+        try:
+            simulation = self.simulation
+        except Product.simulation.RelatedObjectDoesNotExist:
+            simulation = None
+        if simulation and simulation.is_enabled and simulation.is_ready:
+            from _product.simulation import public_config
+
+            context.update({"simulation_profile": simulation, "simulation_config": public_config(simulation)})
+        return context
 
     def __str__(self):
         return self.title

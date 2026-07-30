@@ -19,13 +19,20 @@ class LandingView(TemplateView):
             is_published=True,
             category__is_active=True,
         )[:3]
-        context["featured_products"] = Product.objects.select_related(
+        featured_products = list(Product.objects.select_related(
             "category", "card_image"
         ).filter(
             is_featured=True,
             is_published=True,
             category__is_active=True,
-        )[:5]
+        ))
+        context["featured_products"] = featured_products
+        context["featured_savings"] = [
+            product for product in featured_products if product.category.slug == "simpanan"
+        ]
+        context["featured_loans"] = [
+            product for product in featured_products if product.category.slug == "pinjaman"
+        ]
         return context
 
 

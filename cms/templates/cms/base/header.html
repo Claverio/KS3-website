@@ -6,7 +6,7 @@
                     <div class="container-fluid">
                         <div class="row h-50px xs-h-auto align-items-center m-0 xs-pt-5px xs-pb-5px">
                             <div class="col-lg-6 col-md-7 text-center text-md-start xs-px-0">
-                                <div class="fs-14 text-dark-gray fw-500">&#128075; Imbal hasil simpanan hingga 9% p.a. — Mulai dari Rp500rb</div>
+                                <a href="{% url 'product' %}" class="fs-14 text-dark-gray fw-500"><i class="bi bi-calculator me-5px text-base-color" aria-hidden="true"></i>Jelajahi produk simpanan dan pinjaman beserta simulasinya</a>
                             </div>
                             <div class="col-lg-6 col-md-5 text-end d-none d-md-flex">
                                 <div class="widget me-20px lg-me-25px md-me-0"><a href="mailto:{{ contact_setting.email }}" class="fs-14 fw-500 text-dark-gray"><i class="feather icon-feather-mail fs-16 text-base-color"></i>{{ contact_setting.email }}</a></div>
@@ -42,14 +42,21 @@
                             <div class="collapse navbar-collapse" id="navbarNav"> 
                                 <ul class="navbar-nav">
                                     <li class="nav-item"><a href="{% url 'landing' %}" class="nav-link">Beranda</a></li> 
-                                    <li class="nav-item"><a href="{% url 'p2p_list' %}" class="nav-link">P2P Lending</a></li>
-                                    <li class="nav-item dropdown dropdown-with-icon">
-                                        <a href="{% url 'product' %}" class="nav-link">Produk <span class="label border-radius-100px bg-light-medium-gray fw-700 alt-font text-base-color text-uppercase">New</span></a>
-                                        <i class="fa-solid fa-angle-down dropdown-toggle" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false"></i>
-                                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                            {% for product in navigation_products %}<li><a href="{{ product.get_absolute_url }}"><i class="bi {{ product.icon }}"></i><div class="submenu-icon-content"><span>{{ product.title }}</span><p>{% if product.menu_description %}{{ product.menu_description }}{% else %}{{ product.summary|truncatechars:36 }}{% endif %}</p></div></a></li>{% empty %}<li><a href="{% url 'product' %}"><i class="bi bi-folder"></i><div class="submenu-icon-content"><span>Lihat Produk</span><p>Produk KS3 akan segera tersedia.</p></div></a></li>{% endfor %}
+                                    <li class="nav-item dropdown dropdown-with-icon" data-nav-products="savings">
+                                        <a href="{% url 'product' %}" class="nav-link">Simpanan</a>
+                                        <i class="fa-solid fa-angle-down dropdown-toggle" id="navbarSavingsMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                                        <ul class="dropdown-menu" aria-labelledby="navbarSavingsMenu">
+                                            {% for product in navigation_savings %}<li><a href="{{ product.get_absolute_url }}"><i class="bi {{ product.icon }}"></i><div class="submenu-icon-content"><span>{{ product.title }}</span><p>{% if product.menu_description %}{{ product.menu_description }}{% else %}{{ product.summary|truncatechars:36 }}{% endif %}</p></div></a></li>{% empty %}<li><a href="{% url 'product' %}"><i class="bi bi-piggy-bank"></i><div class="submenu-icon-content"><span>Lihat Simpanan</span><p>Produk simpanan akan segera tersedia.</p></div></a></li>{% endfor %}
                                         </ul>
                                     </li>
+                                    <li class="nav-item dropdown dropdown-with-icon" data-nav-products="loans">
+                                        <a href="{% url 'product' %}" class="nav-link">Pinjaman</a>
+                                        <i class="fa-solid fa-angle-down dropdown-toggle" id="navbarLoansMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false"></i>
+                                        <ul class="dropdown-menu" aria-labelledby="navbarLoansMenu">
+                                            {% for product in navigation_loans %}<li><a href="{{ product.get_absolute_url }}"><i class="bi {{ product.icon }}"></i><div class="submenu-icon-content"><span>{{ product.title }}</span><p>{% if product.menu_description %}{{ product.menu_description }}{% else %}{{ product.summary|truncatechars:36 }}{% endif %}</p></div></a></li>{% empty %}<li><a href="{% url 'product' %}"><i class="bi bi-cash-stack"></i><div class="submenu-icon-content"><span>Lihat Pinjaman</span><p>Produk pinjaman akan segera tersedia.</p></div></a></li>{% endfor %}
+                                        </ul>
+                                    </li>
+                                    <li class="nav-item"><a href="{% url 'p2p_list' %}" class="nav-link">P2P Lending</a></li>
                                     {% if header_misc_pages %}<li class="nav-item dropdown dropdown-with-icon"><a href="{% if misc_index_page %}{{ misc_index_page.url }}{% else %}/halaman/{% endif %}" class="nav-link">Halaman</a><i class="fa-solid fa-angle-down dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false"></i><ul class="dropdown-menu">{% for item in header_misc_pages %}<li><a href="{{ item.url }}"><i class="bi bi-file-text"></i><div class="submenu-icon-content"><span>{{ item.title }}</span><p>{% if item.menu_description %}{{ item.menu_description }}{% else %}{{ item.introduction|truncatechars:36 }}{% endif %}</p></div></a></li>{% endfor %}</ul></li>{% endif %}
                                     {% for item in main_menu_misc_pages %}<li class="nav-item"><a href="{{ item.url }}" class="nav-link">{{ item.title }}</a></li>{% endfor %}
                                     <li class="nav-item d-sm-none"><a href="{% url 'search' %}" class="nav-link"><i class="feather icon-feather-search me-5px"></i>Cari</a></li>

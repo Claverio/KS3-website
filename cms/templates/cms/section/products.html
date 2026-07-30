@@ -3,11 +3,36 @@
 <section id="home-products" class="cover-background border-radius-10px lg-no-border-radius overflow-visible ks3-ksp-products-carousel" style="background-image: url('{% if products_background %}{{ products_background.url }}{% else %}{% static 'cms/images/service-bg.webp' %}{% endif %}')">
     <img src="{% static 'cms/images/demo-modern-business-elements-03.png' %}" alt="" class="position-absolute left-minus-30px md-left-0px top-minus-80px animation-rotation d-none d-md-block">
     <div class="container-fluid overflow-hidden">
-        <div class="row" data-anime='{ "el": "childs", "translateY": [30, 0], "opacity": [0,1], "duration": 600, "delay": 0, "staggervalue": 200, "easing": "easeOutQuad" }'><div class="col-12 text-center"><span class="ps-20px pe-20px pt-5px pb-5px mb-15px text-uppercase alt-font text-base-color fs-12 lh-26 fw-600 border-radius-100px bg-gradient-very-light-gray-transparent d-inline-flex"><i class="bi bi-safe fs-16 me-5px"></i>{{ home_settings.products_small_title }}</span><h2 class="alt-font text-dark-gray fw-700 ls-minus-05px mb-10px">{{ home_settings.products_title }}</h2><p class="mx-auto w-50 xl-w-70 md-w-100 mb-20px">{{ home_settings.products_description }}</p></div></div>
-        <div class="row mb-15px sm-mb-0" data-anime='{ "opacity": [0,1], "duration": 600, "delay": 0, "staggervalue": 200, "easing": "easeOutQuad" }'><div class="col-md-12"><div class="outside-box-right-15 outside-box-left-15 sm-outside-box-right-0 sm-outside-box-left-0"><div class="swiper magic-cursor" data-slider-options='{ "slidesPerView": 1.12, "spaceBetween": 16, "loop": true, "speed": 700, "grabCursor": true, "autoplay": { "delay": 3200, "disableOnInteraction": false, "pauseOnMouseEnter": true }, "pagination": { "el": ".slider-four-slide-pagination-1", "clickable": true, "dynamicBullets": true }, "keyboard": { "enabled": true, "onlyInViewport": true }, "breakpoints": { "1600": { "slidesPerView": 6, "spaceBetween": 30 }, "1400": { "slidesPerView": 5, "spaceBetween": 30 }, "1200": { "slidesPerView": 4, "spaceBetween": 30 }, "991": { "slidesPerView": 3, "spaceBetween": 24 }, "768": { "slidesPerView": 3, "spaceBetween": 20 }, "576": { "slidesPerView": 1.5, "spaceBetween": 18 } }, "effect": "slide" }'><div class="swiper-wrapper pt-30px pb-30px">
-            {% for product in featured_products %}{% include 'cms/components/product_carousel_card.html' with product=product only %}{% endfor %}
-            {% for product in featured_products %}{% include 'cms/components/product_carousel_card.html' with product=product only %}{% empty %}<div class="swiper-slide"><div class="alert alert-light border">Belum ada produk unggulan.</div></div>{% endfor %}
-        </div><div class="swiper-pagination slider-four-slide-pagination-1 swiper-pagination-style-2 position-relative mt-15px"></div></div><div class="d-md-none d-flex align-items-center justify-content-center fs-13 text-medium-gray mt-15px ks3-ksp-swipe-hint"><i class="bi bi-arrow-left me-5px"></i>Geser untuk melihat produk lainnya<i class="bi bi-arrow-right ms-5px"></i></div></div></div></div>
-        <div class="row" data-anime='{ "el": "childs", "translateY": [20, 0], "opacity": [0,1], "duration": 600, "delay": 0, "staggervalue": 200, "easing": "easeOutQuad" }'><div class="col-12 text-center"><a href="{% url 'product' %}" class="alt-font fs-16 fw-600 text-base-color">Lihat Semua Produk KSP<i class="fa-solid fa-arrow-right fs-14 ms-5px align-middle"></i></a></div></div>
+        <div class="row" data-anime='{ "el": "childs", "translateY": [30, 0], "opacity": [0,1], "duration": 600, "delay": 0, "staggervalue": 200, "easing": "easeOutQuad" }'>
+            <div class="col-12 text-center">
+                <span class="ps-20px pe-20px pt-5px pb-5px mb-15px text-uppercase alt-font text-base-color fs-12 lh-26 fw-600 border-radius-100px bg-gradient-very-light-gray-transparent d-inline-flex"><i class="bi bi-safe fs-16 me-5px"></i>{{ home_settings.products_small_title }}</span>
+                <h2 class="alt-font text-dark-gray fw-700 ls-minus-05px mb-10px">{{ home_settings.products_title }}</h2>
+                <p class="mx-auto w-50 xl-w-70 md-w-100 mb-15px">{{ home_settings.products_description }}</p>
+                <div class="ks3-product-category-summary d-flex justify-content-center flex-wrap mb-10px" aria-label="Kategori produk tersedia">
+                    {% if featured_savings %}<span class="alt-font fs-13 fw-600 text-dark-gray bg-white border border-color-extra-medium-gray border-radius-100px ps-15px pe-15px pt-5px pb-5px"><i class="bi bi-piggy-bank text-base-color me-5px"></i>{{ featured_savings|length }} Simpanan</span>{% endif %}
+                    {% if featured_loans %}<span class="alt-font fs-13 fw-600 text-dark-gray bg-white border border-color-extra-medium-gray border-radius-100px ps-15px pe-15px pt-5px pb-5px"><i class="bi bi-cash-stack text-base-color me-5px"></i>{{ featured_loans|length }} Pinjaman</span>{% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row mb-15px sm-mb-0" data-anime='{ "opacity": [0,1], "duration": 600, "delay": 0, "staggervalue": 200, "easing": "easeOutQuad" }'>
+            <div class="col-md-12">
+                <div class="outside-box-right-15 outside-box-left-15 sm-outside-box-right-0 sm-outside-box-left-0">
+                    <div class="swiper magic-cursor" data-home-products-carousel data-slider-options='{ "slidesPerView": 1.12, "spaceBetween": 16, "loop": true, "speed": 700, "grabCursor": true, "autoplay": { "delay": 3600, "disableOnInteraction": false, "pauseOnMouseEnter": true }, "pagination": { "el": ".ks3-products-pagination", "clickable": true, "dynamicBullets": true }, "keyboard": { "enabled": true, "onlyInViewport": true }, "breakpoints": { "1600": { "slidesPerView": 4, "spaceBetween": 30 }, "1200": { "slidesPerView": 3.5, "spaceBetween": 28 }, "991": { "slidesPerView": 3, "spaceBetween": 24 }, "768": { "slidesPerView": 2.25, "spaceBetween": 20 }, "576": { "slidesPerView": 1.5, "spaceBetween": 18 } }, "effect": "slide" }'>
+                        <div class="swiper-wrapper pt-30px pb-30px">
+                            {% for product in featured_products %}
+                                {% include 'cms/components/product_carousel_card.html' with product=product only %}
+                            {% empty %}
+                                <div class="swiper-slide"><div class="alert alert-light border">Belum ada produk unggulan.</div></div>
+                            {% endfor %}
+                        </div>
+                        <div class="swiper-pagination ks3-products-pagination swiper-pagination-style-2 position-relative mt-15px"></div>
+                    </div>
+                    <div class="d-md-none d-flex align-items-center justify-content-center fs-13 text-medium-gray mt-15px ks3-ksp-swipe-hint"><i class="bi bi-arrow-left me-5px"></i>Geser untuk melihat produk lainnya<i class="bi bi-arrow-right ms-5px"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="row" data-anime='{ "el": "childs", "translateY": [20, 0], "opacity": [0,1], "duration": 600, "delay": 0, "staggervalue": 200, "easing": "easeOutQuad" }'>
+            <div class="col-12 text-center"><a href="{% url 'product' %}" class="alt-font fs-16 fw-600 text-base-color">Lihat Semua Produk KS3<i class="fa-solid fa-arrow-right fs-14 ms-5px align-middle"></i></a></div>
+        </div>
     </div>
 </section>

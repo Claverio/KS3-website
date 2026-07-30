@@ -17,10 +17,19 @@ def global_navigation(request):
             .descendant_of(site.root_page)
             .first()
         )
-    return {
-        "navigation_products": Product.objects.filter(
+    navigation_products = list(
+        Product.objects.filter(
             is_published=True, category__is_active=True
-        ).select_related("category")[:5],
+        ).select_related("category")
+    )
+    return {
+        "navigation_products": navigation_products,
+        "navigation_savings": [
+            product for product in navigation_products if product.category.slug == "simpanan"
+        ],
+        "navigation_loans": [
+            product for product in navigation_products if product.category.slug == "pinjaman"
+        ],
         "misc_index_page": index_page,
         "header_misc_pages": pages.filter(show_on_header=True).order_by("menu_order", "title"),
         "main_menu_misc_pages": pages.filter(show_on_main_menu=True).order_by("menu_order", "title"),

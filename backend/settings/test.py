@@ -2,7 +2,7 @@ from .base import *
 
 DEBUG = False
 SECRET_KEY = "test-only-secret-key"
-ALLOWED_HOSTS = ["testserver", "localhost"]
+ALLOWED_HOSTS = ["testserver", "localhost", ".example.test"]
 DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"}}
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 STORAGES = {
