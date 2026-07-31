@@ -271,16 +271,26 @@
   .ks3-export-menu a strong { font-size: .78rem; }
   .ks3-export-menu a small { color: #7b8793; font-size: .67rem; margin-top: .08rem; }
 
-  .ks3-report-table-wrap { overflow-x: auto; scrollbar-color: #c1ccd5 #f3f6f8; scrollbar-width: thin; }
-  .ks3-report-table { margin: 0; min-width: 88rem; table-layout: fixed; width: 100%; }
-  .ks3-report-col--date { width: 10%; }
-  .ks3-report-col--code { width: 15%; }
-  .ks3-report-col--member { width: 18%; }
-  .ks3-report-col--product { width: 10%; }
-  .ks3-report-col--amount { width: 13%; }
-  .ks3-report-col--channel { width: 10%; }
-  .ks3-report-col--verification { width: 16%; }
-  .ks3-report-col--status { width: 8%; }
+  .ks3-report-table-wrap {
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-color: #9fb0bd #eef2f5;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+  }
+  .ks3-report-table-wrap::-webkit-scrollbar { height: .65rem; }
+  .ks3-report-table-wrap::-webkit-scrollbar-track { background: #eef2f5; }
+  .ks3-report-table-wrap::-webkit-scrollbar-thumb { background: #9fb0bd; border: 2px solid #eef2f5; border-radius: 999px; }
+  .ks3-report-table { margin: 0; min-width: 103rem; table-layout: fixed; width: 100%; }
+  .ks3-report-col--date { width: 11rem; }
+  .ks3-report-col--code { width: 15rem; }
+  .ks3-report-col--member { width: 18rem; }
+  .ks3-report-col--product { width: 12rem; }
+  .ks3-report-col--amount { width: 12rem; }
+  .ks3-report-col--channel { width: 11rem; }
+  .ks3-report-col--verification { width: 16rem; }
+  .ks3-report-col--status { width: 8rem; }
   .ks3-report-table thead { background: #f5f8fb; }
   .ks3-report-table th {
     border-bottom: 1px solid #dce3e9;
@@ -307,9 +317,9 @@
 
   .ks3-report-date,
   .ks3-report-amount { display: flex; flex-direction: column; }
-  .ks3-report-date strong { color: #26333f; font-size: .78rem; }
-  .ks3-report-date > span { color: #526170; font-size: .72rem; margin-top: .12rem; }
-  .ks3-report-date small { color: #21814b; font-size: .65rem; margin-top: .3rem; }
+  .ks3-report-date strong { color: #26333f; font-size: .78rem; white-space: nowrap; }
+  .ks3-report-date > span { color: #526170; font-size: .72rem; margin-top: .12rem; white-space: nowrap; }
+  .ks3-report-date small { color: #21814b; font-size: .65rem; margin-top: .3rem; white-space: nowrap; }
   .ks3-report-code { color: #0967aa; display: block; font-size: .76rem; font-weight: 800; overflow-wrap: anywhere; text-decoration: none; }
   .ks3-report-code:hover { text-decoration: underline; }
   .ks3-report-reference { color: #8a959f; display: block; font-size: .62rem; margin-top: .28rem; overflow-wrap: anywhere; }
