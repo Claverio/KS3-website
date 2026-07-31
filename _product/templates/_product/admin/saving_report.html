@@ -1,13 +1,351 @@
 {% extends "wagtailadmin/generic/base.html" %}
 {% load wagtailadmin_tags p2p_tags %}
-{% block content %}<div class="ks3-admin-search-page ks3-saving-report-page">
-  <header class="ks3-admin-hero"><div><span class="ks3-admin-eyebrow">LAPORAN OPERASIONAL</span><h1>Laporan Tabungan</h1><p>Lihat siapa yang menabung dalam periode tertentu dan unduh datanya.</p></div><a href="{{ transaction_list_url }}" class="button button-secondary">Semua transaksi</a></header>
-  <form method="get" class="ks3-report-filters"><div><label for="date_from">Dari tanggal</label><input id="date_from" type="date" name="date_from" value="{{ filters.date_from|date:'Y-m-d' }}"></div><div><label for="date_to">Sampai tanggal</label><input id="date_to" type="date" name="date_to" value="{{ filters.date_to|date:'Y-m-d' }}"></div><div><label for="product">Produk</label><select id="product" name="product"><option value="">Semua produk</option>{% for product in products %}<option value="{{ product.pk }}" {% if filters.product == product.pk|stringformat:'s' %}selected{% endif %}>{{ product.title }}</option>{% endfor %}</select></div><div><label for="status">Status</label><select id="status" name="status"><option value="">Semua status</option>{% for value,label in statuses %}<option value="{{ value }}" {% if filters.status == value %}selected{% endif %}>{{ value|payment_status_label }}</option>{% endfor %}</select></div><button class="button" type="submit">Tampilkan</button></form>
-  <section class="ks3-admin-stats"><div class="ks3-admin-stat"><span class="ks3-admin-stat__icon ks3-admin-stat__icon--blue">{% icon name="credit-card" %}</span><span><small>Total transaksi</small><strong>{{ transaction_count }}</strong><em>Sesuai filter</em></span></div><div class="ks3-admin-stat"><span class="ks3-admin-stat__icon ks3-admin-stat__icon--gold">{% icon name="user" %}</span><span><small>Penabung unik</small><strong>{{ member_count }}</strong><em>Berdasarkan email</em></span></div><div class="ks3-admin-stat"><span class="ks3-admin-stat__icon ks3-admin-stat__icon--blue">{% icon name="check" %}</span><span><small>Setoran lunas</small><strong>{{ paid_count }}</strong><em>Sudah terverifikasi</em></span></div><div class="ks3-admin-stat"><span class="ks3-admin-stat__icon ks3-admin-stat__icon--gold">{% icon name="credit-card" %}</span><span><small>Total nominal</small><strong>{{ total_amount|rupiah }}</strong><em>Sesuai filter</em></span></div></section>
-  <section class="ks3-admin-card ks3-admin-card--transactions"><div class="ks3-admin-card__header"><div><span class="ks3-admin-eyebrow">DATA SETORAN</span><h2>Daftar penabung</h2><p>{{ filters.date_from|date:'d M Y' }} - {{ filters.date_to|date:'d M Y' }}</p></div><details class="ks3-export-menu"><summary class="button button-secondary">Export <span aria-hidden="true">▾</span></summary><div><a href="{% url 'saving_report_export' 'pdf' %}?{{ export_query }}">PDF</a><a href="{% url 'saving_report_export' 'csv' %}?{{ export_query }}">CSV</a><a href="{% url 'saving_report_export' 'xlsx' %}?{{ export_query }}">Excel (.xlsx)</a></div></details></div>
-    {% if rows %}<div class="ks3-admin-table-wrap"><table class="listing ks3-admin-table"><thead><tr><th>Tanggal</th><th>Kode</th><th>Penabung</th><th>Produk</th><th>Nominal</th><th>Kanal</th><th>Status</th></tr></thead><tbody>{% for item in rows %}<tr><td>{{ item.created_at|date:'d M Y, H:i' }}<small>{% if item.paid_at %}Lunas {{ item.paid_at|date:'d M, H:i' }}{% endif %}</small></td><td><a href="{% url 'wagtailsnippets__product_savingtransaction:edit' item.pk %}"><strong>{{ item.transaction_code }}</strong></a></td><td>{{ item.full_name }}<small>{{ item.nomor_anggota|default:'Anggota baru' }} · {{ item.email }}</small></td><td>{{ item.product.title }}</td><td><strong>{{ item.total_amount|rupiah }}</strong></td><td>{{ item.get_payment_channel_display }}</td><td><span class="ks3-report-status ks3-report-status--{{ item.status }}">{{ item.status|payment_status_label }}</span></td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="ks3-admin-empty">Tidak ada transaksi pada periode dan filter ini.</div>{% endif %}
-    {% if rows.paginator.num_pages > 1 %}<nav class="ks3-report-pagination">{% if rows.has_previous %}<a class="button button-secondary button-small" href="?{{ export_query }}&page={{ rows.previous_page_number }}">Sebelumnya</a>{% endif %}<span>Halaman {{ rows.number }} dari {{ rows.paginator.num_pages }}</span>{% if rows.has_next %}<a class="button button-secondary button-small" href="?{{ export_query }}&page={{ rows.next_page_number }}">Berikutnya</a>{% endif %}</nav>{% endif %}
+
+{% block content %}
+<div class="ks3-admin-search-page ks3-saving-report-page">
+  <header class="ks3-admin-hero">
+    <div>
+      <span class="ks3-admin-eyebrow">LAPORAN OPERASIONAL</span>
+      <h1>Laporan Tabungan</h1>
+      <p>Lihat siapa yang menabung dalam periode tertentu dan unduh datanya.</p>
+    </div>
+    <a href="{{ transaction_list_url }}" class="button button-secondary">Semua transaksi</a>
+  </header>
+
+  <form method="get" class="ks3-report-filters">
+    <div>
+      <label for="date_from">Dari tanggal</label>
+      <input id="date_from" type="date" name="date_from" value="{{ filters.date_from|date:'Y-m-d' }}">
+    </div>
+    <div>
+      <label for="date_to">Sampai tanggal</label>
+      <input id="date_to" type="date" name="date_to" value="{{ filters.date_to|date:'Y-m-d' }}">
+    </div>
+    <div>
+      <label for="product">Produk</label>
+      <select id="product" name="product">
+        <option value="">Semua produk</option>
+        {% for product in products %}
+          <option value="{{ product.pk }}" {% if filters.product == product.pk|stringformat:'s' %}selected{% endif %}>{{ product.title }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label for="status">Status</label>
+      <select id="status" name="status">
+        <option value="">Semua status</option>
+        {% for value,label in statuses %}
+          <option value="{{ value }}" {% if filters.status == value %}selected{% endif %}>{{ value|payment_status_label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button class="button" type="submit">Tampilkan</button>
+  </form>
+
+  <section class="ks3-admin-stats" aria-label="Ringkasan laporan tabungan">
+    <div class="ks3-admin-stat">
+      <span class="ks3-admin-stat__icon ks3-admin-stat__icon--blue">{% icon name="credit-card" %}</span>
+      <span><small>Total transaksi</small><strong>{{ transaction_count }}</strong><em>Sesuai filter</em></span>
+    </div>
+    <div class="ks3-admin-stat">
+      <span class="ks3-admin-stat__icon ks3-admin-stat__icon--gold">{% icon name="user" %}</span>
+      <span><small>Penabung unik</small><strong>{{ member_count }}</strong><em>Berdasarkan email</em></span>
+    </div>
+    <div class="ks3-admin-stat">
+      <span class="ks3-admin-stat__icon ks3-admin-stat__icon--blue">{% icon name="check" %}</span>
+      <span><small>Setoran lunas</small><strong>{{ paid_count }}</strong><em>Sudah terverifikasi</em></span>
+    </div>
+    <div class="ks3-admin-stat">
+      <span class="ks3-admin-stat__icon ks3-admin-stat__icon--gold">{% icon name="credit-card" %}</span>
+      <span><small>Total nominal</small><strong>{{ total_amount|rupiah }}</strong><em>Sesuai filter</em></span>
+    </div>
+  </section>
+
+  <section class="ks3-admin-card ks3-admin-card--transactions ks3-report-transactions">
+    <div class="ks3-report-transactions__header">
+      <div class="ks3-report-heading">
+        <span class="ks3-admin-eyebrow">DATA SETORAN</span>
+        <div class="ks3-report-heading__title">
+          <h2>Data penabung &amp; setoran</h2>
+          <span>{{ transaction_count }} transaksi</span>
+        </div>
+        <p>
+          Rincian transaksi periode
+          <strong>{{ filters.date_from|date:'d M Y' }} – {{ filters.date_to|date:'d M Y' }}</strong>
+        </p>
+      </div>
+
+      <details class="ks3-export-menu">
+        <summary class="button button-secondary" aria-label="Pilih format export laporan">
+          <span>Export data</span><span class="ks3-export-menu__chevron" aria-hidden="true">▾</span>
+        </summary>
+        <div>
+          <a href="{% url 'saving_report_export' 'pdf' %}?{{ export_query }}"><strong>PDF</strong><small>Dokumen siap cetak</small></a>
+          <a href="{% url 'saving_report_export' 'csv' %}?{{ export_query }}"><strong>CSV</strong><small>Data teks universal</small></a>
+          <a href="{% url 'saving_report_export' 'xlsx' %}?{{ export_query }}"><strong>Excel</strong><small>Spreadsheet .xlsx</small></a>
+        </div>
+      </details>
+    </div>
+
+    {% if rows %}
+      <div class="ks3-report-table-wrap">
+        <table class="listing ks3-report-table">
+          <colgroup>
+            <col class="ks3-report-col--date">
+            <col class="ks3-report-col--code">
+            <col class="ks3-report-col--member">
+            <col class="ks3-report-col--product">
+            <col class="ks3-report-col--amount">
+            <col class="ks3-report-col--channel">
+            <col class="ks3-report-col--status">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Waktu transaksi</th>
+              <th>Kode setoran</th>
+              <th>Penabung</th>
+              <th>Produk simpanan</th>
+              <th class="ks3-report-table__amount">Rincian nominal</th>
+              <th>Kanal</th>
+              <th class="ks3-report-table__status">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in rows %}
+              <tr>
+                <td>
+                  <div class="ks3-report-date">
+                    <strong>{{ item.created_at|date:'d M Y' }}</strong>
+                    <span>{{ item.created_at|date:'H:i' }} WIB</span>
+                    {% if item.paid_at %}<small>Lunas {{ item.paid_at|date:'d M, H:i' }}</small>{% endif %}
+                  </div>
+                </td>
+                <td>
+                  <a class="ks3-report-code" href="{% url 'wagtailsnippets__product_savingtransaction:edit' item.pk %}">
+                    {{ item.transaction_code }}
+                  </a>
+                  <small class="ks3-report-reference">{{ item.reference_id }}</small>
+                </td>
+                <td>
+                  <div class="ks3-report-member">
+                    <span class="ks3-report-member__avatar" aria-hidden="true">{{ item.full_name|slice:':1'|upper }}</span>
+                    <span class="ks3-report-member__identity">
+                      <strong>{{ item.full_name }}</strong>
+                      <small>{{ item.email }}</small>
+                      <em>{% if item.nomor_anggota %}No. {{ item.nomor_anggota }}{% else %}Anggota baru{% endif %}</em>
+                    </span>
+                  </div>
+                </td>
+                <td><strong class="ks3-report-product">{{ item.product.title }}</strong></td>
+                <td class="ks3-report-table__amount">
+                  <div class="ks3-report-amount">
+                    <strong>{{ item.total_amount|rupiah }}</strong>
+                    <small>Setoran {{ item.amount|rupiah }}</small>
+                    {% if item.service_fee %}<small>Biaya {{ item.service_fee|rupiah }}</small>{% endif %}
+                  </div>
+                </td>
+                <td>
+                  <span class="ks3-report-channel ks3-report-channel--{{ item.payment_channel }}">{{ item.get_payment_channel_display }}</span>
+                </td>
+                <td class="ks3-report-table__status">
+                  <span class="ks3-report-status ks3-report-status--{{ item.status }}">{{ item.status|payment_status_label }}</span>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="ks3-admin-empty ks3-report-empty">
+        <strong>Belum ada data setoran</strong>
+        <span>Tidak ada transaksi pada periode dan filter yang dipilih.</span>
+      </div>
+    {% endif %}
+
+    {% if rows.paginator.num_pages > 1 %}
+      <nav class="ks3-report-pagination" aria-label="Navigasi halaman laporan">
+        {% if rows.has_previous %}<a class="button button-secondary button-small" href="?{{ export_query }}&amp;page={{ rows.previous_page_number }}">Sebelumnya</a>{% endif %}
+        <span>Halaman <strong>{{ rows.number }}</strong> dari {{ rows.paginator.num_pages }}</span>
+        {% if rows.has_next %}<a class="button button-secondary button-small" href="?{{ export_query }}&amp;page={{ rows.next_page_number }}">Berikutnya</a>{% endif %}
+      </nav>
+    {% endif %}
   </section>
 </div>
-<style>.ks3-report-filters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) auto;gap:1rem;align-items:end;background:#fff;border:1px solid #dce2e8;border-radius:.8rem;padding:1.2rem;margin-bottom:1.25rem}.ks3-report-filters div{display:flex;flex-direction:column;gap:.35rem}.ks3-report-filters label{font-size:.72rem;font-weight:700;color:#52606d}.ks3-report-filters input,.ks3-report-filters select{min-height:2.7rem}.ks3-export-menu{position:relative}.ks3-export-menu summary{list-style:none;cursor:pointer}.ks3-export-menu>div{position:absolute;right:0;top:calc(100% + .35rem);z-index:5;min-width:10rem;background:#fff;border:1px solid #dce2e8;border-radius:.45rem;box-shadow:0 .7rem 1.7rem #002e5518;overflow:hidden}.ks3-export-menu a{display:block;padding:.7rem 1rem;text-decoration:none}.ks3-export-menu a:hover{background:#edf4fa}.ks3-report-status{border-radius:999px;padding:.25rem .55rem;font-weight:700;font-size:.7rem;background:#eef1f5}.ks3-report-status--paid{background:#dcfce7;color:#166534}.ks3-report-status--waiting_payment,.ks3-report-status--creating{background:#fef3c7;color:#92400e}.ks3-report-status--failed,.ks3-report-status--expired{background:#fee2e2;color:#991b1b}.ks3-report-pagination{display:flex;align-items:center;justify-content:center;gap:1rem;padding:1.2rem}@media(max-width:75rem){.ks3-report-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.ks3-report-filters button{grid-column:1/-1}}@media(max-width:49.9375em){.ks3-report-filters{grid-template-columns:1fr}.ks3-saving-report-page .ks3-admin-hero>a{width:100%;text-align:center}}</style>
+
+<style>
+  .ks3-report-filters {
+    align-items: end;
+    background: #fff;
+    border: 1px solid #dce2e8;
+    border-radius: .8rem;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+    margin-bottom: 1.25rem;
+    padding: 1.2rem;
+  }
+  .ks3-report-filters div { display: flex; flex-direction: column; gap: .35rem; }
+  .ks3-report-filters label { color: #52606d; font-size: .72rem; font-weight: 700; }
+  .ks3-report-filters input,
+  .ks3-report-filters select { min-height: 2.7rem; }
+
+  .ks3-report-transactions { box-shadow: 0 .5rem 1.8rem rgb(30 54 75 / 5%); }
+  .ks3-report-transactions__header {
+    align-items: flex-start;
+    border-bottom: 1px solid #e3e8ed;
+    display: flex;
+    gap: 2rem;
+    justify-content: space-between;
+    padding: 1.65rem 1.75rem 1.5rem;
+  }
+  .ks3-report-heading { min-width: 0; }
+  .ks3-report-heading__title { align-items: center; display: flex; flex-wrap: wrap; gap: .6rem; margin: .3rem 0 .35rem; }
+  .ks3-report-heading__title h2 { color: #17212b; font-size: 1.45rem; line-height: 1.25; margin: 0; }
+  .ks3-report-heading__title > span {
+    background: #eaf3fb;
+    border-radius: 999px;
+    color: #075f9e;
+    font-size: .7rem;
+    font-weight: 800;
+    padding: .28rem .58rem;
+  }
+  .ks3-report-heading p { color: #677482; font-size: .82rem; margin: 0; }
+  .ks3-report-heading p strong { color: #344250; font-weight: 700; }
+
+  .ks3-export-menu { flex: 0 0 auto; position: relative; }
+  .ks3-export-menu summary { align-items: center; cursor: pointer; display: flex; gap: .65rem; list-style: none; white-space: nowrap; }
+  .ks3-export-menu summary::-webkit-details-marker { display: none; }
+  .ks3-export-menu[open] summary { background: #eaf3fb; border-color: #7fb4dc; }
+  .ks3-export-menu__chevron { font-size: .72rem; transition: transform .18s ease; }
+  .ks3-export-menu[open] .ks3-export-menu__chevron { transform: rotate(180deg); }
+  .ks3-export-menu > div {
+    background: #fff;
+    border: 1px solid #d7e0e8;
+    border-radius: .65rem;
+    box-shadow: 0 .9rem 2.2rem rgb(0 46 85 / 16%);
+    min-width: 13rem;
+    overflow: hidden;
+    padding: .35rem;
+    position: absolute;
+    right: 0;
+    top: calc(100% + .45rem);
+    z-index: 5;
+  }
+  .ks3-export-menu a { border-radius: .42rem; color: #273542; display: flex; flex-direction: column; padding: .65rem .75rem; text-decoration: none; }
+  .ks3-export-menu a:hover { background: #edf5fb; color: #075f9e; }
+  .ks3-export-menu a strong { font-size: .78rem; }
+  .ks3-export-menu a small { color: #7b8793; font-size: .67rem; margin-top: .08rem; }
+
+  .ks3-report-table-wrap { overflow-x: auto; scrollbar-color: #c1ccd5 #f3f6f8; scrollbar-width: thin; }
+  .ks3-report-table { margin: 0; min-width: 76rem; table-layout: fixed; width: 100%; }
+  .ks3-report-col--date { width: 12%; }
+  .ks3-report-col--code { width: 18%; }
+  .ks3-report-col--member { width: 21%; }
+  .ks3-report-col--product { width: 13%; }
+  .ks3-report-col--amount { width: 14%; }
+  .ks3-report-col--channel { width: 13%; }
+  .ks3-report-col--status { width: 9%; }
+  .ks3-report-table thead { background: #f5f8fb; }
+  .ks3-report-table th {
+    border-bottom: 1px solid #dce3e9;
+    color: #657381;
+    font-size: .68rem;
+    font-weight: 800;
+    letter-spacing: .035em;
+    padding: .85rem 1.15rem;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .ks3-report-table td {
+    border-bottom: 1px solid #edf0f3;
+    color: #34404b;
+    font-size: .78rem;
+    padding: 1rem 1.15rem;
+    vertical-align: middle;
+  }
+  .ks3-report-table tbody tr { transition: background-color .15s ease; }
+  .ks3-report-table tbody tr:hover { background: #f7fbfe; }
+  .ks3-report-table tbody tr:last-child td { border-bottom: 0; }
+  .ks3-report-table__amount { text-align: right; }
+  .ks3-report-table__status { text-align: center; }
+
+  .ks3-report-date,
+  .ks3-report-amount { display: flex; flex-direction: column; }
+  .ks3-report-date strong { color: #26333f; font-size: .78rem; }
+  .ks3-report-date > span { color: #526170; font-size: .72rem; margin-top: .12rem; }
+  .ks3-report-date small { color: #21814b; font-size: .65rem; margin-top: .3rem; }
+  .ks3-report-code { color: #0967aa; display: block; font-size: .76rem; font-weight: 800; overflow-wrap: anywhere; text-decoration: none; }
+  .ks3-report-code:hover { text-decoration: underline; }
+  .ks3-report-reference { color: #8a959f; display: block; font-size: .62rem; margin-top: .28rem; overflow-wrap: anywhere; }
+
+  .ks3-report-member { align-items: center; display: flex; gap: .7rem; min-width: 0; }
+  .ks3-report-member__avatar {
+    align-items: center;
+    background: #e6f1fa;
+    border-radius: 50%;
+    color: #0967aa;
+    display: flex;
+    flex: 0 0 2.05rem;
+    font-size: .76rem;
+    font-weight: 800;
+    height: 2.05rem;
+    justify-content: center;
+  }
+  .ks3-report-member__identity { display: flex; flex-direction: column; min-width: 0; }
+  .ks3-report-member__identity strong { color: #26333f; font-size: .8rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ks3-report-member__identity small { color: #76828e; font-size: .67rem; margin-top: .1rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ks3-report-member__identity em { color: #4e6476; font-size: .64rem; font-style: normal; font-weight: 700; margin-top: .18rem; }
+  .ks3-report-product { color: #34404b; font-size: .76rem; font-weight: 700; }
+
+  .ks3-report-amount { align-items: flex-end; }
+  .ks3-report-amount strong { color: #17212b; font-size: .84rem; white-space: nowrap; }
+  .ks3-report-amount small { color: #7b8792; font-size: .64rem; margin-top: .12rem; white-space: nowrap; }
+  .ks3-report-channel {
+    background: #f0f3f6;
+    border-radius: .4rem;
+    color: #526170;
+    display: inline-block;
+    font-size: .66rem;
+    font-weight: 700;
+    line-height: 1.35;
+    padding: .34rem .48rem;
+  }
+  .ks3-report-channel--xendit { background: #eaf3fb; color: #075f9e; }
+  .ks3-report-channel--manual { background: #fff3d7; color: #8a5b00; }
+  .ks3-report-status {
+    background: #eef1f5;
+    border-radius: 999px;
+    display: inline-flex;
+    font-size: .67rem;
+    font-weight: 800;
+    justify-content: center;
+    line-height: 1.25;
+    padding: .35rem .58rem;
+    white-space: nowrap;
+  }
+  .ks3-report-status--paid { background: #dcfce7; color: #166534; }
+  .ks3-report-status--waiting_payment,
+  .ks3-report-status--creating { background: #fef3c7; color: #92400e; }
+  .ks3-report-status--failed,
+  .ks3-report-status--expired,
+  .ks3-report-status--canceled { background: #fee2e2; color: #991b1b; }
+
+  .ks3-report-empty { display: flex; flex-direction: column; gap: .3rem; padding: 3.2rem 1.5rem; }
+  .ks3-report-empty strong { color: #34404b; font-size: .9rem; }
+  .ks3-report-empty span { color: #7a8691; font-size: .75rem; }
+  .ks3-report-pagination { align-items: center; border-top: 1px solid #e4e9ed; display: flex; gap: 1rem; justify-content: center; padding: 1.2rem; }
+  .ks3-report-pagination > span { color: #64717e; font-size: .75rem; }
+
+  @media (max-width: 75rem) {
+    .ks3-report-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .ks3-report-filters button { grid-column: 1 / -1; }
+  }
+  @media (max-width: 49.9375em) {
+    .ks3-report-filters { grid-template-columns: 1fr; }
+    .ks3-saving-report-page .ks3-admin-hero > a { text-align: center; width: 100%; }
+    .ks3-report-transactions__header { align-items: stretch; flex-direction: column; gap: 1.1rem; padding: 1.35rem 1.2rem; }
+    .ks3-export-menu summary { justify-content: center; width: 100%; }
+    .ks3-export-menu > div { left: 0; min-width: 100%; right: 0; }
+  }
+</style>
 {% endblock %}
