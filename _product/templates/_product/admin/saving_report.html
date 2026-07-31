@@ -1,6 +1,8 @@
 {% extends "wagtailadmin/generic/base.html" %}
 {% load wagtailadmin_tags p2p_tags %}
 
+{% block titletag %}Laporan Tabungan{% endblock %}
+
 {% block content %}
 <div class="ks3-admin-search-page ks3-saving-report-page">
   <header class="ks3-admin-hero">
@@ -97,6 +99,7 @@
             <col class="ks3-report-col--product">
             <col class="ks3-report-col--amount">
             <col class="ks3-report-col--channel">
+            <col class="ks3-report-col--verification">
             <col class="ks3-report-col--status">
           </colgroup>
           <thead>
@@ -107,6 +110,7 @@
               <th>Produk simpanan</th>
               <th class="ks3-report-table__amount">Rincian nominal</th>
               <th>Kanal</th>
+              <th>Verifikasi bayar</th>
               <th class="ks3-report-table__status">Status</th>
             </tr>
           </thead>
@@ -146,6 +150,37 @@
                 </td>
                 <td>
                   <span class="ks3-report-channel ks3-report-channel--{{ item.payment_channel }}">{{ item.get_payment_channel_display }}</span>
+                </td>
+                <td>
+                  <div class="ks3-report-verification {% if item.status == 'paid' %}ks3-report-verification--verified{% else %}ks3-report-verification--pending{% endif %}">
+                    {% if item.status == 'paid' %}
+                      <strong><i aria-hidden="true"></i>{% if item.payment_channel == 'manual' %}Diverifikasi admin{% else %}Dikonfirmasi Xendit{% endif %}</strong>
+                      {% if item.paid_at %}<small>{{ item.paid_at|date:'d M Y, H:i' }} WIB</small>{% endif %}
+                      {% if item.payment_channel == 'manual' %}
+                        <small>
+                          Oleh
+                          {% if item.created_by %}
+                            {% if item.created_by.get_full_name %}{{ item.created_by.get_full_name }}{% else %}{{ item.created_by.username }}{% endif %}
+                          {% else %}
+                            admin
+                          {% endif %}
+                        </small>
+                        {% if item.manual_reference %}<code title="{{ item.manual_reference }}">Bukti {{ item.manual_reference|truncatechars:18 }}</code>{% endif %}
+                      {% else %}
+                        <small>Provider: {{ item.xendit_session_status|default:'COMPLETED' }}</small>
+                        {% if item.payment_id %}
+                          <code title="{{ item.payment_id }}">ID {{ item.payment_id|truncatechars:18 }}</code>
+                        {% elif item.payment_request_id %}
+                          <code title="{{ item.payment_request_id }}">ID {{ item.payment_request_id|truncatechars:18 }}</code>
+                        {% elif item.xendit_session_id %}
+                          <code title="{{ item.xendit_session_id }}">Sesi {{ item.xendit_session_id|truncatechars:18 }}</code>
+                        {% endif %}
+                      {% endif %}
+                    {% else %}
+                      <strong><i aria-hidden="true"></i>Belum terverifikasi</strong>
+                      <small>Status provider: {{ item.xendit_session_status|default:'-' }}</small>
+                    {% endif %}
+                  </div>
                 </td>
                 <td class="ks3-report-table__status">
                   <span class="ks3-report-status ks3-report-status--{{ item.status }}">{{ item.status|payment_status_label }}</span>
@@ -237,14 +272,15 @@
   .ks3-export-menu a small { color: #7b8793; font-size: .67rem; margin-top: .08rem; }
 
   .ks3-report-table-wrap { overflow-x: auto; scrollbar-color: #c1ccd5 #f3f6f8; scrollbar-width: thin; }
-  .ks3-report-table { margin: 0; min-width: 76rem; table-layout: fixed; width: 100%; }
-  .ks3-report-col--date { width: 12%; }
-  .ks3-report-col--code { width: 18%; }
-  .ks3-report-col--member { width: 21%; }
-  .ks3-report-col--product { width: 13%; }
-  .ks3-report-col--amount { width: 14%; }
-  .ks3-report-col--channel { width: 13%; }
-  .ks3-report-col--status { width: 9%; }
+  .ks3-report-table { margin: 0; min-width: 88rem; table-layout: fixed; width: 100%; }
+  .ks3-report-col--date { width: 10%; }
+  .ks3-report-col--code { width: 15%; }
+  .ks3-report-col--member { width: 18%; }
+  .ks3-report-col--product { width: 10%; }
+  .ks3-report-col--amount { width: 13%; }
+  .ks3-report-col--channel { width: 10%; }
+  .ks3-report-col--verification { width: 16%; }
+  .ks3-report-col--status { width: 8%; }
   .ks3-report-table thead { background: #f5f8fb; }
   .ks3-report-table th {
     border-bottom: 1px solid #dce3e9;
@@ -312,6 +348,26 @@
   }
   .ks3-report-channel--xendit { background: #eaf3fb; color: #075f9e; }
   .ks3-report-channel--manual { background: #fff3d7; color: #8a5b00; }
+  .ks3-report-verification { display: flex; flex-direction: column; }
+  .ks3-report-verification strong { align-items: center; color: #34404b; display: flex; font-size: .69rem; gap: .35rem; }
+  .ks3-report-verification strong i { background: #a7b0b8; border-radius: 50%; flex: 0 0 .42rem; height: .42rem; width: .42rem; }
+  .ks3-report-verification small { color: #75818c; font-size: .63rem; margin-top: .18rem; }
+  .ks3-report-verification code {
+    background: transparent;
+    color: #71808c;
+    display: block;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: .58rem;
+    margin-top: .2rem;
+    overflow: hidden;
+    padding: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .ks3-report-verification--verified strong { color: #176b3b; }
+  .ks3-report-verification--verified strong i { background: #22a45a; box-shadow: 0 0 0 3px #dcfce7; }
+  .ks3-report-verification--pending strong { color: #8a5b00; }
+  .ks3-report-verification--pending strong i { background: #d99a16; box-shadow: 0 0 0 3px #fef3c7; }
   .ks3-report-status {
     background: #eef1f5;
     border-radius: 999px;

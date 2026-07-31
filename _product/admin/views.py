@@ -120,8 +120,24 @@ def _csv_safe(value):
     return f"'{text}" if text.startswith(("=", "+", "-", "@")) else text
 
 
+def _verification_details(item):
+    if item.status != SavingTransaction.Status.PAID:
+        return "Belum terverifikasi", item.xendit_session_status or "-", ""
+    if item.payment_channel == SavingTransaction.PaymentChannel.MANUAL:
+        if item.created_by:
+            admin_name = item.created_by.get_full_name() or item.created_by.get_username()
+        else:
+            admin_name = "Admin"
+        return f"Admin: {admin_name}", "MANUAL", item.manual_reference or ""
+    provider_reference = (
+        item.payment_id or item.payment_request_id or item.xendit_session_id or ""
+    )
+    return "Xendit", item.xendit_session_status or "COMPLETED", provider_reference
+
+
 def _export_rows(savings):
     for item in savings:
+        verified_by, provider_status, provider_reference = _verification_details(item)
         yield [
             item.transaction_code,
             timezone.localtime(item.created_at).strftime("%Y-%m-%d %H:%M"),
@@ -134,6 +150,9 @@ def _export_rows(savings):
             float(item.service_fee),
             float(item.total_amount),
             item.get_payment_channel_display(),
+            verified_by,
+            provider_status,
+            provider_reference,
             item.get_status_display(),
             timezone.localtime(item.paid_at).strftime("%Y-%m-%d %H:%M") if item.paid_at else "",
         ]
@@ -141,7 +160,8 @@ def _export_rows(savings):
 
 EXPORT_HEADERS = [
     "Kode Setoran", "Tanggal Transaksi", "Nama", "Nomor Anggota", "WhatsApp", "Email",
-    "Produk", "Nominal", "Biaya Layanan", "Total", "Kanal", "Status", "Tanggal Dibayar",
+    "Produk", "Nominal", "Biaya Layanan", "Total", "Kanal", "Diverifikasi Oleh",
+    "Status Provider", "ID/Bukti Provider", "Status", "Tanggal Dibayar",
 ]
 
 
@@ -175,7 +195,7 @@ def export_saving_report(request, file_format):
         for row in _export_rows(savings):
             sheet.append([_csv_safe(value) if isinstance(value, str) else value for value in row])
         sheet.auto_filter.ref = sheet.dimensions
-        widths = [22, 19, 25, 18, 18, 28, 24, 16, 16, 16, 22, 18, 19]
+        widths = [22, 19, 25, 18, 18, 28, 24, 16, 16, 16, 22, 24, 18, 30, 18, 19]
         for index, width in enumerate(widths, start=1):
             sheet.column_dimensions[chr(64 + index)].width = width
         for row in sheet.iter_rows(min_row=2, min_col=8, max_col=10):
@@ -202,8 +222,12 @@ def export_saving_report(request, file_format):
             topMargin=12 * mm, bottomMargin=12 * mm,
         )
         styles = getSampleStyleSheet()
-        data = [["Tanggal", "Kode", "Nama / Anggota", "Produk", "Total", "Kanal", "Status"]]
+        data = [["Tanggal", "Kode", "Nama / Anggota", "Produk", "Total", "Kanal", "Verifikasi", "Status"]]
         for item in savings:
+            verified_by, provider_status, provider_reference = _verification_details(item)
+            verification = f"{verified_by}\n{provider_status}"
+            if provider_reference:
+                verification += f"\n{provider_reference}"
             data.append([
                 timezone.localtime(item.created_at).strftime("%d-%m-%Y %H:%M"),
                 item.transaction_code,
@@ -211,9 +235,10 @@ def export_saving_report(request, file_format):
                 item.product.title,
                 f"Rp{item.total_amount:,.0f}".replace(",", "."),
                 item.get_payment_channel_display(),
+                verification,
                 item.get_status_display(),
             ])
-        table = Table(data, repeatRows=1, colWidths=[28*mm, 43*mm, 45*mm, 42*mm, 28*mm, 34*mm, 28*mm])
+        table = Table(data, repeatRows=1, colWidths=[26*mm, 38*mm, 40*mm, 34*mm, 26*mm, 27*mm, 45*mm, 22*mm])
         table.setStyle(TableStyle([
             ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#005DAA")),
             ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),

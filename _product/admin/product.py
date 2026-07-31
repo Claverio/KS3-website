@@ -40,7 +40,7 @@ class ProductViewSet(SnippetViewSet):
 class ProductSimulationViewSet(SnippetViewSet):
     model = ProductSimulation
     menu_label = "Simulators"
-    icon = "calculator"
+    icon = "decimal"
     list_display = ("product", "product_kind", "strategy", "is_enabled", "readiness", "updated_at")
     list_filter = ("is_enabled", "product_kind", "strategy")
     search_fields = ("product__title", "product__slug", "simulator_title")
