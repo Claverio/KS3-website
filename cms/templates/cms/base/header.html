@@ -49,6 +49,7 @@
                                             {% for product in navigation_savings %}<li><a href="{{ product.get_absolute_url }}"><i class="bi {{ product.icon }}"></i><div class="submenu-icon-content"><span>{{ product.title }}</span><p>{% if product.menu_description %}{{ product.menu_description }}{% else %}{{ product.summary|truncatechars:36 }}{% endif %}</p></div></a></li>{% empty %}<li><a href="{% url 'product' %}"><i class="bi bi-piggy-bank"></i><div class="submenu-icon-content"><span>Lihat Simpanan</span><p>Produk simpanan akan segera tersedia.</p></div></a></li>{% endfor %}
                                         </ul>
                                     </li>
+                                    <li class="nav-item"><a href="{% url 'saving_create' %}" class="nav-link">Nabung</a></li>
                                     <li class="nav-item dropdown dropdown-with-icon" data-nav-products="loans">
                                         <a href="{% url 'product' %}" class="nav-link">Pinjaman</a>
                                         <i class="fa-solid fa-angle-down dropdown-toggle" id="navbarLoansMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false"></i>
@@ -56,9 +57,12 @@
                                             {% for product in navigation_loans %}<li><a href="{{ product.get_absolute_url }}"><i class="bi {{ product.icon }}"></i><div class="submenu-icon-content"><span>{{ product.title }}</span><p>{% if product.menu_description %}{{ product.menu_description }}{% else %}{{ product.summary|truncatechars:36 }}{% endif %}</p></div></a></li>{% empty %}<li><a href="{% url 'product' %}"><i class="bi bi-cash-stack"></i><div class="submenu-icon-content"><span>Lihat Pinjaman</span><p>Produk pinjaman akan segera tersedia.</p></div></a></li>{% endfor %}
                                         </ul>
                                     </li>
-                                    <li class="nav-item"><a href="{% url 'p2p_list' %}" class="nav-link">P2P Lending</a></li>
+                                    <li class="nav-item"><a href="{% url 'p2p_list' %}" class="nav-link">Proyek</a></li>
                                     {% if header_misc_pages %}<li class="nav-item dropdown dropdown-with-icon"><a href="{% if misc_index_page %}{{ misc_index_page.url }}{% else %}/halaman/{% endif %}" class="nav-link">Halaman</a><i class="fa-solid fa-angle-down dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false"></i><ul class="dropdown-menu">{% for item in header_misc_pages %}<li><a href="{{ item.url }}"><i class="bi bi-file-text"></i><div class="submenu-icon-content"><span>{{ item.title }}</span><p>{% if item.menu_description %}{{ item.menu_description }}{% else %}{{ item.introduction|truncatechars:36 }}{% endif %}</p></div></a></li>{% endfor %}</ul></li>{% endif %}
                                     {% for item in main_menu_misc_pages %}<li class="nav-item"><a href="{{ item.url }}" class="nav-link">{{ item.title }}</a></li>{% endfor %}
+                                    <li class="nav-item"><a href="{% url 'public_docs' %}" class="nav-link">Dokumen Publik</a></li>
+                                    <li class="nav-item"><a href="{% url 'image_gallery' %}" class="nav-link">Galeri</a></li>
+                                    <li class="nav-item"><a href="https://kspsss.smartcoop.id/apps/auth/login" target="_blank" class="nav-link">Login</a></li>
                                     <li class="nav-item d-sm-none"><a href="{% url 'search' %}" class="nav-link"><i class="feather icon-feather-search me-5px"></i>Cari</a></li>
                                 </ul>
                             </div>

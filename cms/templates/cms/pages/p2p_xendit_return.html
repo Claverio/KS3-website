@@ -15,6 +15,7 @@
   </style>
 </head>
 <body>
+  {% firstof return_event_type "p2p-payment-return" as payment_return_event %}
   <main>
     <div class="spinner" aria-hidden="true"></div>
     <h2>Pembayaran sedang dikonfirmasi</h2>
@@ -23,7 +24,7 @@
   </main>
   <script>
     if (window.parent !== window) {
-      window.parent.postMessage({type: 'p2p-payment-return'}, '*');
+      window.parent.postMessage({type: '{{ payment_return_event }}'}, '*');
     } else {
       window.location.replace('{{ target_url|escapejs }}');
     }

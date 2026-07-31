@@ -20,7 +20,8 @@ class XenditAPIError(XenditError):
 
 
 class XenditService:
-    timeout = (5, 20)
+    # TLS handshakes to the payment provider can occasionally exceed five seconds.
+    timeout = (15, 30)
 
     @classmethod
     def get_setting(cls):

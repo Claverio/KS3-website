@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from _product.models import Product, ProductCategory, ProductSimulation
+from _product.models import Product, ProductCategory, ProductSimulation, SavingTransaction
 
 
 def make_product(**overrides):
@@ -43,3 +43,27 @@ def make_simulation(product=None, **overrides):
     }
     values.update(overrides)
     return ProductSimulation.objects.create(**values)
+
+
+def make_saving_transaction(product=None, **overrides):
+    product = product or make_product()
+    values = {
+        "reference_id": f"KS3-SAV-TEST-{SavingTransaction.objects.count():04d}",
+        "transaction_code": f"KS3-STR-TEST-{SavingTransaction.objects.count():04d}",
+        "product": product,
+        "full_name": "Budi Santoso",
+        "phone": "081234567890",
+        "email": "budi@example.com",
+        "nik": "1234567890123456",
+        "is_new_member": False,
+        "nomor_anggota": "AGT-001",
+        "amount": Decimal("500000"),
+        "service_fee": Decimal("0"),
+        "total_amount": Decimal("500000"),
+        "currency": "IDR",
+        "status": SavingTransaction.Status.WAITING_PAYMENT,
+        "xendit_session_id": f"ps-sav-{SavingTransaction.objects.count():025d}",
+        "xendit_session_status": "ACTIVE",
+    }
+    values.update(overrides)
+    return SavingTransaction.objects.create(**values)

@@ -19,3 +19,23 @@ services:
       timeout: 15s
       retries: 3
       start_period: 90s
+
+  payment-sync:
+    build: .
+    env_file:
+      - backend/settings/.env
+    environment:
+      DJANGO_SETTINGS_MODULE: backend.settings.production
+    command:
+      - /bin/sh
+      - -c
+      - |
+        while true; do
+          python manage.py sync_unpaid_payments
+          sleep 60
+        done
+    depends_on:
+      web:
+        condition: service_healthy
+    restart: unless-stopped
+    stop_grace_period: 30s

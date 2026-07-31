@@ -111,6 +111,8 @@ class P2P(PreviewableMixin, models.Model):
             models.CheckConstraint(condition=models.Q(target_amount__gt=0), name="p2p_target_amount_gt_zero"),
             models.CheckConstraint(condition=models.Q(interest_rate__gte=0), name="p2p_interest_rate_gte_zero"),
         ]
+        verbose_name_plural = "Proyek"
+        verbose_name = "Proyek"
 
     def clean(self):
         super().clean()

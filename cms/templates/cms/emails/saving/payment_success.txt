@@ -1,0 +1,16 @@
+{% load p2p_tags %}Halo {{ saving_txn.full_name }},
+
+Setoran simpanan Anda telah berhasil diverifikasi.
+
+Kode setoran: {{ saving_txn.transaction_code }}
+Produk: {{ saving_txn.product.title }}
+Nominal setoran: {{ saving_txn.amount|rupiah }}
+Biaya payment gateway: {{ saving_txn.service_fee|rupiah }}
+Total dibayar: {{ saving_txn.total_amount|rupiah }}
+Metode: {{ saving_txn.get_payment_channel_display }}
+
+Simpan email ini sebagai bukti konfirmasi.
+Butuh bantuan? {{ contact_setting.email }}{% if contact_setting.whatsapp_display %} / WhatsApp {{ contact_setting.whatsapp_display }}{% endif %}
+
+KSP Sentra Solusi Sejahtera
+{{ contact_setting.address }}

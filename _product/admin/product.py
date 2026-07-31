@@ -2,7 +2,12 @@ from wagtail.snippets.models import register_snippet
 from wagtail.snippets.views.snippets import SnippetViewSet, SnippetViewSetGroup
 
 from backend.helper.singleton import SingletonSnippetViewSet
-from _product.models import Product, ProductCategory, ProductSEOSettings, ProductSimulation
+from _product.models import Product, ProductCategory, ProductSEOSettings, ProductSimulation, SavingTransaction
+from _product.admin.views import SavingTransactionCreateView
+from _product.forms.admin import SavingTransactionAdminForm
+
+
+SavingTransaction.base_form_class = SavingTransactionAdminForm
 
 
 class ProductSEOViewSet(SingletonSnippetViewSet):
@@ -43,12 +48,33 @@ class ProductSimulationViewSet(SnippetViewSet):
     inspect_view_enabled = True
 
 
+class SavingTransactionViewSet(SnippetViewSet):
+    model = SavingTransaction
+    menu_label = "Setoran Simpanan"
+    icon = "credit-card"
+    add_view_class = SavingTransactionCreateView
+    list_display = (
+        "transaction_code",
+        "product",
+        "full_name",
+        "nomor_anggota",
+        "amount",
+        "payment_channel",
+        "status",
+        "created_at",
+    )
+    list_filter = ("status", "payment_channel", "product", "is_new_member", "created_at")
+    search_fields = ("transaction_code", "reference_id", "full_name", "email", "phone", "nomor_anggota")
+    ordering = ("-created_at",)
+    inspect_view_enabled = True
+
+
 class ProductAdminGroup(SnippetViewSetGroup):
     menu_label = "Products"
     menu_icon = "folder-open-inverse"
     menu_name = "products"
     menu_order = 210
-    items = (ProductSEOViewSet, ProductCategoryViewSet, ProductViewSet, ProductSimulationViewSet)
+    items = (ProductSEOViewSet, ProductCategoryViewSet, ProductViewSet, ProductSimulationViewSet, SavingTransactionViewSet)
 
 
 register_snippet(ProductAdminGroup)

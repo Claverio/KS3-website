@@ -22,5 +22,12 @@ docker compose up -d --build
 docker compose logs -f web
 ```
 
-Domain production: [ks3.claverio.com](https://ks3.claverio.com)
+Container `payment-sync` menjalankan `python manage.py sync_unpaid_payments`
+setiap 60 detik untuk merekonsiliasi transaksi P2P dan tabungan Xendit yang
+masih menunggu pembayaran. Pantau worker dengan:
 
+```bash
+docker compose logs -f payment-sync
+```
+
+Domain production: [ks3.claverio.com](https://ks3.claverio.com)

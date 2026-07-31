@@ -1,0 +1,1 @@
+Setoran {{ saving_txn.transaction_code }} berhasil

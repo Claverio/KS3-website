@@ -65,7 +65,7 @@ class KS3AdminDashboardTests(TestCase):
         response = self.client.get("/admin/")
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "P2P sedang berjalan")
+        self.assertContains(response, "Proyek sedang berjalan")
         self.assertContains(response, "Pendanaan Kopi Dashboard")
         self.assertContains(response, "Pembeli Dashboard")
         self.assertContains(response, "20 TERBARU")
@@ -85,7 +85,7 @@ class KS3AdminDashboardTests(TestCase):
         self.assertContains(project_response, "Pendanaan Kopi Dashboard")
         self.assertContains(project_response, "Produk Kopi Anggota")
         self.assertContains(buyer_response, self.purchase.booking_number)
-        self.assertContains(buyer_response, "Transaksi P2P")
+        self.assertContains(buyer_response, "Transaksi Proyek")
 
     def test_sidebar_hides_unused_items_and_groups_homepage_settings(self):
         request = RequestFactory().get("/admin/")

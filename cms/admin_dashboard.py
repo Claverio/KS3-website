@@ -61,6 +61,7 @@ class KS3DashboardPanel(Component):
                     "wagtailsnippets__p2p_p2ppurchase:list"
                 ),
                 "product_list_url": reverse("wagtailsnippets__product_product:list"),
+                "saving_report_url": reverse("saving_report"),
             }
         )
         return context

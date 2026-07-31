@@ -22,7 +22,7 @@
 
             <nav class="ks3-search-filters mb-40px" aria-label="Filter hasil pencarian">
                 <a href="?q={{ query|urlencode }}&category=all"{% if active_category == 'all' %} class="active" aria-current="page"{% endif %}>Semua <span>{{ total_count }}</span></a>
-                <a href="?q={{ query|urlencode }}&category=p2p"{% if active_category == 'p2p' %} class="active" aria-current="page"{% endif %}>P2P <span>{{ p2p_count }}</span></a>
+                <a href="?q={{ query|urlencode }}&category=p2p"{% if active_category == 'p2p' %} class="active" aria-current="page"{% endif %}>Proyek <span>{{ p2p_count }}</span></a>
                 <a href="?q={{ query|urlencode }}&category=product"{% if active_category == 'product' %} class="active" aria-current="page"{% endif %}>Produk <span>{{ product_count }}</span></a>
                 <a href="?q={{ query|urlencode }}&category=page"{% if active_category == 'page' %} class="active" aria-current="page"{% endif %}>Halaman <span>{{ page_count }}</span></a>
             </nav>
@@ -30,9 +30,9 @@
             {% if active_count %}
                 {% if active_category == 'all' or active_category == 'p2p' %}{% if p2p_results %}
                 <div class="ks3-search-group mb-45px">
-                    <div class="d-flex align-items-center justify-content-between mb-20px"><h3 class="alt-font fs-24 fw-700 text-dark-gray mb-0"><i class="bi bi-graph-up-arrow text-base-color me-10px"></i>P2P Lending</h3>{% if active_category == 'all' %}<a href="?q={{ query|urlencode }}&category=p2p" class="fs-13 fw-600 text-base-color">Lihat {{ p2p_count }} hasil</a>{% endif %}</div>
+                    <div class="d-flex align-items-center justify-content-between mb-20px"><h3 class="alt-font fs-24 fw-700 text-dark-gray mb-0"><i class="bi bi-graph-up-arrow text-base-color me-10px"></i>Proyek</h3>{% if active_category == 'all' %}<a href="?q={{ query|urlencode }}&category=p2p" class="fs-13 fw-600 text-base-color">Lihat {{ p2p_count }} hasil</a>{% endif %}</div>
                     <div class="ks3-search-results-grid">
-                        {% for item in p2p_results %}<div><a href="{{ item.get_absolute_url }}" class="ks3-search-result-card ks3-search-result-card-p2p"><span class="ks3-search-result-icon"><i class="bi bi-cash-coin"></i></span><span class="ks3-search-result-content"><span class="ks3-search-result-meta">P2P · {{ item.category.name }}</span><strong>{{ item.title }}</strong><span>{{ item.summary|truncatechars:125 }}</span><span class="ks3-search-result-link">Lihat pendanaan <i class="fa-solid fa-arrow-right"></i></span></span><span class="ks3-search-status">{{ item.display_status }}</span></a></div>{% endfor %}
+                        {% for item in p2p_results %}<div><a href="{{ item.get_absolute_url }}" class="ks3-search-result-card ks3-search-result-card-p2p"><span class="ks3-search-result-icon"><i class="bi bi-cash-coin"></i></span><span class="ks3-search-result-content"><span class="ks3-search-result-meta">Proyek · {{ item.category.name }}</span><strong>{{ item.title }}</strong><span>{{ item.summary|truncatechars:125 }}</span><span class="ks3-search-result-link">Lihat pendanaan <i class="fa-solid fa-arrow-right"></i></span></span><span class="ks3-search-status">{{ item.display_status }}</span></a></div>{% endfor %}
                     </div>
                 </div>
                 {% endif %}{% endif %}

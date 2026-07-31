@@ -27,6 +27,7 @@ if settings.DEBUG:
 urlpatterns = urlpatterns + [
     path("", include("_product.urls")),
     path("", include("_p2p.urls")),
+    path("", include("_misc.urls")),
     path("", include("cms.urls")),
     # For anything not caught by a more specific rule above, hand over to
     # Wagtail's page serving mechanism. This should be the last pattern in

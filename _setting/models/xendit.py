@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from decimal import Decimal
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 
 from backend.helper.singleton_model import SingletonModel
@@ -16,11 +17,17 @@ class XenditSetting(SingletonModel):
     )
     return_base_url = models.URLField(
         default="http://127.0.0.1:8000",
-        help_text="Browser return URL after checkout. Localhost is valid for local testing.",
+        help_text="Public HTTPS browser return URL after checkout (required by Xendit Payment Session).",
     )
     session_duration = models.PositiveIntegerField(
         default=86400,
         help_text="Payment Session lifetime in seconds; minimum 600.",
+    )
+    saving_payment_gateway_fee = models.DecimalField(
+        max_digits=18,
+        decimal_places=2,
+        default=Decimal("2750"),
+        help_text="Biaya tambahan payment gateway untuk setiap setoran simpanan.",
     )
 
     panels = [
@@ -33,6 +40,7 @@ class XenditSetting(SingletonModel):
                 FieldPanel("public_base_url"),
                 FieldPanel("return_base_url"),
                 FieldPanel("session_duration"),
+                FieldPanel("saving_payment_gateway_fee"),
             ],
             heading="Xendit API",
         ),

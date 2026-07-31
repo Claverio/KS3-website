@@ -1,0 +1,51 @@
+{% extends 'cms/base/base.html' %}
+{% load wagtailimages_tags %}
+
+{% block content %}
+{% include 'cms/components/page_title.html' %}
+
+<style>
+    .gallery-box-zoom img {
+        transition: transform 0.4s ease;
+    }
+    .gallery-box-zoom:hover img {
+        transform: scale(1.08);
+    }
+</style>
+
+<section class="ps-5 pe-5 lg-ps-2 lg-pe-2 pt-50px pb-50px">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col">
+                <ul class="gallery-wrapper grid grid-4col xxl-grid-4col xl-grid-4col lg-grid-3col md-grid-2col sm-grid-2col xs-grid-1col gutter-large">
+                    <li class="grid-sizer"></li>
+                    {% for item in galleries %}
+                    {% if item.image %}
+                    <!-- start gallery item -->
+                    <li class="grid-item">
+                        <div class="gallery-box gallery-box-zoom">
+                            {% image item.image original as orig %}
+                            <a href="{{ orig.url }}" data-group="lightbox-group-gallery-item-2" title="{{ item.title }}" class="d-block w-100 h-100 text-decoration-none">
+                                <div class="gallery-image overflow-hidden">
+                                    {% image item.image fill-350x350 as thumb %}
+                                    <img src="{{ thumb.url }}" alt="{{ item.title }}" data-no-retina="" class="w-100">
+                                </div>
+                                <div class="bg-slate-blue text-white text-center" style="padding: 8px 5px; font-size: 12px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                    {{ item.title }}
+                                </div>
+                            </a>
+                        </div>
+                    </li>
+                    <!-- end gallery item -->
+                    {% endif %}
+                    {% empty %}
+                    <li class="w-100 text-center py-5">
+                        <p>Belum ada foto di galeri.</p>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

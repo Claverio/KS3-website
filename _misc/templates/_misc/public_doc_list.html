@@ -1,0 +1,44 @@
+{% extends 'cms/base/base.html' %}
+
+{% block content %}
+{% include 'cms/components/page_title.html' %}
+
+<section id="down-section" class="bg-very-light-gray pb-50px pt-50px">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <h3 class="alt-font fw-700 text-dark-gray mb-10px">Pusat Unduhan Berkas</h3>
+                <p>Klik pada dokumen di bawah ini untuk melihat atau mengunduhnya dalam format PDF.</p>
+            </div>
+        </div>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 justify-content-center">
+            {% for doc in docs %}
+            <div class="col mb-30px">
+                <a href="{% if doc.document %}{{ doc.document.url }}{% else %}#{% endif %}" target="_blank" class="d-block bg-white border border-color-extra-medium-gray border-radius-10px p-30px h-100 hover-box-shadow" style="transition: all 0.3s ease;">
+                    <div class="d-flex align-items-start mb-15px">
+                        <div class="flex-shrink-0 text-base-color me-15px mt-5px">
+                            <i class="bi bi-file-earmark-pdf-fill fs-35"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h4 class="alt-font text-dark-gray fw-700 mb-5px fs-18 lh-24">{{ doc.title }}</h4>
+                            <span class="fs-12 text-uppercase text-medium-gray fw-600"><i class="bi bi-calendar2-week me-5px"></i>{{ doc.upload_date|date:"d M Y" }}</span>
+                        </div>
+                    </div>
+                    <p class="mb-15px fs-14 lh-24 text-gray">{{ doc.description }}</p>
+                    <div class="border-top border-color-extra-medium-gray pt-15px mt-auto text-end">
+                        <span class="alt-font fw-600 text-base-color fs-13 text-uppercase">Unduh PDF <i class="fa-solid fa-download ms-5px"></i></span>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <div class="p-5 bg-white border-radius-10px border border-color-extra-medium-gray">
+                    <i class="bi bi-folder-x fs-40 text-medium-gray mb-3 d-block"></i>
+                    <p class="mb-0 fs-16">Belum ada dokumen publik yang tersedia saat ini.</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

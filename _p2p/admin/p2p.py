@@ -42,7 +42,7 @@ class P2PProjectViewSet(SnippetViewSet):
 
 class P2PPurchaseViewSet(SnippetViewSet):
     model = P2PPurchase
-    menu_label = "Purchases"
+    menu_label = "Pembelian Project"
     icon = "credit-card"
     list_display = (
         "booking_number",
@@ -61,7 +61,7 @@ class P2PPurchaseViewSet(SnippetViewSet):
 
 
 class P2PAdminGroup(SnippetViewSetGroup):
-    menu_label = "P2P Lending"
+    menu_label = "Project"
     menu_icon = "hand-holding-dollar"
     menu_name = "p2p-lending"
     menu_order = 200
