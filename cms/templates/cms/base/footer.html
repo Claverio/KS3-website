@@ -9,12 +9,12 @@
                             <img src="{% static 'cms/images/logo-koperasi-vertical.svg' %}" alt="KS3 Simpan Pinjam" style="max-height: 110px; width: auto;">
                         </a>
                         {% if footer_misc_pages %}<ul class="p-0 mb-20px list-unstyled">{% for item in footer_misc_pages %}<li class="mb-5px"><a href="{{ item.url }}" class="text-white opacity-7 opacity-10-hover">{{ item.title }}</a></li>{% endfor %}</ul>{% endif %}
-                        <div class="elements-social social-text-style-01 mt-auto">
+                        <div class="elements-social social-icon-style-01 mt-auto">
                             <ul class="small-icon light">
-                                {% if contact_setting.facebook_url %}<li><a class="facebook" href="{{ contact_setting.facebook_url }}" target="_blank" rel="noopener noreferrer">Fb.</a></li>{% endif %}
-                                {% if contact_setting.instagram_url %}<li><a class="instagram" href="{{ contact_setting.instagram_url }}" target="_blank" rel="noopener noreferrer">Ig.</a></li>{% endif %}
-                                {% if contact_setting.twitter_url %}<li><a class="twitter" href="{{ contact_setting.twitter_url }}" target="_blank" rel="noopener noreferrer">Tw.</a></li>{% endif %}
-                                {% if contact_setting.behance_url %}<li><a class="behance" href="{{ contact_setting.behance_url }}" target="_blank" rel="noopener noreferrer">Be.</a></li>{% endif %}
+                                {% if contact_setting.facebook_url %}<li><a class="facebook" href="{{ contact_setting.facebook_url }}" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a></li>{% endif %}
+                                {% if contact_setting.instagram_url %}<li><a class="instagram" href="{{ contact_setting.instagram_url }}" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a></li>{% endif %}
+                                {% if contact_setting.twitter_url %}<li><a class="twitter" href="{{ contact_setting.twitter_url }}" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a></li>{% endif %}
+                                {% if contact_setting.behance_url %}<li><a class="behance" href="{{ contact_setting.behance_url }}" target="_blank" rel="noopener noreferrer" aria-label="Behance"><i class="fa-brands fa-behance" aria-hidden="true"></i></a></li>{% endif %}
                             </ul>
                         </div>
                     </div>
