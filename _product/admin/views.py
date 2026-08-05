@@ -160,7 +160,7 @@ def _export_rows(savings):
 
 EXPORT_HEADERS = [
     "Kode Setoran", "Tanggal Transaksi", "Nama", "Nomor Anggota", "WhatsApp", "Email",
-    "Produk", "Nominal", "Biaya Layanan", "Total", "Kanal", "Diverifikasi Oleh",
+    "Produk", "Nominal", "Biaya Payment Gateway", "Total", "Kanal", "Diverifikasi Oleh",
     "Status Provider", "ID/Bukti Provider", "Status", "Tanggal Dibayar",
 ]
 

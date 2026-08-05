@@ -5,6 +5,15 @@ from backend.helper.singleton_model import SingletonModel
 
 
 class P2PSEOSettings(SingletonModel):
+    list_heading = models.CharField(
+        max_length=255,
+        default="Proyek Anggota",
+        verbose_name="Judul halaman",
+    )
+    list_intro = models.TextField(
+        default="Danai proyek pilihan dan dapatkan imbal hasil yang kompetitif.",
+        verbose_name="Teks pengantar",
+    )
     list_title = models.CharField(max_length=255, blank=True)
     list_description = models.TextField(blank=True)
     list_keywords = models.CharField(max_length=255, blank=True)
@@ -28,8 +37,14 @@ class P2PSEOSettings(SingletonModel):
     edit_handler = TabbedInterface(
         [
             ObjectList(
-                [FieldPanel("list_title"), FieldPanel("list_description"), FieldPanel("list_keywords")],
-                heading="List",
+                [
+                    FieldPanel("list_heading"),
+                    FieldPanel("list_intro"),
+                    FieldPanel("list_title"),
+                    FieldPanel("list_description"),
+                    FieldPanel("list_keywords"),
+                ],
+                heading="Halaman Proyek",
             ),
             ObjectList(
                 [FieldPanel("detail_title"), FieldPanel("detail_description"), FieldPanel("detail_keywords")],

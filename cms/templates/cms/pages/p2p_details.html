@@ -2,6 +2,6 @@
 {% load static %}
 
 {% block content %}
-    {% include 'cms/section/p2p_list_page_title.html' %}
+    {% include 'cms/section/p2p_list_page_title.html' with page_heading=project.title page_intro=project.summary %}
     {% include 'cms/section/p2p_details_content.html' %}
 {% endblock %}

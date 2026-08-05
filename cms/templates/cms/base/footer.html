@@ -19,7 +19,9 @@
                         </div>
                     </div>
                     <div class="col-12 col-xl-4 col-md-6 last-paragraph-no-margin order-xl-2 order-3 sm-mb-20px">
-                        <p class="w-80 mb-20px md-w-100"><span class="text-white d-block">Kantor Pusat KS3</span>{{ contact_setting.address }}</p>
+                        {% for office in contact_setting.addresses.all %}
+                        <p class="w-80 mb-20px md-w-100"><span class="text-white d-block">{{ office.name }}</span>{{ office.address }}</p>
+                        {% endfor %}
                         <p class="w-80 md-w-100"><span class="text-white d-block">Jam Operasional</span>{{ contact_setting.operational_hours }}</p>
                     </div>
                     <div class="col-12 col-xl-4 col-md-6 last-paragraph-no-margin order-xl-3 order-4 sm-mb-30px">

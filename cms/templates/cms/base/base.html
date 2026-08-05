@@ -24,7 +24,7 @@
         <link rel="stylesheet" href="{% static 'cms/css/icon.min.css' %}"/>
         <link rel="stylesheet" href="{% static 'cms/css/style.css' %}"/>
         <link rel="stylesheet" href="{% static 'cms/css/responsive.css' %}"/>
-        <link rel="stylesheet" href="{% static 'cms/css/ks3-theme.css' %}?v=20260731-4"/>
+        <link rel="stylesheet" href="{% static 'cms/css/ks3-theme.css' %}?v=20260802-1"/>
         {% block extra_css %}{% endblock %}
     </head>
     <body data-mobile-nav-style="classic" class="background-position-center-top {% block body_class %}{% endblock %}" style="background-image: url('{% static 'cms/images/vertical-line-bg.svg' %}')">
@@ -35,6 +35,20 @@
             {% endblock content %}
         </div>
         {% include 'cms/base/footer.html' %}
+
+        {% if contact_setting.whatsapp_floating_enabled and contact_setting.whatsapp_link %}
+        <a href="{{ contact_setting.whatsapp_link }}" target="_blank" rel="noopener noreferrer" class="ks3-whatsapp-float" aria-label="Chat dengan KS3 melalui WhatsApp">
+            <span class="ks3-whatsapp-float__icon" aria-hidden="true">
+                <i class="bi bi-whatsapp"></i>
+                <span class="ks3-whatsapp-float__status"></span>
+            </span>
+            <span class="ks3-whatsapp-float__copy">
+                <span>Butuh bantuan?</span>
+                <strong>Chat dengan KS3</strong>
+            </span>
+            <span class="ks3-whatsapp-float__arrow" aria-hidden="true"><i class="bi bi-arrow-up-right"></i></span>
+        </a>
+        {% endif %}
         
         <!-- start crafto progressive blur -->
         <div class="crafto-progressive-blur crafto-progressive-blur-bottom" blur-bottom="yes" style="--progressive-blur-height:15vh"></div>

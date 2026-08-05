@@ -10,17 +10,26 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 from _p2p.forms import P2PPurchaseForm
 from _p2p.models import P2P, P2PSEOSettings, P2PPurchase
 from _p2p.services.purchase_workflow import PurchaseWorkflowError, create_p2p_purchase
+from _payment.services import FeeConfigurationError
 from _setting.models import ContactSetting, XenditSetting
 
 
 def _seo_context(section):
     seo = P2PSEOSettings.load()
-    return {
+    context = {
         "seo_title": getattr(seo, f"{section}_title"),
         "seo_description": getattr(seo, f"{section}_description"),
         "seo_keywords": getattr(seo, f"{section}_keywords"),
         "seo_og_image": seo.og_image,
     }
+    if section == "list":
+        context.update(
+            {
+                "page_heading": seo.list_heading,
+                "page_intro": seo.list_intro,
+            }
+        )
+    return context
 
 
 def p2p_list(request):
@@ -57,7 +66,7 @@ def p2p_purchase(request, slug):
                 project=project,
                 **form.cleaned_data,
             )
-        except PurchaseWorkflowError as exc:
+        except (PurchaseWorkflowError, FeeConfigurationError) as exc:
             form.add_error(None, str(exc))
         except Exception:
             form.add_error(None, "Payment Session gagal dibuat. Silakan coba lagi atau hubungi admin.")

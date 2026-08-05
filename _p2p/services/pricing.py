@@ -11,10 +11,10 @@ class PurchasePrice:
     total: Decimal
 
 
-def calculate_purchase_price(project, quantity):
+def calculate_purchase_price(project, quantity, *, service_fee=None):
     if quantity < 1:
         raise ValueError("Slot quantity must be at least one.")
     unit_price = Decimal(project.slot_price)
     subtotal = unit_price * quantity
-    service_fee = Decimal(project.service_fee)
+    service_fee = Decimal(project.service_fee if service_fee is None else service_fee)
     return PurchasePrice(unit_price, quantity, subtotal, service_fee, subtotal + service_fee)

@@ -1,7 +1,7 @@
-from django.db import models
+from modelcluster.models import ClusterableModel
 
 
-class SingletonModel(models.Model):
+class SingletonModel(ClusterableModel):
     """Abstract base class for singleton models."""
 
     class Meta:

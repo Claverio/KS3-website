@@ -11,6 +11,7 @@ from _product.forms import SavingTransactionForm
 from _product.models import SavingTransaction
 from _product.services import create_online_saving_transaction, synchronize_saving_transaction
 from _product.services.saving_workflow import SavingWorkflowError
+from _payment.services import FeeConfigurationError
 from _setting.models import ContactSetting, XenditSetting
 from backend.services.xendit import XenditError
 
@@ -18,12 +19,11 @@ logger = logging.getLogger(__name__)
 
 
 def saving_create(request):
-    payment_gateway_fee = XenditSetting.load().saving_payment_gateway_fee
     form = SavingTransactionForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         try:
             saving_txn = create_online_saving_transaction(**form.cleaned_data)
-        except SavingWorkflowError as exc:
+        except (SavingWorkflowError, FeeConfigurationError) as exc:
             form.add_error(None, str(exc))
         except XenditError as exc:
             logger.warning("Xendit unavailable while creating a saving transaction: %s", exc)
@@ -36,11 +36,7 @@ def saving_create(request):
             form.add_error(None, "Payment Session gagal dibuat. Silakan coba lagi atau hubungi admin.")
         else:
             return redirect("saving_waiting", public_id=saving_txn.public_id)
-    return render(
-        request,
-        "cms/pages/saving_form.html",
-        {"form": form, "payment_gateway_fee": payment_gateway_fee},
-    )
+    return render(request, "cms/pages/saving_form.html", {"form": form})
 
 
 def saving_waiting(request, public_id):

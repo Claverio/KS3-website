@@ -11,14 +11,16 @@ class SavingTransactionModelTest(TestCase):
         txn = make_saving_transaction(amount=Decimal("500000"), service_fee=Decimal("2500"), total_amount=Decimal("0"))
         self.assertEqual(txn.total_amount, Decimal("502500"))
 
-    def test_save_recalculates_total_on_update(self):
+    def test_financial_snapshot_is_immutable_after_creation(self):
         txn = make_saving_transaction(amount=Decimal("500000"), service_fee=Decimal("0"))
         self.assertEqual(txn.total_amount, Decimal("500000"))
 
         txn.amount = Decimal("600000")
         txn.service_fee = Decimal("1000")
-        txn.save()
-        self.assertEqual(txn.total_amount, Decimal("601000"))
+        with self.assertRaises(ValidationError):
+            txn.save()
+        txn.refresh_from_db()
+        self.assertEqual(txn.total_amount, Decimal("500000"))
 
     def test_clean_requires_nomor_anggota_for_existing_member(self):
         txn = make_saving_transaction(is_new_member=False, nomor_anggota='')

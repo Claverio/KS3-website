@@ -9,6 +9,7 @@ from _p2p.forms import P2PPurchaseForm
 from _p2p.models import P2P, P2PPurchase
 from _p2p.services import create_p2p_purchase, synchronize_xendit_purchase
 from _p2p.services.purchase_workflow import PurchaseWorkflowError
+from _payment.services import FeeConfigurationError, active_channels, resolve_fee
 from _setting.models import XenditSetting
 from backend.services.xendit import XenditError
 
@@ -53,6 +54,10 @@ class Command(BaseCommand):
             raise CommandError("Project ID is invalid or not purchasable.") from exc
 
     def _collect_form(self, project):
+        channel = active_channels("p2p").first()
+        if not channel:
+            raise CommandError("No Virtual Account channel is enabled for P2P.")
+        self.stdout.write(f"Using payment channel: {channel.display_name}")
         data = {
             "slot_quantity": self._ask("Number of slots: "),
             "full_name": self._ask("Full name (as on KTP): "),
@@ -60,6 +65,7 @@ class Command(BaseCommand):
             "email": self._ask("Email: "),
             "nik": self._ask("NIK (optional): ", optional=True),
             "note": self._ask("Admin note (optional): ", optional=True),
+            "xendit_channel": channel.code,
         }
         form = P2PPurchaseForm(data=data, project=project)
         if not form.is_valid():
@@ -137,7 +143,15 @@ class Command(BaseCommand):
             project = self._select_project(options.get("project_id"))
             cleaned = self._collect_form(project)
             quantity = cleaned["slot_quantity"]
-            total = (project.slot_price * quantity) + project.service_fee
+            try:
+                fee = resolve_fee(
+                    channel_code=cleaned["xendit_channel"],
+                    route="p2p",
+                    principal_amount=project.slot_price * quantity,
+                )
+            except FeeConfigurationError as exc:
+                raise CommandError(str(exc)) from exc
+            total = (project.slot_price * quantity) + fee.total_fee
             self.stdout.write(
                 f"\nReady: project={project.title}, slots={quantity}, total=Rp{total:,.0f}, "
                 f"buyer={cleaned['full_name']} <{cleaned['email']}>"

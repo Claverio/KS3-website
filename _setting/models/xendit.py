@@ -27,7 +27,17 @@ class XenditSetting(SingletonModel):
         max_digits=18,
         decimal_places=2,
         default=Decimal("2750"),
-        help_text="Biaya tambahan payment gateway untuk setiap setoran simpanan.",
+        help_text="Legacy only; tarif transaksi baru dikelola pada Versi Tarif VA.",
+    )
+    auto_learn_va_fees = models.BooleanField(
+        default=True,
+        help_text="Buat versi tarif VA baru dari actual fee Xendit untuk transaksi berikutnya.",
+    )
+    fee_auto_update_max_delta = models.DecimalField(
+        max_digits=18,
+        decimal_places=2,
+        default=Decimal("5000"),
+        help_text="Perubahan di atas nominal ini ditahan sebagai candidate untuk review admin.",
     )
 
     panels = [
@@ -40,7 +50,8 @@ class XenditSetting(SingletonModel):
                 FieldPanel("public_base_url"),
                 FieldPanel("return_base_url"),
                 FieldPanel("session_duration"),
-                FieldPanel("saving_payment_gateway_fee"),
+                FieldPanel("auto_learn_va_fees"),
+                FieldPanel("fee_auto_update_max_delta"),
             ],
             heading="Xendit API",
         ),
@@ -53,6 +64,10 @@ class XenditSetting(SingletonModel):
         super().clean()
         if self.session_duration < 600:
             raise ValidationError({"session_duration": "Minimum session duration is 600 seconds."})
+        if self.fee_auto_update_max_delta < 0:
+            raise ValidationError(
+                {"fee_auto_update_max_delta": "Batas perubahan fee tidak boleh negatif."}
+            )
 
     def __str__(self):
         return "Xendit Settings"

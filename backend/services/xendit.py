@@ -38,12 +38,13 @@ class XenditService:
         return {"Authorization": f"Basic {encoded}", "Content-Type": "application/json"}
 
     @classmethod
-    def _request(cls, method, url, *, api_key, payload=None):
+    def _request(cls, method, url, *, api_key, payload=None, params=None):
         try:
             response = requests.request(
                 method,
                 url,
                 json=payload,
+                params=params,
                 headers=cls._headers(api_key),
                 timeout=cls.timeout,
             )
@@ -82,6 +83,8 @@ class XenditService:
         success_return_url=None,
         cancel_return_url=None,
         allowed_payment_channels=None,
+        items=None,
+        metadata=None,
     ):
         setting = cls.get_setting()
         duration = invoice_duration or setting.session_duration
@@ -103,8 +106,27 @@ class XenditService:
             payload["success_return_url"] = success_return_url
         if cancel_return_url:
             payload["cancel_return_url"] = cancel_return_url
-        if allowed_payment_channels:
-            payload["allowed_payment_channels"] = allowed_payment_channels
+        if allowed_payment_channels is not None:
+            channels = list(allowed_payment_channels)
+            if not channels:
+                raise XenditConfigurationError(
+                    "At least one allowed payment channel is required."
+                )
+            payload["allowed_payment_channels"] = channels
+        if items:
+            try:
+                item_total = sum(
+                    Decimal(str(item["net_unit_amount"]))
+                    * int(item.get("quantity", 1))
+                    for item in items
+                )
+            except (KeyError, TypeError, ValueError) as exc:
+                raise XenditAPIError("Xendit items contain an invalid amount or quantity.") from exc
+            if item_total != decimal_amount:
+                raise XenditAPIError("Xendit item total must match the Payment Session amount.")
+            payload["items"] = items
+        if metadata:
+            payload["metadata"] = metadata
         return cls._request(
             "POST", f"{setting.api_url.rstrip('/')}/sessions", api_key=setting.api_key, payload=payload
         )
@@ -114,4 +136,31 @@ class XenditService:
         setting = cls.get_setting()
         return cls._request(
             "GET", f"{setting.api_url.rstrip('/')}/sessions/{session_id}", api_key=setting.api_key
+        )
+
+    @classmethod
+    def list_transactions(
+        cls,
+        *,
+        reference_id=None,
+        product_id=None,
+        transaction_type=None,
+        status=None,
+        limit=10,
+    ):
+        setting = cls.get_setting()
+        params = {"limit": int(limit)}
+        if reference_id:
+            params["reference_id"] = reference_id
+        if product_id:
+            params["product_id"] = product_id
+        if transaction_type:
+            params["types"] = transaction_type
+        if status:
+            params["statuses"] = status
+        return cls._request(
+            "GET",
+            f"{setting.api_url.rstrip('/')}/transactions",
+            api_key=setting.api_key,
+            params=params,
         )

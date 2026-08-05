@@ -2,10 +2,22 @@ from django.templatetags.static import static
 from django.urls import path, reverse
 from django.utils.html import format_html
 from wagtail import hooks
+from wagtail.admin.menu import MenuItem
 from wagtail.admin.search import SearchArea
 
 from cms.admin_dashboard import KS3DashboardPanel
 from cms.admin_views import global_admin_search
+
+
+@hooks.register("register_admin_menu_item")
+def register_custom_page_menu_item():
+    return MenuItem(
+        "Custom Page",
+        reverse("wagtailadmin_explore", args=[4]),
+        name="custom-page",
+        icon_name="doc-full-inverse",
+        order=110,
+    )
 
 
 @hooks.register("insert_global_admin_css")

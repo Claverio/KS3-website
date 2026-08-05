@@ -24,10 +24,17 @@ docker compose logs -f web
 
 Container `payment-sync` menjalankan `python manage.py sync_unpaid_payments`
 setiap 60 detik untuk merekonsiliasi transaksi P2P dan tabungan Xendit yang
-masih menunggu pembayaran. Pantau worker dengan:
+masih menunggu pembayaran, lalu menarik actual fee dari Transactions API untuk
+ledger `xendit_fees`. API key Xendit harus memiliki permission `Transaction Read`.
+Pantau worker dengan:
 
 ```bash
 docker compose logs -f payment-sync
 ```
+
+Kanal Virtual Account, status aktif per rute, dan versi tarif efektif dikelola
+dari menu **Xendit Fee** di Wagtail. Selisih charged fee vs actual fee serta
+adjustment FIFO tersedia di menu **Rekonsiliasi Xendit**. Adjustment tidak pernah
+mengubah nominal transaksi asli.
 
 Domain production: [ks3.claverio.com](https://ks3.claverio.com)

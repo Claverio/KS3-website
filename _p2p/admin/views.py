@@ -39,7 +39,7 @@ def export_project_purchases(request, project_id):
             "Jumlah Slot",
             "Harga per Slot",
             "Subtotal",
-            "Biaya Layanan",
+            "Biaya Payment Gateway",
             "Total",
             "Status",
             "Waktu Transaksi",

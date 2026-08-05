@@ -1,0 +1,87 @@
+{% extends "wagtailadmin/generic/base.html" %}
+{% load wagtailadmin_tags p2p_tags %}
+
+{% block titletag %}Rekonsiliasi Fee Xendit{% endblock %}
+
+{% block content %}
+<div class="ks3-xendit-report">
+  <header class="ks3-xendit-hero">
+    <div>
+      <span>PAYMENT OPERATIONS</span>
+      <h1>Rekonsiliasi Fee Xendit</h1>
+      <p>Fee yang dibebankan ke customer dibandingkan actual deduction Xendit. Transaksi asli tidak pernah diubah oleh adjustment.</p>
+    </div>
+    <div class="ks3-xendit-actions">
+      <a class="button button-secondary" href="{{ channel_list_url }}">Kanal VA</a>
+      <a class="button button-secondary" href="{{ rate_list_url }}">Versi tarif</a>
+      <a class="button" href="{% url 'xendit_fee_reconciliation_export' %}?{{ export_query }}">Export CSV</a>
+    </div>
+  </header>
+
+  <form method="get" class="ks3-xendit-filters">
+    <label>Dari tanggal<input type="date" name="date_from" value="{{ filters.date_from|date:'Y-m-d' }}"></label>
+    <label>Sampai tanggal<input type="date" name="date_to" value="{{ filters.date_to|date:'Y-m-d' }}"></label>
+    <label>Rute<select name="route"><option value="">Semua</option><option value="saving" {% if filters.route == 'saving' %}selected{% endif %}>Nabung</option><option value="p2p" {% if filters.route == 'p2p' %}selected{% endif %}>P2P / Proyek</option></select></label>
+    <label>Kanal VA<select name="channel"><option value="">Semua</option>{% for channel in channels %}<option value="{{ channel.pk }}" {% if filters.channel == channel.pk|stringformat:'s' %}selected{% endif %}>{{ channel.display_name }}</option>{% endfor %}</select></label>
+    <label>Status<select name="status"><option value="">Semua</option>{% for value,label in statuses %}<option value="{{ value }}" {% if filters.status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+    <button class="button" type="submit">Tampilkan</button>
+  </form>
+
+  <section class="ks3-xendit-stats">
+    <article><small>Transaksi</small><strong>{{ transaction_count }}</strong><span>{{ matched_count }} klop · {{ variance_count }} selisih · {{ pending_count }} pending</span></article>
+    <article><small>Fee dibebankan</small><strong>{{ charged_total|rupiah }}</strong><span>Snapshot immutable saat invoice dibuat</span></article>
+    <article><small>Actual Xendit</small><strong>{{ actual_total|rupiah }}</strong><span>Berdasarkan Transactions API</span></article>
+    <article class="{% if residual_total < 0 %}is-short{% elif residual_total > 0 %}is-over{% endif %}"><small>Selisih tersisa</small><strong>{{ residual_total|rupiah }}</strong><span>Sesudah allocation adjustment</span></article>
+  </section>
+
+  <div class="ks3-xendit-grid">
+    <section class="ks3-xendit-card ks3-xendit-table-card">
+      <div class="ks3-xendit-card__head">
+        <div><h2>Ledger transaksi</h2><p>{% if last_run %}Sync terakhir {{ last_run.finished_at|date:'d M Y H:i' }} · {{ last_run.get_status_display }}{% else %}Belum pernah sync actual fee.{% endif %}</p></div>
+      </div>
+      <div class="ks3-xendit-table-wrap">
+        <table class="listing">
+          <thead><tr><th>Transaksi</th><th>VA / versi</th><th class="num">Pokok</th><th class="num">Charged</th><th class="num">Actual</th><th class="num">Adjustment</th><th class="num">Residual</th><th>Status</th></tr></thead>
+          <tbody>
+          {% for fee in rows %}
+            <tr>
+              <td><strong>{{ fee.route_label }} · {{ fee.transaction_reference }}</strong><small>{{ fee.created_at|date:'d M Y H:i' }}</small>{% if fee.provider_transaction_id %}<code>{{ fee.provider_transaction_id }}</code>{% endif %}<details><summary>Metadata snapshot</summary><pre>Request: {{ fee.session_request_snapshot }}
+
+Response: {{ fee.session_response_snapshot }}
+
+Actual: {{ fee.actual_payload }}</pre></details></td>
+              <td><strong>{{ fee.channel.display_name }}</strong><small>{{ fee.channel.code }}</small><small>Rate #{{ fee.rate_id }}</small></td>
+              <td class="num">{{ fee.principal_amount|rupiah }}</td>
+              <td class="num">{{ fee.charged_fee_total|rupiah }}<small>Base {{ fee.charged_fee_before_tax|rupiah }} + VAT {{ fee.charged_fee_vat|rupiah }}</small></td>
+              <td class="num">{% if fee.actual_total_fee is not None %}{{ fee.actual_total_fee|rupiah }}<small>Xendit {{ fee.actual_xendit_fee|rupiah }} + tax {{ fee.actual_vat|rupiah }}</small>{% else %}-{% endif %}</td>
+              <td class="num">{{ fee.allocated_adjustment|rupiah }}</td>
+              <td class="num {% if fee.residual_variance < 0 %}is-short{% elif fee.residual_variance > 0 %}is-over{% endif %}">{% if fee.residual_variance is not None %}{{ fee.residual_variance|rupiah }}{% else %}-{% endif %}</td>
+              <td><span class="ks3-xendit-status status-{{ fee.reconciliation_status }}">{{ fee.get_reconciliation_status_display }}</span>{% if fee.reconciliation_last_error %}<small class="error">{{ fee.reconciliation_last_error }}</small>{% endif %}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="8" class="empty">Belum ada snapshot fee untuk filter ini.</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% if rows.paginator.num_pages > 1 %}<nav class="ks3-xendit-pagination">{% if rows.has_previous %}<a class="button button-secondary button-small" href="?{{ export_query }}&page={{ rows.previous_page_number }}">Sebelumnya</a>{% endif %}<span>Halaman {{ rows.number }} / {{ rows.paginator.num_pages }}</span>{% if rows.has_next %}<a class="button button-secondary button-small" href="?{{ export_query }}&page={{ rows.next_page_number }}">Berikutnya</a>{% endif %}</nav>{% endif %}
+    </section>
+
+    <aside class="ks3-xendit-card ks3-xendit-adjustment">
+      <h2>Post adjustment</h2>
+      <p>Satu nominal dialokasikan FIFO ke semua variance yang arahnya sesuai. Kekurangan yang belum tertutup tetap tampil sebagai residual.</p>
+      <form method="post">{% csrf_token %}
+        {% if adjustment_form.non_field_errors %}<div class="help-block help-critical">{{ adjustment_form.non_field_errors }}</div>{% endif %}
+        {% for field in adjustment_form %}<label>{{ field.label }}{{ field }}{% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}{% for error in field.errors %}<em>{{ error }}</em>{% endfor %}</label>{% endfor %}
+        <button class="button" type="submit">Post &amp; alokasikan</button>
+      </form>
+      <h3>Adjustment terbaru</h3>
+      <ul>{% for adjustment in recent_adjustments %}<li><strong>{{ adjustment.amount|rupiah }}</strong><span>{{ adjustment.get_kind_display }} · {{ adjustment.get_status_display }}</span><small>Allocated {{ adjustment.allocated_amount|rupiah }} · sisa {{ adjustment.unallocated_amount|rupiah }}</small></li>{% empty %}<li>Belum ada adjustment.</li>{% endfor %}</ul>
+    </aside>
+  </div>
+</div>
+
+<style>
+.ks3-xendit-report{padding:2rem;max-width:1800px;margin:auto}.ks3-xendit-hero{display:flex;justify-content:space-between;gap:2rem;align-items:flex-start;margin-bottom:1.5rem}.ks3-xendit-hero span{font-size:.72rem;font-weight:800;letter-spacing:.12em;color:#0875b9}.ks3-xendit-hero h1{font-size:2rem;margin:.25rem 0}.ks3-xendit-hero p,.ks3-xendit-card p{color:#667783;margin:0;max-width:760px}.ks3-xendit-actions{display:flex;gap:.6rem;flex-wrap:wrap}.ks3-xendit-filters{display:grid;grid-template-columns:repeat(5,minmax(130px,1fr)) auto;gap:1rem;align-items:end;background:#fff;border:1px solid #dce3e8;border-radius:.75rem;padding:1rem;margin-bottom:1rem}.ks3-xendit-filters label,.ks3-xendit-adjustment label{display:flex;flex-direction:column;gap:.35rem;font-size:.75rem;font-weight:700}.ks3-xendit-filters input,.ks3-xendit-filters select,.ks3-xendit-adjustment input,.ks3-xendit-adjustment select,.ks3-xendit-adjustment textarea{min-height:2.6rem}.ks3-xendit-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1rem}.ks3-xendit-stats article,.ks3-xendit-card{background:#fff;border:1px solid #dce3e8;border-radius:.75rem}.ks3-xendit-stats article{padding:1.1rem;display:flex;flex-direction:column;gap:.25rem}.ks3-xendit-stats small{color:#6a7885}.ks3-xendit-stats strong{font-size:1.35rem}.ks3-xendit-stats span{font-size:.72rem;color:#75828e}.is-short{color:#b42318!important}.is-over{color:#067647!important}.ks3-xendit-grid{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:1rem;align-items:start}.ks3-xendit-card__head,.ks3-xendit-adjustment{padding:1.25rem}.ks3-xendit-card h2{font-size:1.25rem;margin:0 0 .3rem}.ks3-xendit-table-wrap{overflow:auto}.ks3-xendit-table-card table{min-width:1150px}.ks3-xendit-table-card th,.ks3-xendit-table-card td{vertical-align:top}.ks3-xendit-table-card td>small,.ks3-xendit-table-card td>code{display:block;margin-top:.25rem}.ks3-xendit-table-card .num{text-align:right}.ks3-xendit-table-card details{margin-top:.5rem;font-size:.7rem}.ks3-xendit-table-card pre{white-space:pre-wrap;max-width:480px;max-height:280px;overflow:auto;background:#f5f7f8;padding:.6rem}.ks3-xendit-status{display:inline-block;border-radius:999px;padding:.25rem .55rem;background:#eef2f5;font-size:.72rem;font-weight:700}.status-matched,.status-adjusted{background:#dcfae6;color:#067647}.status-short,.status-over,.status-review{background:#fee4e2;color:#b42318}.error{color:#b42318;display:block;margin-top:.4rem}.empty{text-align:center;padding:3rem!important}.ks3-xendit-pagination{padding:1rem;display:flex;justify-content:center;align-items:center;gap:1rem}.ks3-xendit-adjustment form{display:flex;flex-direction:column;gap:.9rem;margin:1.2rem 0 1.5rem}.ks3-xendit-adjustment label small{font-weight:400;color:#697783}.ks3-xendit-adjustment label em{color:#b42318;font-style:normal}.ks3-xendit-adjustment h3{font-size:1rem;border-top:1px solid #e3e7ea;padding-top:1rem}.ks3-xendit-adjustment ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.8rem}.ks3-xendit-adjustment li{border-bottom:1px solid #edf0f2;padding-bottom:.7rem}.ks3-xendit-adjustment li strong,.ks3-xendit-adjustment li span,.ks3-xendit-adjustment li small{display:block}.ks3-xendit-adjustment li small{color:#6c7882}@media(max-width:1100px){.ks3-xendit-filters{grid-template-columns:repeat(3,1fr)}.ks3-xendit-stats{grid-template-columns:repeat(2,1fr)}.ks3-xendit-grid{grid-template-columns:1fr}}@media(max-width:700px){.ks3-xendit-report{padding:1rem}.ks3-xendit-hero{display:block}.ks3-xendit-actions{margin-top:1rem}.ks3-xendit-filters,.ks3-xendit-stats{grid-template-columns:1fr}}
+</style>
+{% endblock %}

@@ -36,7 +36,7 @@ class SavingWorkflowTest(TestCase):
             email="budi@example.com",
             is_new_member=True,
             amount=Decimal("500000"),
-            service_fee=Decimal("2500"),
+            service_fee=Decimal("2750"),
             status=SavingTransaction.Status.CREATING,
         )
         self.assertTrue(instance.reference_id.startswith("KS3-SAV-"))
@@ -48,7 +48,7 @@ class SavingWorkflowTest(TestCase):
         self.assertEqual(instance.status, SavingTransaction.Status.WAITING_PAYMENT)
         self.assertEqual(instance.payment_link_url, "https://xen.to/test")
         self.assertEqual(instance.xendit_session_id, "ps-1234567890123456789012345")
-        self.assertEqual(instance.total_amount, Decimal("502500"))
+        self.assertEqual(instance.total_amount, Decimal("502750"))
         expected_return_url = (
             f"https://ks3.claverio.com/api/product/savings/{instance.public_id}/return/"
         )
@@ -58,6 +58,17 @@ class SavingWorkflowTest(TestCase):
         self.assertEqual(
             create_invoice.call_args.kwargs["cancel_return_url"], expected_return_url
         )
+        self.assertEqual(
+            create_invoice.call_args.kwargs["allowed_payment_channels"],
+            ["BCA_VIRTUAL_ACCOUNT"],
+        )
+        self.assertEqual(
+            [item["type"] for item in create_invoice.call_args.kwargs["items"]],
+            ["DIGITAL_SERVICE", "FEE"],
+        )
+        snapshot = instance.xendit_fee_snapshot
+        self.assertEqual(snapshot.charged_fee_total, Decimal("2750"))
+        self.assertEqual(snapshot.session_response_snapshot["status"], "ACTIVE")
 
     @patch("_product.services.saving_workflow.XenditService.create_invoice")
     def test_sets_failed_on_xendit_error(self, create_invoice):
@@ -71,7 +82,7 @@ class SavingWorkflowTest(TestCase):
             email="budi@example.com",
             is_new_member=True,
             amount=Decimal("500000"),
-            service_fee=Decimal("0"),
+            service_fee=Decimal("2750"),
             status=SavingTransaction.Status.CREATING,
         )
 

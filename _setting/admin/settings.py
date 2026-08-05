@@ -21,13 +21,13 @@ class HomePageSettingViewSet(ViewSet):
 
 class ContactSettingViewSet(SingletonSnippetViewSet):
     model = ContactSetting
-    menu_label = "Contact"
+    menu_label = "Kontak & Kantor"
     icon = "site"
 
 
 class EmailSettingViewSet(SingletonSnippetViewSet):
     model = EmailSetting
-    menu_label = "Email"
+    menu_label = "Email Notifikasi"
     icon = "envelope"
 
 

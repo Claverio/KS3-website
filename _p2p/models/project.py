@@ -78,7 +78,7 @@ class P2P(PreviewableMixin, models.Model):
             ObjectList(
                 [
                     MultiFieldPanel(
-                        [FieldPanel("target_amount"), FieldPanel("slot_price"), FieldPanel("service_fee"), FieldPanel("total_slots")],
+                        [FieldPanel("target_amount"), FieldPanel("slot_price"), FieldPanel("total_slots")],
                         heading="Funding",
                     ),
                     MultiFieldPanel(

@@ -105,3 +105,6 @@ class KS3AdminDashboardTests(TestCase):
             "homepage",
             {item.name for item in general.menu.menu_items_for_request(request)},
         )
+        custom_page = next(item for item in main_items if item.name == "custom-page")
+        self.assertEqual(custom_page.label, "Custom Page")
+        self.assertEqual(custom_page.url, "/admin/pages/4/")

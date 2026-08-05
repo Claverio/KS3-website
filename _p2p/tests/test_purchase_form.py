@@ -16,6 +16,7 @@ class PurchaseFormValidationTests(TestCase):
             "email": "BUDI@EXAMPLE.COM",
             "nik": "1234567890123456",
             "slot_quantity": "1",
+            "xendit_channel": "BCA_VIRTUAL_ACCOUNT",
             "note": "Konfirmasi via WhatsApp",
         }
         data.update(overrides)

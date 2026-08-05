@@ -7,9 +7,14 @@ from _product.models import Product, SavingTransaction
 
 
 class SavingTransactionForm(forms.ModelForm):
+    xendit_channel = forms.ChoiceField(
+        choices=(),
+        label="Pilih bank Virtual Account",
+        error_messages={"required": "Pilih bank Virtual Account untuk melanjutkan."},
+    )
     amount = forms.DecimalField(
         min_value=Decimal("1"),
-        max_digits=18,
+        max_digits=16,
         decimal_places=0,
         label="Nominal setoran",
         error_messages={
@@ -33,6 +38,7 @@ class SavingTransactionForm(forms.ModelForm):
             "email",
             "nik",
             "amount",
+            "xendit_channel",
             "note",
         )
         labels = {
@@ -103,6 +109,15 @@ class SavingTransactionForm(forms.ModelForm):
             category__is_active=True,
             category__slug="simpanan",
         ).select_related("category").order_by("sort_order", "title")
+        from _payment.services import active_channels
+
+        self.fields["xendit_channel"].choices = [
+            ("", "Pilih bank Virtual Account"),
+            *[
+                (channel.code, channel.display_name)
+                for channel in active_channels("saving")
+            ],
+        ]
         for name, field in self.fields.items():
             if name == "is_new_member":
                 continue

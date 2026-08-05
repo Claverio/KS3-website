@@ -12,6 +12,22 @@ phone_validator = RegexValidator(r"^\+?[0-9][0-9\s-]{7,19}$", "Enter a valid pho
 
 
 class P2PPurchase(models.Model):
+    IMMUTABLE_FIELDS = (
+        "reference_id",
+        "booking_number",
+        "project_id",
+        "full_name",
+        "phone",
+        "email",
+        "nik",
+        "note",
+        "slot_quantity",
+        "unit_price",
+        "subtotal",
+        "service_fee",
+        "total_amount",
+        "currency",
+    )
     class Status(models.TextChoices):
         CREATING = "creating", "Creating payment"
         WAITING_PAYMENT = "waiting_payment", "Waiting for payment"
@@ -140,6 +156,21 @@ class P2PPurchase(models.Model):
     @property
     def masked_nik(self):
         return f"************{self.nik[-4:]}" if self.nik else "-"
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            original = type(self).objects.filter(pk=self.pk).first()
+            if original:
+                changed = [
+                    field
+                    for field in self.IMMUTABLE_FIELDS
+                    if getattr(original, field) != getattr(self, field)
+                ]
+                if changed:
+                    raise ValidationError(
+                        "Transaksi P2P immutable setelah dibuat: " + ", ".join(changed)
+                    )
+        super().save(*args, **kwargs)
 
     def clean(self):
         super().clean()

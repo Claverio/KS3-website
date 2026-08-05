@@ -1,19 +1,20 @@
 from decimal import Decimal
 
+from django import forms
 from django.utils import timezone
 from wagtail.admin.forms.models import WagtailAdminModelForm
 
+from _payment.services import FeeConfigurationError, resolve_fee
 from _product.models import SavingTransaction
-from _setting.models import XenditSetting
 
 
 class SavingTransactionAdminForm(WagtailAdminModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if not self.is_bound and not self.instance.pk and "service_fee" in self.fields:
-            fee = XenditSetting.load().saving_payment_gateway_fee
-            self.initial["service_fee"] = fee
-            self.fields["service_fee"].initial = fee
+        if "service_fee" in self.fields:
+            self.fields["service_fee"].help_text = (
+                "Untuk transaksi Xendit, nilai ini dihitung ulang dari tarif VA aktif."
+            )
         if self.instance.pk and "payment_channel" in self.fields:
             self.fields["payment_channel"].disabled = True
 
@@ -26,4 +27,14 @@ class SavingTransactionAdminForm(WagtailAdminModelForm):
             self.instance.paid_at = paid_at
             self.instance.provider_updated_at = paid_at
             self.instance.xendit_session_status = "MANUAL"
+        elif cleaned_data.get("amount"):
+            try:
+                resolved = resolve_fee(
+                    channel_code=None,
+                    route="saving",
+                    principal_amount=cleaned_data["amount"],
+                )
+            except FeeConfigurationError as exc:
+                raise forms.ValidationError(str(exc)) from exc
+            cleaned_data["service_fee"] = resolved.total_fee
         return cleaned_data

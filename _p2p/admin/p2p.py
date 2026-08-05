@@ -7,7 +7,7 @@ from _p2p.models import P2P, P2PCategory, P2PPurchase, P2PSEOSettings
 
 class P2PSEOViewSet(SingletonSnippetViewSet):
     model = P2PSEOSettings
-    menu_label = "SEO"
+    menu_label = "Halaman & SEO"
     icon = "search"
 
 

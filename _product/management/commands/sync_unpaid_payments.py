@@ -9,6 +9,7 @@ from _p2p.models import P2PPurchase
 from _p2p.services.payment_transition import apply_xendit_payment_update
 from _product.models import SavingTransaction
 from _product.services.payment_transition import apply_saving_payment_update
+from _payment.services import reconcile_pending_fees
 
 logger = logging.getLogger(__name__)
 
@@ -107,4 +108,11 @@ class Command(BaseCommand):
                 f"({p2p_errors} errors), "
                 f"{saving_synced}/{saving_total} saving transactions "
                 f"({saving_errors} errors)."
+            ))
+            fee_run = reconcile_pending_fees(limit=MAX_RECORDS_PER_RUN)
+            fee_style = self.style.WARNING if fee_run.error_count else self.style.SUCCESS
+            self.stdout.write(fee_style(
+                f"Fee reconciliation: {fee_run.processed_count} processed, "
+                f"{fee_run.matched_count} matched, {fee_run.variance_count} variance, "
+                f"{fee_run.error_count} errors."
             ))

@@ -25,6 +25,7 @@ if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns = urlpatterns + [
+    path("", include("_payment.urls")),
     path("", include("_product.urls")),
     path("", include("_p2p.urls")),
     path("", include("_misc.urls")),

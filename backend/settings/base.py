@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "search",
     "cms",
     "_setting",
+    "_payment",
     "_p2p",
     "_product",
     "_misc",

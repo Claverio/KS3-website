@@ -6,6 +6,11 @@ from _p2p.models import P2PPurchase
 
 
 class P2PPurchaseForm(forms.ModelForm):
+    xendit_channel = forms.ChoiceField(
+        choices=(),
+        label="Pilih bank Virtual Account",
+        error_messages={"required": "Pilih bank Virtual Account untuk melanjutkan."},
+    )
     slot_quantity = forms.IntegerField(
         min_value=1,
         label="Jumlah slot",
@@ -19,7 +24,15 @@ class P2PPurchaseForm(forms.ModelForm):
 
     class Meta:
         model = P2PPurchase
-        fields = ("full_name", "phone", "email", "nik", "slot_quantity", "note")
+        fields = (
+            "full_name",
+            "phone",
+            "email",
+            "nik",
+            "slot_quantity",
+            "xendit_channel",
+            "note",
+        )
         labels = {
             "full_name": "Nama lengkap (sesuai KTP)",
             "phone": "No. handphone / WhatsApp",
@@ -87,6 +100,15 @@ class P2PPurchaseForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.project = project
         self.fields["slot_quantity"].widget.attrs["max"] = project.available_slots
+        from _payment.services import active_channels
+
+        self.fields["xendit_channel"].choices = [
+            ("", "Pilih bank Virtual Account"),
+            *[
+                (channel.code, channel.display_name)
+                for channel in active_channels("p2p")
+            ],
+        ]
         for name, field in self.fields.items():
             field.widget.attrs["class"] = "form-control border-radius-4px box-shadow-double-large"
             if self.is_bound and self.errors.get(name):

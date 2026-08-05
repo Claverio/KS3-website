@@ -5,7 +5,7 @@ from wagtail.models import Site
 
 from _p2p.tests.factories import make_project
 from _product.tests.factories import make_product
-from _setting.models import ContactSetting, HomePageSetting
+from _setting.models import ContactAddress, ContactSetting, HomePageSetting
 
 
 class HomePageSettingTests(TestCase):
@@ -57,6 +57,55 @@ class HomePageSettingTests(TestCase):
         self.assertNotContains(response, "Berlangganan Newsletter KS3")
         self.assertNotContains(response, "Masukkan email Anda")
         self.assertContains(response, "© 2026 KSP Sentra Solusi Sejahtera.")
+
+    def test_footer_renders_multiple_contact_addresses_in_order(self):
+        contact = ContactSetting.load()
+        contact.addresses.all().delete()
+        ContactAddress.objects.create(
+            contact_setting=contact,
+            name="Kantor Jakarta",
+            address="Equity Tower, Jakarta",
+            sort_order=0,
+        )
+        ContactAddress.objects.create(
+            contact_setting=contact,
+            name="Kantor Tangerang",
+            address="Rukan Shibuya, Tangerang",
+            sort_order=1,
+        )
+
+        response = self.client.get(reverse("landing"))
+        body = response.content.decode()
+
+        self.assertContains(response, "Kantor Jakarta")
+        self.assertContains(response, "Equity Tower, Jakarta")
+        self.assertContains(response, "Kantor Tangerang")
+        self.assertContains(response, "Rukan Shibuya, Tangerang")
+        self.assertLess(body.index("Kantor Jakarta"), body.index("Kantor Tangerang"))
+
+    def test_contact_admin_separates_addresses_and_contact_channels_into_tabs(self):
+        user = get_user_model().objects.create_superuser(
+            username="admin-contact-settings-test",
+            email="contact-admin@example.test",
+            password="test-password",
+        )
+        self.client.force_login(user)
+        contact = ContactSetting.load()
+
+        response = self.client.get(
+            reverse(
+                "wagtailsnippets__setting_contactsetting:edit",
+                args=[contact.pk],
+            )
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Alamat Kantor")
+        self.assertContains(response, "Email &amp; Operasional")
+        self.assertContains(response, "WhatsApp")
+        self.assertContains(response, "Tampilkan tombol WhatsApp melayang")
+        self.assertContains(response, "Media Sosial")
+        self.assertContains(response, "Tambah alamat kantor")
 
     def test_homepage_renders_all_sections_in_fixed_order(self):
         response = self.client.get(reverse("landing"))
@@ -118,6 +167,38 @@ class HomePageSettingTests(TestCase):
         self.assertContains(response, contact.whatsapp_display)
         self.assertContains(response, contact.whatsapp_link)
         self.assertNotContains(response, "Tim kami siap membantu Anda")
+
+    def test_whatsapp_floating_button_uses_contact_setting_link(self):
+        contact = ContactSetting.load()
+        contact.whatsapp_floating_enabled = True
+        contact.whatsapp_link = "https://wa.me/6281234567890"
+        contact.save()
+
+        response = self.client.get(reverse("landing"))
+
+        self.assertContains(response, 'class="ks3-whatsapp-float"')
+        self.assertContains(response, f'href="{contact.whatsapp_link}"')
+        self.assertContains(response, "Chat dengan KS3")
+
+    def test_whatsapp_floating_button_can_be_disabled(self):
+        contact = ContactSetting.load()
+        contact.whatsapp_floating_enabled = False
+        contact.whatsapp_link = "https://wa.me/6281234567890"
+        contact.save()
+
+        response = self.client.get(reverse("landing"))
+
+        self.assertNotContains(response, 'class="ks3-whatsapp-float"')
+
+    def test_whatsapp_floating_button_requires_a_link(self):
+        contact = ContactSetting.load()
+        contact.whatsapp_floating_enabled = True
+        contact.whatsapp_link = ""
+        contact.save()
+
+        response = self.client.get(reverse("landing"))
+
+        self.assertNotContains(response, 'class="ks3-whatsapp-float"')
 
     def test_settings_are_isolated_per_wagtail_site(self):
         other_site = Site.objects.create(

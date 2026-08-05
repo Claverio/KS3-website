@@ -1,6 +1,6 @@
 {% load p2p_tags %}
 <section id="down-section" class="position-relative"><div class="container">
-<form action="{% url 'p2p_purchase' project.slug %}" method="post" id="p2p-purchase-form" data-unit-price="{{ project.slot_price }}" data-service-fee="{{ project.service_fee }}" novalidate>{% csrf_token %}<div class="row">
+<form action="{% url 'p2p_purchase' project.slug %}" method="post" id="p2p-purchase-form" data-unit-price="{{ project.slot_price }}" data-fee-quote-url="{% url 'xendit_fee_quote' %}" novalidate>{% csrf_token %}<div class="row">
     <div class="col-lg-7 order-1 md-mb-50px">
         <a href="{{ project.get_absolute_url }}" class="fs-14 fw-600 text-medium-gray text-base-color-hover d-inline-block mb-25px"><i class="bi bi-arrow-left me-5px"></i>Kembali ke detail project</a>
         {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
@@ -16,9 +16,9 @@
     </div>
     <div class="col-lg-5 order-2 ps-6 lg-ps-4 md-ps-15px"><div class="position-sticky top-80px"><div class="bg-white border border-color-extra-medium-gray border-radius-10px p-30px">
         <h5 class="alt-font text-dark-gray fw-700 mb-20px">Ringkasan pendanaan</h5><div class="d-flex align-items-start justify-content-between gap-15px mb-5px"><span class="alt-font text-dark-gray fw-700 fs-18">{{ project.title }}</span><span class="alt-font fs-12 fw-600 text-uppercase text-nowrap flex-shrink-0 d-inline-flex align-items-center border-radius-100px ps-15px pe-15px pt-5px pb-5px bg-green-transparent-light text-green">{{ project.display_status }}</span></div><span class="fs-13 text-medium-gray d-block mb-20px">{{ project.interest_rate|percent }} p.a. · Tenor {{ project.tenor_months }} bulan · {{ project.get_installment_frequency_display }}</span>
-        <div class="bg-gradient-top-very-light-gray border-radius-6px p-20px mb-20px fs-14"><div class="d-flex justify-content-between pb-10px mb-10px border-bottom"><span>Harga per slot</span><span class="fw-600">{{ project.slot_price|rupiah }}</span></div><div class="d-flex justify-content-between pb-10px mb-10px border-bottom"><span>Jumlah slot</span><span class="fw-600" id="summary-slots">1 slot</span></div><div class="d-flex justify-content-between"><span>Biaya layanan</span><span class="fw-600">{{ project.service_fee|rupiah }}</span></div></div>
+        <div class="bg-gradient-top-very-light-gray border-radius-6px p-20px mb-20px fs-14"><div class="d-flex justify-content-between pb-10px mb-10px border-bottom"><span>Harga per slot</span><span class="fw-600">{{ project.slot_price|rupiah }}</span></div><div class="d-flex justify-content-between pb-10px mb-10px border-bottom"><span>Jumlah slot</span><span class="fw-600" id="summary-slots">1 slot</span></div><div class="pb-15px mb-10px border-bottom"><label class="d-block mb-8px fw-600 text-dark-gray" for="{{ form.xendit_channel.id_for_label }}">Bank Virtual Account <span class="text-base-color">*</span></label>{{ form.xendit_channel }}<div class="invalid-feedback" data-client-error-for="{{ form.xendit_channel.id_for_label }}"></div>{% for error in form.xendit_channel.errors %}<div class="invalid-feedback d-block" data-server-error-for="{{ form.xendit_channel.id_for_label }}">{{ error }}</div>{% endfor %}</div><div class="d-flex justify-content-between"><span>Biaya payment gateway</span><span class="fw-600" id="summary-service-fee">-</span></div><div class="fs-12 text-danger mt-8px d-none" id="p2p-fee-error"></div></div>
         <div class="d-flex justify-content-between align-items-center mb-25px ks3-purchase-total-row"><span class="alt-font fs-18 fw-700 text-dark-gray ks3-purchase-total-label">Total pendanaan</span><span class="alt-font fs-26 fw-700 text-base-color ks3-purchase-total-value" id="summary-total">-</span></div>
-        <button type="submit" class="btn btn-large btn-base-color btn-rounded btn-switch-text w-100 mb-15px"><span><span class="btn-double-text" data-text="Bayar">Bayar</span><span><i class="fa-solid fa-arrow-right"></i></span></span></button><p class="fs-13 text-medium-gray mb-0 lh-22"><i class="bi bi-shield-lock text-base-color me-5px"></i>Anda akan diarahkan ke Xendit untuk menyelesaikan pembayaran.</p>
+        <button type="submit" class="btn btn-large btn-base-color btn-rounded btn-switch-text w-100 mb-15px" id="p2p-submit"><span><span class="btn-double-text" data-text="Bayar">Bayar</span><span><i class="fa-solid fa-arrow-right"></i></span></span></button><p class="fs-13 text-medium-gray mb-0 lh-22"><i class="bi bi-shield-lock text-base-color me-5px"></i>Anda akan diarahkan ke Xendit untuk menyelesaikan pembayaran.</p>
     </div></div></div>
 </div></form></div></section>
 <script>
@@ -29,19 +29,58 @@ document.addEventListener('DOMContentLoaded', function () {
   const phone = document.getElementById('id_phone');
   const email = document.getElementById('id_email');
   const nik = document.getElementById('id_nik');
+  const channel = document.getElementById('id_xendit_channel');
+  const feeLabel = document.getElementById('summary-service-fee');
+  const totalLabel = document.getElementById('summary-total');
+  const feeError = document.getElementById('p2p-fee-error');
+  const submitButton = document.getElementById('p2p-submit');
   const rupiah = new Intl.NumberFormat('id-ID', {style: 'currency', currency: 'IDR', maximumFractionDigits: 0});
-  function updateSummary() { const parsed = parseInt(quantity.value, 10); const qty = Number.isInteger(parsed) && parsed > 0 ? parsed : 0; document.getElementById('summary-slots').textContent = qty ? qty + ' slot' : '-'; document.getElementById('summary-total').textContent = qty ? rupiah.format((Number(form.dataset.unitPrice) * qty) + Number(form.dataset.serviceFee)) : '-'; }
+  let quoteSequence = 0;
+  let feeReady = false;
+  async function updateSummary() {
+    const parsed = parseInt(quantity.value, 10);
+    const qty = Number.isInteger(parsed) && parsed > 0 ? parsed : 0;
+    const principal = Number(form.dataset.unitPrice) * qty;
+    const currentSequence = ++quoteSequence;
+    document.getElementById('summary-slots').textContent = qty ? qty + ' slot' : '-';
+    totalLabel.textContent = qty ? rupiah.format(principal) : '-';
+    feeLabel.textContent = '-';
+    feeError.classList.add('d-none');
+    feeReady = false;
+    submitButton.disabled = true;
+    if (!qty || !channel.value) return;
+    feeLabel.textContent = 'Menghitung...';
+    try {
+      const params = new URLSearchParams({route: 'p2p', channel: channel.value, amount: String(principal)});
+      const response = await fetch(form.dataset.feeQuoteUrl + '?' + params.toString(), {headers: {'Accept': 'application/json'}});
+      const payload = await response.json();
+      if (currentSequence !== quoteSequence) return;
+      if (!response.ok) throw new Error(payload.error || 'Fee tidak dapat dihitung.');
+      feeLabel.textContent = rupiah.format(Number(payload.fee_total));
+      totalLabel.textContent = rupiah.format(Number(payload.total_amount));
+      feeReady = true;
+      submitButton.disabled = false;
+    } catch (error) {
+      if (currentSequence !== quoteSequence) return;
+      feeLabel.textContent = '-';
+      feeError.textContent = error.message || 'Fee tidak dapat dihitung.';
+      feeError.classList.remove('d-none');
+    }
+  }
   phone.addEventListener('input', function () { let value = phone.value.replace(/[^0-9+\s-]/g, ''); value = value.replace(/(?!^)\+/g, ''); phone.value = value; });
   nik.addEventListener('input', function () { nik.value = nik.value.replace(/\D/g, '').slice(0, 16); });
   quantity.addEventListener('input', function () { if (quantity.value) quantity.value = quantity.value.replace(/\D/g, ''); });
-  quantity.addEventListener('input', updateSummary); updateSummary();
+  quantity.addEventListener('input', updateSummary);
+  channel.addEventListener('change', updateSummary);
+  updateSummary();
 
-  const validatedFields = [fullName, phone, email, nik, quantity];
+  const validatedFields = [fullName, phone, email, nik, quantity, channel];
   const requiredMessages = {
     id_full_name: 'Nama lengkap wajib diisi.',
     id_phone: 'Nomor handphone / WhatsApp wajib diisi.',
     id_email: 'Email wajib diisi.',
-    id_slot_quantity: 'Jumlah slot wajib diisi.'
+    id_slot_quantity: 'Jumlah slot wajib diisi.',
+    id_xendit_channel: 'Pilih bank Virtual Account.'
   };
   function validationMessage(field) {
     const value = field.value.trim();
@@ -84,10 +123,11 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   form.addEventListener('submit', function (event) {
     form.classList.add('was-validated');
-    const valid = validatedFields.map(showValidation).every(Boolean);
+    const valid = validatedFields.map(showValidation).every(Boolean) && feeReady;
     if (!valid) {
       event.preventDefault();
       event.stopPropagation();
+      if (!feeReady) updateSummary();
       const invalid = form.querySelector('.is-invalid');
       if (invalid) invalid.focus();
     }

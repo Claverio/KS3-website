@@ -14,6 +14,24 @@ phone_validator = RegexValidator(r"^\+?[0-9][0-9\s-]{7,19}$", "Enter a valid pho
 
 
 class SavingTransaction(models.Model):
+    IMMUTABLE_FIELDS = (
+        "reference_id",
+        "transaction_code",
+        "product_id",
+        "payment_channel",
+        "manual_reference",
+        "is_new_member",
+        "nomor_anggota",
+        "full_name",
+        "phone",
+        "email",
+        "nik",
+        "note",
+        "amount",
+        "service_fee",
+        "total_amount",
+        "currency",
+    )
     class Status(models.TextChoices):
         CREATING = "creating", "Creating payment"
         WAITING_PAYMENT = "waiting_payment", "Waiting for payment"
@@ -214,6 +232,18 @@ class SavingTransaction(models.Model):
         ]
 
     def save(self, *args, **kwargs):
+        if self.pk:
+            original = type(self).objects.filter(pk=self.pk).first()
+            if original:
+                changed = [
+                    field
+                    for field in self.IMMUTABLE_FIELDS
+                    if getattr(original, field) != getattr(self, field)
+                ]
+                if changed:
+                    raise ValidationError(
+                        "Transaksi simpanan immutable setelah dibuat: " + ", ".join(changed)
+                    )
         if not self.reference_id:
             from django.utils import timezone
 
@@ -225,7 +255,7 @@ class SavingTransaction(models.Model):
 
             token = secrets.token_hex(4).upper()
             self.transaction_code = f"KS3-STR-{timezone.localtime():%Y}-{token}"
-        if self.amount is not None and self.service_fee is not None:
+        if not self.pk and self.amount is not None and self.service_fee is not None:
             self.total_amount = self.amount + self.service_fee
         super().save(*args, **kwargs)
 

@@ -10,7 +10,6 @@
                             </div>
                             <div class="col-lg-6 col-md-5 text-end d-none d-md-flex">
                                 <div class="widget me-20px lg-me-25px md-me-0"><a href="mailto:{{ contact_setting.email }}" class="fs-14 fw-500 text-dark-gray"><i class="feather icon-feather-mail fs-16 text-base-color"></i>{{ contact_setting.email }}</a></div>
-                                <div class="widget fs-14 fw-500 text-dark-gray d-none d-lg-inline-block"><i class="feather icon-feather-map-pin fs-16 text-base-color"></i>{{ contact_setting.address }}</div> 
                             </div>
                         </div>
                     </div>
@@ -25,12 +24,6 @@
                                 <img src="{% static 'cms/images/logo-koperasi-horizontal.svg' %}" alt="KS3 Simpan Pinjam" class="alt-logo">
                                 <img src="{% static 'cms/images/logo-koperasi-horizontal.svg' %}" alt="KS3 Simpan Pinjam" class="mobile-logo"> 
                             </a>
-                            <div class="d-xxl-flex d-none align-items-center ms-15px">
-                                <span class="h-25px w-25px bg-green-transparent-light border-radius-100px d-flex align-items-center justify-content-center me-5px">
-                                    <span class="h-9px w-9px bg-green border-radius-100px animation-zoom"></span>
-                                </span>
-                                <p class="mb-0 fs-13 lh-22 fw-500 text-green">Koperasi KS3</p>
-                            </div>
                         </div>
                         <div class="col-auto ms-auto md-ms-0 menu-order position-static">
                             <button class="navbar-toggler float-start" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-label="Toggle navigation">
@@ -57,7 +50,7 @@
                                             {% for product in navigation_loans %}<li><a href="{{ product.get_absolute_url }}"><i class="bi {{ product.icon }}"></i><div class="submenu-icon-content"><span>{{ product.title }}</span><p>{% if product.menu_description %}{{ product.menu_description }}{% else %}{{ product.summary|truncatechars:36 }}{% endif %}</p></div></a></li>{% empty %}<li><a href="{% url 'product' %}"><i class="bi bi-cash-stack"></i><div class="submenu-icon-content"><span>Lihat Pinjaman</span><p>Produk pinjaman akan segera tersedia.</p></div></a></li>{% endfor %}
                                         </ul>
                                     </li>
-                                    <li class="nav-item"><a href="{% url 'p2p_list' %}" class="nav-link">Proyek</a></li>
+                                    <li class="nav-item"><a href="{% url 'p2p_list' %}" class="nav-link">Proyek Anggota</a></li>
                                     {% if header_misc_pages %}<li class="nav-item dropdown dropdown-with-icon"><a href="{% if misc_index_page %}{{ misc_index_page.url }}{% else %}/halaman/{% endif %}" class="nav-link">Halaman</a><i class="fa-solid fa-angle-down dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false"></i><ul class="dropdown-menu">{% for item in header_misc_pages %}<li><a href="{{ item.url }}"><i class="bi bi-file-text"></i><div class="submenu-icon-content"><span>{{ item.title }}</span><p>{% if item.menu_description %}{{ item.menu_description }}{% else %}{{ item.introduction|truncatechars:36 }}{% endif %}</p></div></a></li>{% endfor %}</ul></li>{% endif %}
                                     {% for item in main_menu_misc_pages %}<li class="nav-item"><a href="{{ item.url }}" class="nav-link">{{ item.title }}</a></li>{% endfor %}
                                     <li class="nav-item"><a href="{% url 'public_docs' %}" class="nav-link">Dokumen Publik</a></li>

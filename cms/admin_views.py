@@ -50,7 +50,7 @@ def global_admin_search(request):
         groups.append(
             {
                 "key": "purchase",
-                "title": "Transaksi P2P",
+                "title": "Transaksi Proyek",
                 "icon": "credit-card",
                 "items": [
                     {
