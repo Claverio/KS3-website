@@ -66,7 +66,15 @@ class SavingWorkflowTest(TestCase):
             [item["type"] for item in create_invoice.call_args.kwargs["items"]],
             ["DIGITAL_SERVICE", "FEE"],
         )
+        self.assertEqual(
+            [item["category"] for item in create_invoice.call_args.kwargs["items"]],
+            ["SAVINGS", "PAYMENT_FEE"],
+        )
         snapshot = instance.xendit_fee_snapshot
+        self.assertEqual(
+            [item["category"] for item in snapshot.session_request_snapshot["items"]],
+            ["SAVINGS", "PAYMENT_FEE"],
+        )
         self.assertEqual(snapshot.charged_fee_total, Decimal("2750"))
         self.assertEqual(snapshot.session_response_snapshot["status"], "ACTIVE")
 

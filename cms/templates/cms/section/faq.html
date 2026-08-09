@@ -5,10 +5,21 @@
             <span class="ps-20px pe-20px pt-5px pb-5px mb-20px text-uppercase alt-font text-base-color fs-12 lh-26 fw-600 alt-font border-radius-100px bg-gradient-very-light-gray-transparent d-inline-flex"><i class="bi bi-headphones fs-16 me-5px"></i>{{ home_settings.faq_badge }}</span>
             <h2 class="alt-font text-dark-gray fw-700 mb-15px">{{ home_settings.faq_title }}</h2>
             <p class="mb-0">{{ home_settings.faq_description }}</p>
-            <p>{{ home_settings.faq_contact_prefix }}
-                {% if contact_setting.whatsapp_link %}<a href="{{ contact_setting.whatsapp_link }}" target="_blank" rel="noopener noreferrer" class="text-dark-gray border-bottom border-color-dark-gray fw-500"><i class="bi bi-whatsapp me-5px"></i>{{ contact_setting.whatsapp_display|default:"WhatsApp" }}</a>
-                {% else %}<span class="text-dark-gray fw-500"><i class="bi bi-whatsapp me-5px"></i>WhatsApp</span>{% endif %}
-            </p>
+            {% if contact_setting.whatsapp_link %}
+                <a href="{{ contact_setting.whatsapp_link }}" target="_blank" rel="noopener noreferrer" class="ks3-faq-contact" aria-label="Hubungi KS3 melalui WhatsApp di {{ contact_setting.whatsapp_display|default:'nomor resmi KS3' }}">
+                    <span class="ks3-faq-contact__icon" aria-hidden="true"><i class="bi bi-whatsapp"></i></span>
+                    <span class="ks3-faq-contact__copy">
+                        <span>{{ home_settings.faq_contact_prefix }}</span>
+                        <strong>{{ contact_setting.whatsapp_display|default:"WhatsApp KS3" }}</strong>
+                    </span>
+                    <span class="ks3-faq-contact__arrow" aria-hidden="true"><i class="bi bi-arrow-up-right"></i></span>
+                </a>
+            {% else %}
+                <span class="ks3-faq-contact is-disabled" aria-disabled="true">
+                    <span class="ks3-faq-contact__icon" aria-hidden="true"><i class="bi bi-whatsapp"></i></span>
+                    <span class="ks3-faq-contact__copy"><span>{{ home_settings.faq_contact_prefix }}</span><strong>WhatsApp KS3</strong></span>
+                </span>
+            {% endif %}
         </div>
         <div class="col-xl-7 col-lg-7 offset-xl-1"><div class="accordion accordion-style-02" id="accordion-style-02" data-active-icon="icon-feather-minus" data-inactive-icon="icon-feather-plus">
             {% for faq in home_settings.faq_items %}<div class="accordion-item{% if forloop.first %} active-accordion{% endif %}">

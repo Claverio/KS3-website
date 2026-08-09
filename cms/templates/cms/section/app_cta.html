@@ -9,7 +9,12 @@
             <span class="ps-20px pe-20px pt-5px pb-5px mb-15px text-uppercase alt-font text-base-color fs-12 lh-26 fw-600 border-radius-100px bg-white d-inline-flex"><i class="bi bi-phone fs-16 me-5px"></i>{{ home_settings.app_badge }}</span>
             <h2 class="alt-font text-dark-gray fw-700 mb-15px">{{ home_settings.app_title }}</h2>
             <p class="fs-18 mb-25px">{{ home_settings.app_description }}</p>
-            <div class="d-flex justify-content-center justify-content-lg-start ks3-store-buttons"><a href="{{ home_settings.app_store_url }}" class="d-inline-block me-15px"><img src="{% static 'cms/images/app-store-black.svg' %}" class="h-50px" alt="Download on the App Store"></a><a href="{{ home_settings.play_store_url }}" class="d-inline-block"><img src="{% static 'cms/images/play-store-black.svg' %}" class="h-50px" alt="Get it on Google Play"></a></div>
+            {% if home_settings.app_store_enabled or home_settings.play_store_enabled %}
+                <div class="d-flex justify-content-center justify-content-lg-start ks3-store-buttons">
+                    {% if home_settings.app_store_enabled %}<a href="{{ home_settings.app_store_url }}" class="d-inline-block{% if home_settings.play_store_enabled %} me-15px{% endif %}"><img src="{% static 'cms/images/play-store-black.svg' %}" class="h-50px" alt="Download on the App Store"></a>{% endif %}
+                    {% if home_settings.play_store_enabled %}<a href="{{ home_settings.play_store_url }}" class="d-inline-block"><img src="{% static 'cms/images/app-store-black.svg' %}" class="h-50px" alt="Get it on Google Play"></a>{% endif %}
+                </div>
+            {% endif %}
         </div>
     </div></div>
 </section>

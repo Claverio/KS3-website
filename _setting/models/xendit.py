@@ -27,11 +27,17 @@ class XenditSetting(SingletonModel):
         max_digits=18,
         decimal_places=2,
         default=Decimal("2750"),
-        help_text="Legacy only; tarif transaksi baru dikelola pada Versi Tarif VA.",
+        help_text="Biaya tetap yang dibebankan ke customer untuk setiap transaksi nabung.",
+    )
+    p2p_payment_gateway_fee = models.DecimalField(
+        max_digits=18,
+        decimal_places=2,
+        default=Decimal("2750"),
+        help_text="Biaya tetap yang dibebankan ke customer untuk setiap pembayaran proyek/P2P.",
     )
     auto_learn_va_fees = models.BooleanField(
-        default=True,
-        help_text="Buat versi tarif VA baru dari actual fee Xendit untuk transaksi berikutnya.",
+        default=False,
+        help_text="Legacy/nonaktif: actual fee tidak lagi mengubah biaya checkout.",
     )
     fee_auto_update_max_delta = models.DecimalField(
         max_digits=18,
@@ -44,14 +50,19 @@ class XenditSetting(SingletonModel):
         FieldPanel("is_active"),
         MultiFieldPanel(
             [
+                FieldPanel("saving_payment_gateway_fee"),
+                FieldPanel("p2p_payment_gateway_fee"),
+            ],
+            heading="Biaya yang dibebankan ke customer",
+        ),
+        MultiFieldPanel(
+            [
                 FieldPanel("api_url"),
                 FieldPanel("api_key"),
                 FieldPanel("webhook_verification_token"),
                 FieldPanel("public_base_url"),
                 FieldPanel("return_base_url"),
                 FieldPanel("session_duration"),
-                FieldPanel("auto_learn_va_fees"),
-                FieldPanel("fee_auto_update_max_delta"),
             ],
             heading="Xendit API",
         ),
@@ -68,6 +79,13 @@ class XenditSetting(SingletonModel):
             raise ValidationError(
                 {"fee_auto_update_max_delta": "Batas perubahan fee tidak boleh negatif."}
             )
+        fee_errors = {}
+        if self.saving_payment_gateway_fee < 0:
+            fee_errors["saving_payment_gateway_fee"] = "Biaya nabung tidak boleh negatif."
+        if self.p2p_payment_gateway_fee < 0:
+            fee_errors["p2p_payment_gateway_fee"] = "Biaya proyek/P2P tidak boleh negatif."
+        if fee_errors:
+            raise ValidationError(fee_errors)
 
     def __str__(self):
         return "Xendit Settings"

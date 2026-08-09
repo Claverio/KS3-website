@@ -74,6 +74,7 @@ def create_p2p_purchase(
             {
                 "reference_id": f"{purchase.reference_id}-principal",
                 "type": "DIGITAL_SERVICE",
+                "category": "PROJECT_FUNDING",
                 "name": f"Pendanaan {project.title}"[:255],
                 "net_unit_amount": int(purchase.subtotal),
                 "quantity": 1,
@@ -84,6 +85,7 @@ def create_p2p_purchase(
                 {
                     "reference_id": f"{purchase.reference_id}-fee",
                     "type": "FEE",
+                    "category": "PAYMENT_FEE",
                     "name": "Biaya administrasi pembayaran",
                     "net_unit_amount": int(purchase.service_fee),
                     "quantity": 1,
@@ -101,7 +103,10 @@ def create_p2p_purchase(
                 "transaction_reference": purchase.reference_id,
                 "booking_number": purchase.booking_number,
                 "fee_snapshot_id": str(fee_snapshot.pk),
-                "fee_rate_version": str(fee_snapshot.rate_id),
+                "fee_charge_source": "xendit_setting",
+                "fee_setting_field": fee_snapshot.charge_configuration_snapshot.get(
+                    "setting_field", ""
+                ),
                 "selected_va_channel": fee_snapshot.channel.code,
                 "principal_amount": str(purchase.subtotal),
                 "charged_fee_total": str(purchase.service_fee),

@@ -1,26 +1,23 @@
 import csv
 from datetime import timedelta
 
-from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.db.models import DecimalField, Sum, Value
 from django.db.models.functions import Coalesce
 from django.http import HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.dateparse import parse_date
+from django.views.decorators.http import require_GET
 from wagtail.admin.auth import user_passes_test
 
-from .forms import XenditFeeAdjustmentPostForm
 from .models import (
-    XenditFeeAdjustment,
     XenditPaymentChannel,
     XenditReconciliationRun,
     XenditTransactionFee,
 )
-from .services import post_adjustment_fifo
 
 
 def _admin_access(user):
@@ -101,26 +98,9 @@ def _totals(qs):
 
 
 @user_passes_test(_admin_access)
+@require_GET
 def fee_reconciliation_report(request):
     _ensure_report_permission(request)
-    if request.method == "POST":
-        if not request.user.has_perm("_payment.add_xenditfeeadjustment"):
-            raise PermissionDenied
-        adjustment_form = XenditFeeAdjustmentPostForm(request.POST)
-        if adjustment_form.is_valid():
-            adjustment = adjustment_form.save(commit=False)
-            adjustment.created_by = request.user
-            adjustment.save()
-            post_adjustment_fifo(adjustment, approved_by=request.user)
-            messages.success(
-                request,
-                f"Adjustment {adjustment.amount:,.0f} diposting; "
-                f"{adjustment.allocated_amount:,.0f} berhasil dialokasikan.",
-            )
-            return redirect("xendit_fee_reconciliation_report")
-    else:
-        adjustment_form = XenditFeeAdjustmentPostForm()
-
     fees, filters = _filtered_fees(request)
     query = request.GET.copy()
     query.pop("page", None)
@@ -129,8 +109,6 @@ def fee_reconciliation_report(request):
         "filters": filters,
         "statuses": XenditTransactionFee.ReconciliationStatus.choices,
         "channels": XenditPaymentChannel.objects.order_by("sort_order", "display_name"),
-        "adjustment_form": adjustment_form,
-        "recent_adjustments": XenditFeeAdjustment.objects.select_related("created_by")[:10],
         "last_run": XenditReconciliationRun.objects.first(),
         "export_query": query.urlencode(),
         "channel_list_url": reverse("wagtailsnippets__payment_xenditpaymentchannel:list"),

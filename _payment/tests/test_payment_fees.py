@@ -13,7 +13,6 @@ from _p2p.tests.factories import make_project, make_purchase
 from _payment.models import (
     XenditFeeAdjustment,
     XenditFeeRate,
-    XenditPaymentChannel,
     XenditTransactionFee,
 )
 from _payment.services import (
@@ -22,11 +21,15 @@ from _payment.services import (
     reconcile_transaction_fee,
 )
 from _payment.services.reconciliation import refresh_reconciliation_status
+from _setting.models import XenditSetting
 
 
 class XenditFeeCheckoutTests(TestCase):
-    def test_fee_quote_uses_selected_va_rate(self):
-        response = self.client.get(
+    def test_fee_quote_uses_route_setting_and_is_independent_of_va(self):
+        setting = XenditSetting.load()
+        setting.saving_payment_gateway_fee = Decimal("3500")
+        setting.save()
+        bca_response = self.client.get(
             reverse("xendit_fee_quote"),
             {
                 "route": "saving",
@@ -34,14 +37,28 @@ class XenditFeeCheckoutTests(TestCase):
                 "amount": "500000",
             },
         )
+        bni_response = self.client.get(
+            reverse("xendit_fee_quote"),
+            {
+                "route": "saving",
+                "channel": "BNI_VIRTUAL_ACCOUNT",
+                "amount": "500000",
+            },
+        )
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()["fee_total"], "2750")
-        self.assertEqual(response.json()["total_amount"], "502750")
+        self.assertEqual(bca_response.status_code, 200)
+        self.assertEqual(bca_response.json()["fee_total"], "3500.00")
+        self.assertEqual(bca_response.json()["total_amount"], "503500.00")
+        self.assertEqual(bni_response.json()["fee_total"], "3500.00")
+        self.assertIsNone(bca_response.json()["rate_version"])
+        self.assertEqual(bca_response.json()["charge_source"], "xendit_setting")
 
     @patch("_p2p.services.purchase_workflow.XenditService.create_invoice")
     def test_p2p_checkout_locks_one_va_and_sends_principal_plus_fee_items(self, create_invoice):
         project = make_project(service_fee=Decimal("999999"))
+        setting = XenditSetting.load()
+        setting.p2p_payment_gateway_fee = Decimal("6000")
+        setting.save()
         create_invoice.side_effect = lambda **kwargs: {
             "payment_session_id": "ps-selected-va-123456789012345",
             "reference_id": kwargs["reference_id"],
@@ -61,17 +78,29 @@ class XenditFeeCheckoutTests(TestCase):
             xendit_channel="BNI_VIRTUAL_ACCOUNT",
         )
 
-        self.assertEqual(purchase.service_fee, Decimal("2750"))
-        self.assertEqual(purchase.total_amount, Decimal("202750"))
+        self.assertEqual(purchase.service_fee, Decimal("6000"))
+        self.assertEqual(purchase.total_amount, Decimal("206000"))
         payload = create_invoice.call_args.kwargs
         self.assertEqual(payload["allowed_payment_channels"], ["BNI_VIRTUAL_ACCOUNT"])
         self.assertEqual([item["type"] for item in payload["items"]], ["DIGITAL_SERVICE", "FEE"])
-        self.assertEqual(sum(item["net_unit_amount"] for item in payload["items"]), 202750)
+        self.assertEqual(
+            [item["category"] for item in payload["items"]],
+            ["PROJECT_FUNDING", "PAYMENT_FEE"],
+        )
+        self.assertEqual(sum(item["net_unit_amount"] for item in payload["items"]), 206000)
         self.assertEqual(payload["metadata"]["selected_va_channel"], "BNI_VIRTUAL_ACCOUNT")
+        self.assertEqual(payload["metadata"]["fee_charge_source"], "xendit_setting")
+        self.assertNotIn("fee_rate_version", payload["metadata"])
 
         snapshot = purchase.xendit_fee_snapshot
         self.assertEqual(snapshot.channel.code, "BNI_VIRTUAL_ACCOUNT")
-        self.assertEqual(snapshot.charged_fee_total, Decimal("2750"))
+        self.assertIsNone(snapshot.rate_id)
+        self.assertEqual(snapshot.charged_fee_total, Decimal("6000"))
+        self.assertEqual(
+            snapshot.charge_configuration_snapshot["setting_field"],
+            "p2p_payment_gateway_fee",
+        )
+        self.assertEqual(snapshot.charge_configuration_snapshot["configured_amount"], "6000.00")
         self.assertEqual(snapshot.session_request_snapshot["items"][1]["type"], "FEE")
 
     def test_p2p_financials_and_fee_snapshot_are_immutable(self):
@@ -121,9 +150,9 @@ class XenditFeeReconciliationTests(TestCase):
         return refresh_reconciliation_status(snapshot)
 
     @patch("_payment.services.reconciliation.XenditService.list_transactions")
-    def test_actual_fee_is_snapshotted_and_next_rate_is_auto_versioned(self, list_transactions):
+    def test_actual_fee_is_snapshotted_without_changing_checkout_configuration(self, list_transactions):
         fee = self._paid_fee("sync", "2750")
-        old_rate = fee.rate
+        rate_count = XenditFeeRate.objects.count()
         # Reset provider fields so this call represents the first Transactions API sync.
         fee.actual_xendit_fee = None
         fee.actual_vat = None
@@ -174,19 +203,13 @@ class XenditFeeReconciliationTests(TestCase):
         # Withholding tax is retained in audit fields, but not counted as gateway fee.
         self.assertEqual(fee.actual_xendit_withholding_tax, Decimal("100"))
 
-        old_rate.refresh_from_db()
-        self.assertEqual(old_rate.status, XenditFeeRate.Status.SUPERSEDED)
-        current = XenditFeeRate.objects.get(
-            channel__code="BCA_VIRTUAL_ACCOUNT",
-            status=XenditFeeRate.Status.ACTIVE,
-            effective_to__isnull=True,
-        )
-        self.assertEqual(current.fixed_fee, Decimal("4000"))
-        self.assertEqual(current.source, XenditFeeRate.Source.OBSERVED)
+        self.assertIsNone(fee.rate_id)
+        self.assertEqual(XenditFeeRate.objects.count(), rate_count)
+        setting = XenditSetting.load()
+        self.assertEqual(setting.p2p_payment_gateway_fee, Decimal("2750"))
 
-    def test_one_adjustment_covers_many_variances_fifo_and_leaves_remainder(self):
+    def test_adjustment_posting_is_closed_and_does_not_allocate(self):
         first = self._paid_fee("one", "3750")
-        second = self._paid_fee("two", "3750")
         first_total = first.p2p_purchase.total_amount
         adjustment = XenditFeeAdjustment.objects.create(
             amount=Decimal("1500"),
@@ -194,43 +217,19 @@ class XenditFeeReconciliationTests(TestCase):
             reason="Kredit gabungan perubahan fee VA",
         )
 
-        post_adjustment_fifo(adjustment)
+        with self.assertRaisesMessage(ValidationError, "sedang dinonaktifkan"):
+            post_adjustment_fifo(adjustment)
 
         first.refresh_from_db()
-        second.refresh_from_db()
         adjustment.refresh_from_db()
-        self.assertEqual(first.residual_variance, Decimal("0"))
-        self.assertEqual(second.residual_variance, Decimal("-500"))
-        self.assertEqual(first.reconciliation_status, XenditTransactionFee.ReconciliationStatus.ADJUSTED)
-        self.assertEqual(second.reconciliation_status, XenditTransactionFee.ReconciliationStatus.SHORT)
-        self.assertEqual(adjustment.allocated_amount, Decimal("1500"))
-        self.assertEqual(adjustment.unallocated_amount, Decimal("0"))
+        self.assertEqual(first.residual_variance, Decimal("-1000"))
+        self.assertEqual(first.reconciliation_status, XenditTransactionFee.ReconciliationStatus.SHORT)
+        self.assertEqual(adjustment.allocated_amount, Decimal("0"))
+        self.assertEqual(adjustment.unallocated_amount, Decimal("1500"))
         first.p2p_purchase.refresh_from_db()
         self.assertEqual(first.p2p_purchase.total_amount, first_total)
 
-    def test_single_5000_adjustment_can_close_five_fee_changes(self):
-        fees = [self._paid_fee(f"batch-{index}", "3750") for index in range(5)]
-        adjustment = XenditFeeAdjustment.objects.create(
-            amount=Decimal("5000"),
-            kind=XenditFeeAdjustment.Kind.PROVIDER_CREDIT,
-            reason="Satu kredit provider untuk lima selisih fee",
-        )
-
-        post_adjustment_fifo(adjustment)
-
-        adjustment.refresh_from_db()
-        self.assertEqual(adjustment.allocations.count(), 5)
-        self.assertEqual(adjustment.allocated_amount, Decimal("5000"))
-        self.assertEqual(adjustment.unallocated_amount, Decimal("0"))
-        for fee in fees:
-            fee.refresh_from_db()
-            self.assertEqual(fee.residual_variance, Decimal("0"))
-            self.assertEqual(
-                fee.reconciliation_status,
-                XenditTransactionFee.ReconciliationStatus.ADJUSTED,
-            )
-
-    def test_admin_reconciliation_report_is_available(self):
+    def test_admin_reconciliation_report_is_read_only(self):
         user = get_user_model().objects.create_superuser(
             username="fee-admin", email="fee@example.com", password="secret"
         )
@@ -238,4 +237,7 @@ class XenditFeeReconciliationTests(TestCase):
         response = self.client.get(reverse("xendit_fee_reconciliation_report"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Rekonsiliasi Fee Xendit")
-        self.assertContains(response, "Post adjustment")
+        self.assertContains(response, "Adjustment dan auto-update tarif sedang dinonaktifkan")
+        self.assertNotContains(response, "Post &amp; alokasikan")
+        post_response = self.client.post(reverse("xendit_fee_reconciliation_report"), {})
+        self.assertEqual(post_response.status_code, 405)

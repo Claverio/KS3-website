@@ -7,12 +7,9 @@ from django.db.models import Q
 from django.utils import timezone
 
 from _payment.models import (
-    XenditFeeRate,
-    XenditPaymentChannel,
     XenditReconciliationRun,
     XenditTransactionFee,
 )
-from _setting.models import XenditSetting
 from backend.services.xendit import XenditService
 
 
@@ -94,96 +91,6 @@ def refresh_reconciliation_status(fee_record):
     return fee_record
 
 
-def _maybe_learn_rate(fee_record):
-    setting = XenditSetting.load()
-    if not getattr(setting, "auto_learn_va_fees", True):
-        return None
-    if fee_record.actual_fee_status != "COMPLETED":
-        return None
-    if fee_record.actual_channel_category != "VIRTUAL_ACCOUNT":
-        return None
-    if fee_record.actual_xendit_fee is None or fee_record.actual_xendit_fee <= 0:
-        return None
-    actual_total = fee_record.actual_total_fee
-    if actual_total == fee_record.charged_fee_total:
-        return None
-
-    target_channel = fee_record.channel
-    if target_channel.code == "LEGACY_UNKNOWN_VIRTUAL_ACCOUNT":
-        target_channel = XenditPaymentChannel.objects.filter(
-            code=_normalized_va_code(fee_record.actual_channel_code),
-            is_enabled=True,
-        ).first()
-        if not target_channel:
-            return None
-
-    observed_base = fee_record.actual_xendit_fee
-    observed_vat = fee_record.actual_vat or Decimal("0")
-    observed_vat_percent = (
-        (observed_vat / observed_base * Decimal("100")).quantize(Decimal("0.001"))
-        if observed_base
-        else Decimal("0")
-    )
-    delta = abs(actual_total - fee_record.charged_fee_total)
-    max_delta = Decimal(str(getattr(setting, "fee_auto_update_max_delta", 5000)))
-    now = timezone.now()
-
-    with transaction.atomic():
-        current = (
-            XenditFeeRate.objects.select_for_update()
-            .filter(
-                channel=target_channel,
-                currency=fee_record.currency,
-                status=XenditFeeRate.Status.ACTIVE,
-                effective_to__isnull=True,
-            )
-            .order_by("-effective_from")
-            .first()
-        )
-        if current and current.fixed_fee == observed_base and current.vat_percent == observed_vat_percent:
-            return current
-
-        status = (
-            XenditFeeRate.Status.ACTIVE
-            if delta <= max_delta
-            else XenditFeeRate.Status.CANDIDATE
-        )
-        if status == XenditFeeRate.Status.ACTIVE and current:
-            current.effective_to = now
-            current.status = XenditFeeRate.Status.SUPERSEDED
-            current.save(update_fields=("effective_to", "status", "updated_at"))
-
-        if status == XenditFeeRate.Status.CANDIDATE:
-            existing = XenditFeeRate.objects.filter(
-                channel=target_channel,
-                currency=fee_record.currency,
-                fixed_fee=observed_base,
-                percentage_fee=Decimal("0"),
-                vat_percent=observed_vat_percent,
-                status=XenditFeeRate.Status.CANDIDATE,
-            ).first()
-            if existing:
-                return existing
-
-        return XenditFeeRate.objects.create(
-            channel=target_channel,
-            currency=fee_record.currency,
-            fixed_fee=observed_base,
-            percentage_fee=Decimal("0"),
-            vat_percent=observed_vat_percent,
-            effective_from=now,
-            source=XenditFeeRate.Source.OBSERVED,
-            status=status,
-            source_reference=f"Observed from {fee_record.transaction_reference}",
-            observed_transaction_id=fee_record.provider_transaction_id or "",
-            notes=(
-                "Aktif otomatis untuk transaksi berikutnya."
-                if status == XenditFeeRate.Status.ACTIVE
-                else f"Ditahan karena delta {delta} melebihi batas {max_delta}."
-            ),
-        )
-
-
 @transaction.atomic
 def _apply_actual_payload(fee_record, payload):
     fee_record = XenditTransactionFee.objects.select_for_update().get(pk=fee_record.pk)
@@ -257,7 +164,6 @@ def reconcile_transaction_fee(fee_record):
         return fee_record
     payload = sorted(candidates, key=lambda row: row.get("updated") or "", reverse=True)[0]
     fee_record = _apply_actual_payload(fee_record, payload)
-    _maybe_learn_rate(fee_record)
     return fee_record
 
 

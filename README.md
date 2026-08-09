@@ -32,9 +32,10 @@ Pantau worker dengan:
 docker compose logs -f payment-sync
 ```
 
-Kanal Virtual Account, status aktif per rute, dan versi tarif efektif dikelola
-dari menu **Xendit Fee** di Wagtail. Selisih charged fee vs actual fee serta
-adjustment FIFO tersedia di menu **Rekonsiliasi Xendit**. Adjustment tidak pernah
-mengubah nominal transaksi asli.
+Kanal Virtual Account dan status aktif per rute dikelola dari menu **Xendit Fee**
+di Wagtail. Nominal biaya yang dibebankan ke customer diatur terpisah untuk
+**Nabung** dan **P2P/Proyek** pada **General Settings → Xendit**. Menu
+**Rekonsiliasi Xendit** tetap menarik actual fee untuk observasi, tetapi
+auto-update tarif dan posting adjustment sedang dinonaktifkan.
 
 Domain production: [ks3.claverio.com](https://ks3.claverio.com)

@@ -23,7 +23,7 @@ class XenditPaymentChannelViewSet(SnippetViewSet):
 
 class XenditFeeRateViewSet(SnippetViewSet):
     model = XenditFeeRate
-    menu_label = "Versi Tarif VA"
+    menu_label = "Tarif VA (arsip)"
     icon = "date"
     list_display = (
         "channel", "fixed_fee", "percentage_fee", "vat_percent", "effective_from",

@@ -1,5 +1,9 @@
 # Xendit VA Fee System — Changelog & AI Review Handoff
 
+> **Dokumen historis.** Desain versioned rate, auto-learning, dan adjustment di
+> bawah ini telah dinonaktifkan pada 6 Agustus 2026. Untuk kondisi sistem aktif,
+> gunakan `docs/xendit-fixed-charge-system-ai-review.md`.
+
 Tanggal implementasi: 2 Agustus 2026  
 Status: implementasi selesai, migration konsisten, 172 test lulus
 

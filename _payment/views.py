@@ -40,6 +40,7 @@ def fee_quote(request):
             "fee_vat": str(resolved.vat),
             "fee_total": str(resolved.total_fee),
             "total_amount": str(resolved.principal_amount + resolved.total_fee),
-            "rate_version": resolved.rate.pk,
+            "rate_version": None,
+            "charge_source": "xendit_setting",
         }
     )

@@ -114,6 +114,12 @@ class XenditService:
                 )
             payload["allowed_payment_channels"] = channels
         if items:
+            if any(
+                not isinstance(item.get("category"), str)
+                or not item["category"].strip()
+                for item in items
+            ):
+                raise XenditAPIError("Every Xendit item requires a category.")
             try:
                 item_total = sum(
                     Decimal(str(item["net_unit_amount"]))

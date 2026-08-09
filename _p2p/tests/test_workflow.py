@@ -37,6 +37,14 @@ class PurchaseWorkflowTests(TestCase):
         request_kwargs = create_invoice.call_args.kwargs
         self.assertNotIn("success_return_url", request_kwargs)
         self.assertNotIn("cancel_return_url", request_kwargs)
+        self.assertEqual(
+            [item["category"] for item in request_kwargs["items"]],
+            ["PROJECT_FUNDING", "PAYMENT_FEE"],
+        )
+        self.assertEqual(
+            [item["category"] for item in purchase.xendit_fee_snapshot.session_request_snapshot["items"]],
+            ["PROJECT_FUNDING", "PAYMENT_FEE"],
+        )
 
     def test_rejects_unavailable_quantity_before_provider_call(self):
         project = make_project(total_slots=1)

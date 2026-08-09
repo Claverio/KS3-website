@@ -1,10 +1,8 @@
 from dataclasses import dataclass
 from decimal import Decimal
 
-from django.db.models import Q
-from django.utils import timezone
-
 from _payment.models import XenditFeeRate, XenditPaymentChannel, XenditTransactionFee
+from _setting.models import XenditSetting
 
 
 class FeeConfigurationError(Exception):
@@ -14,11 +12,12 @@ class FeeConfigurationError(Exception):
 @dataclass(frozen=True)
 class ResolvedXenditFee:
     channel: XenditPaymentChannel
-    rate: XenditFeeRate
+    rate: XenditFeeRate | None
     principal_amount: Decimal
     fee_before_tax: Decimal
     vat: Decimal
     total_fee: Decimal
+    charge_setting_field: str
 
 
 def active_channels(route):
@@ -52,36 +51,30 @@ def resolve_fee(*, channel_code, route, principal_amount, at=None, currency="IDR
     principal = Decimal(principal_amount)
     if principal <= 0:
         raise FeeConfigurationError("Nominal pokok harus lebih besar dari nol.")
-    moment = at or timezone.now()
     channel = _resolve_channel(channel_code, route)
-    rate = (
-        XenditFeeRate.objects.filter(
-            channel=channel,
-            currency=currency,
-            status=XenditFeeRate.Status.ACTIVE,
-            effective_from__lte=moment,
-        )
-        .filter(Q(effective_to__isnull=True) | Q(effective_to__gt=moment))
-        .order_by("-effective_from")
-        .first()
-    )
-    if not rate:
-        raise FeeConfigurationError(
-            f"Tarif aktif untuk {channel.display_name} belum dikonfigurasi."
-        )
-    fee_before_tax, vat, total_fee = rate.calculate(principal)
+    setting = XenditSetting.load()
+    setting_field = {
+        "saving": "saving_payment_gateway_fee",
+        "p2p": "p2p_payment_gateway_fee",
+    }[route]
+    total_fee = Decimal(getattr(setting, setting_field))
+    if total_fee < 0:
+        raise FeeConfigurationError("Biaya payment gateway tidak boleh negatif.")
     return ResolvedXenditFee(
         channel=channel,
-        rate=rate,
+        rate=None,
         principal_amount=principal,
-        fee_before_tax=fee_before_tax,
-        vat=vat,
+        fee_before_tax=total_fee,
+        vat=Decimal("0"),
         total_fee=total_fee,
+        charge_setting_field=setting_field,
     )
 
 
 def _rate_snapshot(resolved):
     rate = resolved.rate
+    if rate is None:
+        return {}
     return {
         "rate_id": rate.pk,
         "channel_code": resolved.channel.code,
@@ -123,6 +116,15 @@ def create_fee_snapshot(
         charged_fee_vat=resolved.vat,
         charged_fee_total=resolved.total_fee,
         rate_snapshot=_rate_snapshot(resolved),
+        charge_configuration_snapshot={
+            "source": "xendit_setting",
+            "route": route,
+            "setting_field": resolved.charge_setting_field,
+            "configured_amount": str(resolved.total_fee),
+            "currency": transaction.currency,
+            "selected_channel": resolved.channel.code,
+            "channel_independent": True,
+        },
         allowed_payment_channels=[resolved.channel.code],
     )
     return snapshot, resolved

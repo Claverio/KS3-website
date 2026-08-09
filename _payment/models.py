@@ -250,6 +250,8 @@ class XenditTransactionFee(models.Model):
         XenditFeeRate,
         on_delete=models.PROTECT,
         related_name="transaction_fees",
+        null=True,
+        blank=True,
     )
     currency = models.CharField(max_length=3, default="IDR")
     principal_amount = models.DecimalField(max_digits=18, decimal_places=2)
@@ -257,6 +259,7 @@ class XenditTransactionFee(models.Model):
     charged_fee_vat = models.DecimalField(max_digits=18, decimal_places=2, default=MONEY_ZERO)
     charged_fee_total = models.DecimalField(max_digits=18, decimal_places=2)
     rate_snapshot = models.JSONField(default=dict)
+    charge_configuration_snapshot = models.JSONField(default=dict)
     allowed_payment_channels = models.JSONField(default=list)
     session_request_snapshot = models.JSONField(default=dict)
     session_response_snapshot = models.JSONField(default=dict)
@@ -330,6 +333,7 @@ class XenditTransactionFee(models.Model):
                     FieldPanel("charged_fee_vat", read_only=True),
                     FieldPanel("charged_fee_total", read_only=True),
                     FieldPanel("rate_snapshot", read_only=True),
+                    FieldPanel("charge_configuration_snapshot", read_only=True),
                 ],
                 heading="Snapshot tagihan",
             ),
@@ -377,6 +381,7 @@ class XenditTransactionFee(models.Model):
         "charged_fee_vat",
         "charged_fee_total",
         "rate_snapshot",
+        "charge_configuration_snapshot",
         "allowed_payment_channels",
         "session_request_snapshot",
         "session_response_snapshot",

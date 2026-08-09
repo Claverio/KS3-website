@@ -77,6 +77,7 @@ def create_saving_transaction(*, saving_txn):
             {
                 "reference_id": f"{saving_txn.reference_id}-principal",
                 "type": "DIGITAL_SERVICE",
+                "category": "SAVINGS",
                 "name": f"Setoran {saving_txn.product.title}"[:255],
                 "net_unit_amount": int(saving_txn.amount),
                 "quantity": 1,
@@ -87,6 +88,7 @@ def create_saving_transaction(*, saving_txn):
                 {
                     "reference_id": f"{saving_txn.reference_id}-fee",
                     "type": "FEE",
+                    "category": "PAYMENT_FEE",
                     "name": "Biaya administrasi pembayaran",
                     "net_unit_amount": int(saving_txn.service_fee),
                     "quantity": 1,
@@ -104,7 +106,10 @@ def create_saving_transaction(*, saving_txn):
                 "transaction_reference": saving_txn.reference_id,
                 "transaction_code": saving_txn.transaction_code,
                 "fee_snapshot_id": str(fee_snapshot.pk),
-                "fee_rate_version": str(fee_snapshot.rate_id),
+                "fee_charge_source": "xendit_setting",
+                "fee_setting_field": fee_snapshot.charge_configuration_snapshot.get(
+                    "setting_field", ""
+                ),
                 "selected_va_channel": fee_snapshot.channel.code,
                 "principal_amount": str(saving_txn.amount),
                 "charged_fee_total": str(saving_txn.service_fee),

@@ -81,6 +81,102 @@
   padding-top: 70px !important;
 }
 
+.ks3-faq-contact {
+  display: flex;
+  width: 100%;
+  max-width: 380px;
+  min-height: 70px;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 10px 12px 10px 10px;
+  border: 1px solid #dcebf5;
+  border-radius: 16px;
+  background: #f4f9fd;
+  color: #1f2c36;
+  transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ks3-faq-contact__icon {
+  display: inline-flex;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #2fd26d, #18a957);
+  color: #fff;
+  font-size: 22px;
+  box-shadow: 0 8px 18px rgba(24, 169, 87, 0.22);
+}
+
+.ks3-faq-contact__copy {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.ks3-faq-contact__copy span {
+  overflow: hidden;
+  margin-bottom: 5px;
+  color: #74818c;
+  font-size: 11px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ks3-faq-contact__copy strong {
+  overflow: hidden;
+  color: #1f2c36;
+  font-family: var(--alt-font);
+  font-size: 15px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ks3-faq-contact__arrow {
+  display: inline-flex;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #fff;
+  color: #005daa;
+  font-size: 12px;
+  box-shadow: 0 4px 12px rgba(0, 55, 94, 0.08);
+  transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.ks3-faq-contact:hover {
+  transform: translateY(-3px);
+  border-color: rgba(0, 93, 170, 0.28);
+  background: #fff;
+  color: #1f2c36;
+  box-shadow: 0 14px 30px rgba(0, 55, 94, 0.11);
+}
+
+.ks3-faq-contact:hover .ks3-faq-contact__arrow {
+  transform: translate(1px, -1px);
+  background: #005daa;
+  color: #fff;
+}
+
+.ks3-faq-contact:focus-visible {
+  outline: 3px solid rgba(255, 172, 10, 0.58);
+  outline-offset: 4px;
+}
+
+.ks3-faq-contact.is-disabled {
+  opacity: 0.64;
+}
+
 .ks3-app-cta-section {
   padding-top: 55px;
   padding-bottom: 55px;
@@ -199,6 +295,100 @@
   color: #7b8792;
   font-size: 12px;
   white-space: nowrap;
+}
+
+/* Compact product-sidebar CTA. Keep the phone number readable on the narrow card. */
+.ks3-product-whatsapp {
+  display: flex;
+  width: 100%;
+  min-height: 64px;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 16px;
+  background: #fff;
+  color: #1f2c36;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  text-align: left;
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease;
+}
+
+.ks3-product-whatsapp__icon {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #2fd26d, #18a957);
+  color: #fff;
+  font-size: 20px;
+  box-shadow: 0 7px 16px rgba(24, 169, 87, 0.24);
+}
+
+.ks3-product-whatsapp__copy {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.ks3-product-whatsapp__copy span {
+  margin-bottom: 4px;
+  color: #76838d;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.ks3-product-whatsapp__copy strong {
+  overflow: hidden;
+  color: #1f2c36;
+  font-family: var(--alt-font);
+  font-size: 14px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ks3-product-whatsapp__arrow {
+  display: inline-flex;
+  width: 27px;
+  height: 27px;
+  flex: 0 0 27px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #edf7ff;
+  color: #005daa;
+  font-size: 12px;
+  transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.ks3-product-whatsapp:hover {
+  transform: translateY(-3px);
+  color: #1f2c36;
+  box-shadow: 0 17px 36px rgba(0, 0, 0, 0.26);
+}
+
+.ks3-product-whatsapp:hover .ks3-product-whatsapp__arrow {
+  transform: translate(1px, -1px);
+  background: #005daa;
+  color: #fff;
+}
+
+.ks3-product-whatsapp:focus-visible {
+  outline: 3px solid rgba(255, 172, 10, 0.72);
+  outline-offset: 4px;
+}
+
+.ks3-product-whatsapp.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+  box-shadow: none;
 }
 
 .ks3-app-preview {
@@ -477,6 +667,76 @@
   color: #fff;
 }
 
+.ks3-complete-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.ks3-complete-action {
+  display: inline-flex;
+  min-width: 240px;
+  min-height: 56px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 22px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  font-family: var(--alt-font);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  text-transform: none;
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.25s ease, background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.ks3-complete-action i {
+  flex: 0 0 auto;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.ks3-complete-action--whatsapp {
+  border-color: #dce4e9;
+  background: #fff;
+  color: #26343d;
+  box-shadow: 0 8px 22px rgba(31, 44, 54, 0.07);
+}
+
+.ks3-complete-action--whatsapp i {
+  color: #19ad5a;
+  font-size: 20px;
+}
+
+.ks3-complete-action--whatsapp:hover {
+  transform: translateY(-2px);
+  border-color: rgba(25, 173, 90, 0.42);
+  color: #26343d;
+  box-shadow: 0 12px 28px rgba(31, 44, 54, 0.12);
+}
+
+.ks3-complete-action--primary {
+  background: #005daa;
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(0, 93, 170, 0.2);
+}
+
+.ks3-complete-action--primary:hover {
+  transform: translateY(-2px);
+  background: #004d8d;
+  color: #fff;
+  box-shadow: 0 14px 30px rgba(0, 93, 170, 0.27);
+}
+
+.ks3-complete-action:focus-visible {
+  outline: 3px solid rgba(255, 172, 10, 0.62);
+  outline-offset: 3px;
+}
+
 /* Global WhatsApp contact: a soft speech-bubble silhouette that stays on-brand. */
 .ks3-whatsapp-float {
   position: fixed;
@@ -695,6 +955,15 @@
 }
 
 @media (max-width: 767px) {
+  .ks3-complete-actions {
+    flex-direction: column;
+  }
+
+  .ks3-complete-action {
+    width: min(100%, 360px);
+    min-width: 0;
+  }
+
   .ks3-whatsapp-float {
     right: 16px;
     bottom: max(16px, env(safe-area-inset-bottom));

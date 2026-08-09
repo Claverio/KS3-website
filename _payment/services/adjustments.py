@@ -14,6 +14,14 @@ from .reconciliation import refresh_reconciliation_status
 
 @transaction.atomic
 def post_adjustment_fifo(adjustment, *, approved_by=None):
+    raise ValidationError(
+        "Posting adjustment fee Xendit sedang dinonaktifkan. "
+        "Checkout memakai biaya tetap per rute dari Xendit Settings."
+    )
+
+
+def _legacy_post_adjustment_fifo(adjustment, *, approved_by=None):
+    """Retained only as a historical implementation; no active caller may post it."""
     adjustment = XenditFeeAdjustment.objects.select_for_update().get(pk=adjustment.pk)
     if adjustment.status not in {
         XenditFeeAdjustment.Status.DRAFT,

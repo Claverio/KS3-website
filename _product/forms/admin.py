@@ -13,7 +13,7 @@ class SavingTransactionAdminForm(WagtailAdminModelForm):
         super().__init__(*args, **kwargs)
         if "service_fee" in self.fields:
             self.fields["service_fee"].help_text = (
-                "Untuk transaksi Xendit, nilai ini dihitung ulang dari tarif VA aktif."
+                "Untuk transaksi Xendit, nilai ini dihitung ulang dari setting biaya nabung."
             )
         if self.instance.pk and "payment_channel" in self.fields:
             self.fields["payment_channel"].disabled = True

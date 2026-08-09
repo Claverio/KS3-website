@@ -7,7 +7,21 @@
                 <div class="ps-14 pe-14 xl-ps-10 xl-pe-10 pt-10 pb-10 lg-p-25px bg-dark-gray border-radius-6px text-center text-lg-start">
                     <span class="fs-20 fw-500 text-white mb-10px d-inline-block">Punya pertanyaan?</span>
                     <p class="text-white opacity-5">Tim KS3 siap membantu Anda memahami produk yang paling sesuai dengan kebutuhan.</p>
-                    {% if contact_setting.whatsapp_link %}<a href="{{ contact_setting.whatsapp_link }}" target="_blank" rel="noopener noreferrer" class="btn btn-large btn-white btn-switch-text btn-box-shadow w-100 border-0 btn-rounded text-transform-none left-icon me-10px sm-mb-15px sm-mt-15px"><span><span><i class="bi bi-whatsapp"></i></span><span class="btn-double-text" data-text="{{ contact_setting.whatsapp_display|default:'Hubungi via WhatsApp' }}">{{ contact_setting.whatsapp_display|default:'Hubungi via WhatsApp' }}</span></span></a>{% else %}<span class="btn btn-large btn-white w-100 border-0 btn-rounded text-transform-none left-icon disabled"><i class="bi bi-whatsapp me-10px"></i>Hubungi via WhatsApp</span>{% endif %}
+                    {% if contact_setting.whatsapp_link %}
+                        <a href="{{ contact_setting.whatsapp_link }}" target="_blank" rel="noopener noreferrer" class="ks3-product-whatsapp" aria-label="Chat dengan KS3 melalui WhatsApp di {{ contact_setting.whatsapp_display|default:'nomor resmi KS3' }}">
+                            <span class="ks3-product-whatsapp__icon" aria-hidden="true"><i class="bi bi-whatsapp"></i></span>
+                            <span class="ks3-product-whatsapp__copy">
+                                <span>Chat via WhatsApp</span>
+                                <strong>{{ contact_setting.whatsapp_display|default:'Hubungi KS3' }}</strong>
+                            </span>
+                            <span class="ks3-product-whatsapp__arrow" aria-hidden="true"><i class="bi bi-arrow-up-right"></i></span>
+                        </a>
+                    {% else %}
+                        <span class="ks3-product-whatsapp is-disabled" aria-disabled="true">
+                            <span class="ks3-product-whatsapp__icon" aria-hidden="true"><i class="bi bi-whatsapp"></i></span>
+                            <span class="ks3-product-whatsapp__copy"><span>Chat via WhatsApp</span><strong>Hubungi KS3</strong></span>
+                        </span>
+                    {% endif %}
                 </div>
             </div>
         </div>

@@ -136,7 +136,9 @@ class HomePageSetting(BaseSiteSetting):
     app_badge = models.CharField(max_length=120, default="Aplikasi KS3")
     app_title = models.CharField(max_length=255, default="KS3, Kini dalam Genggaman Anda")
     app_description = models.TextField(default="Akses informasi pendanaan, pantau peluang P2P, dan dapatkan update KS3 langsung dari aplikasi.")
+    app_store_enabled = models.BooleanField(default=True, verbose_name="Tampilkan tombol App Store")
     app_store_url = models.CharField(max_length=500, default="#")
+    play_store_enabled = models.BooleanField(default=True, verbose_name="Tampilkan tombol Google Play")
     play_store_url = models.CharField(max_length=500, default="#")
 
     edit_handler = TabbedInterface([
@@ -147,7 +149,7 @@ class HomePageSetting(BaseSiteSetting):
         ObjectList([FieldPanel("products_enabled"), FieldPanel("products_background_image"), FieldPanel("products_small_title"), FieldPanel("products_title"), FieldPanel("products_description")], heading="Products"),
         ObjectList([FieldPanel("advantages_enabled"), FieldPanel("advantages_badge"), FieldPanel("advantages_title"), FieldPanel("advantages_description"), FieldPanel("advantages_items"), FieldPanel("advantages_image"), FieldPanel("advantages_image_alt"), FieldPanel("advantages_floating_title"), FieldPanel("advantages_floating_description")], heading="Advantages"),
         ObjectList([FieldPanel("faq_enabled"), FieldPanel("faq_badge"), FieldPanel("faq_title"), FieldPanel("faq_description"), FieldPanel("faq_contact_prefix"), FieldPanel("faq_items")], heading="FAQ"),
-        ObjectList([FieldPanel("app_enabled"), FieldPanel("app_first_image"), FieldPanel("app_second_image"), FieldPanel("app_image_alt"), FieldPanel("app_badge"), FieldPanel("app_title"), FieldPanel("app_description"), FieldPanel("app_store_url"), FieldPanel("play_store_url")], heading="App CTA"),
+        ObjectList([FieldPanel("app_enabled"), FieldPanel("app_first_image"), FieldPanel("app_second_image"), FieldPanel("app_image_alt"), FieldPanel("app_badge"), FieldPanel("app_title"), FieldPanel("app_description"), FieldPanel("app_store_enabled"), FieldPanel("app_store_url"), FieldPanel("play_store_enabled"), FieldPanel("play_store_url")], heading="App CTA"),
     ])
 
     class Meta:
