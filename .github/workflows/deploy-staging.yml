@@ -1,0 +1,26 @@
+name: Deploy On-Prem (claverio-fujitsu)
+
+on:
+  push:
+    branches:
+      - staging
+      - production
+  workflow_dispatch:
+
+concurrency:
+  group: fujitsu-deploy-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Build & Deploy to claverio-fujitsu
+    runs-on: [self-hosted, fujitsu]
+    timeout-minutes: 20
+    steps:
+      - name: Checkout clean commit
+        uses: actions/checkout@v4
+        with:
+          clean: true
+
+      - name: Deploy & Verify Healthcheck (with Auto-Rollback)
+        run: /home/claverio/bin/fujitsu-ci-deploy ks3-website "${{ github.sha }}"
